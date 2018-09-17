@@ -1,0 +1,8 @@
+HIGHWAY_VOXEL_WIDTH = 0.5    # 0.5m
+HIGHWAY_LANES_COUNT = 8
+
+HIGHWAY_DEPTH = 2000         # 1000m
+HIGHWAY_WIDTH = 7            # 3.5m
+HIGHWAY_HEIGHT = 10          # 5m
+
+NONE_TYPE = 'none'
