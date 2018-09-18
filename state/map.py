@@ -1,30 +1,31 @@
+import enum
+
 import numpy as np
 
-from state.constants import HIGHWAY_LANES_COUNT
-from state.constants import HIGHWAY_DEPTH
-from state.constants import HIGHWAY_WIDTH
-from state.constants import HIGHWAY_HEIGHT
-from state.constatns import NONE_TYPE
+from constants import HIGHWAY_LANES_COUNT
+from constants import HIGHWAY_DEPTH
+from constants import HIGHWAY_WIDTH
+from constants import HIGHWAY_HEIGHT
 
-ROAD_TYPES = [
-    'drivable',
-    'emergency',
-    'parking',
-]
+class RoadType(enum.Enum):
+    NONE = 0
+    DRIVABLE = 1
+    EMERGENCY = 2
+    PARKING = 3
 
-LINE_TYPES = [
-    'continuous',
-    'dashed',
-    'dense_dashed',
-]
+class LineType(enum.Enum):
+    NONE = 0
+    CONTINUOUS = 1
+    DASHED = 2
+    DENSE = 3
 
 class Map:
     def __init__(
             self,
     ):
-        self._compoment = np.zeros((
-            HIGHWAY_LANE_COUNT,
+        self._component = np.zeros((
+            HIGHWAY_LANES_COUNT,
             HIGHWAY_DEPTH, HIGHWAY_WIDTH,
-            len(ROAD_TYPES) + 2 * len(LINE_TYPES),
+            len(RoadType) + 2 * len(LineType),
         ))
 

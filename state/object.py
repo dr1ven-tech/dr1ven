@@ -1,34 +1,31 @@
+import enum
+
 import numpy as np
 
-from state.constants import HIGHWAY_LANES_COUNT
-from state.constants import HIGHWAY_DEPTH
-from state.constants import HIGHWAY_WIDTH
-from state.constants import HIGHWAY_HEIGHT
-from state.constatns import NONE_TYPE
+from constants import HIGHWAY_LANES_COUNT
+from constants import HIGHWAY_DEPTH
+from constants import HIGHWAY_WIDTH
+from constants import HIGHWAY_HEIGHT
 
-OBJECT_TYPES = [
-    'ego',
-    'unknown',
-    'car',
-    'truck',
-    'motorbike',
-    'traffic_cone',
-    'safety_sign',
-    'human',
-    'animal',
-]
+class ObjectType(enum.Enum):
+    NONE = 0
+    EGO = 1
+    UNKNOWN = 2
+    CAR = 3
+    TRUCK = 4
+    MOTORBIKE = 5
+    TRAFFIC_CONE = 6
+    SAFETY_SIGN = 7
+    HUMAN = 8
+    ANIMAL = 9
 
 class Object:
     def __init__(
             self,
-            object_type,
+            type,
+            occupation,
             speed,
     ):
-        self._compoment = np.zeros((
-            HIGHWAY_LANE_COUNT,
-            HIGHWAY_DEPTH, HIGHWAY_WIDTH, HIGHWAY_HEIGHT,
-            len(OBJECT_TYPES) + 3
-        ))
-
-        self._type = object_type
+        self._occupation = occupation
+        self._type = type
         self._speed = speed
