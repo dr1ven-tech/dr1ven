@@ -12,3 +12,4 @@ from symbolic.map import LineType
 from symbolic.map import Map
 
 from symbolic.highway import Highway
+

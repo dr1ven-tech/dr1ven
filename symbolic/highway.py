@@ -1,16 +1,16 @@
 import numpy as np
 
-from constants import HIGHWAY_LANES_COUNT
-from constants import HIGHWAY_DEPTH
-from constants import HIGHWAY_WIDTH
-from constants import HIGHWAY_HEIGHT
+from symbolic.constants import HIGHWAY_LANES_COUNT
+from symbolic.constants import HIGHWAY_DEPTH
+from symbolic.constants import HIGHWAY_WIDTH
+from symbolic.constants import HIGHWAY_HEIGHT
 
-from object import ObjectType
-from object import Object
+from symbolic.object import ObjectType
+from symbolic.object import Object
 
-from map import RoadType
-from map import LineType
-from map import Map
+from symbolic.map import RoadType
+from symbolic.map import LineType
+from symbolic.map import Map
 
 class Highway:
     def __init__(
@@ -35,7 +35,11 @@ class Highway:
     ):
         for o in object._occupation:
             occ = self._objects_component[tuple(o)]
+
+            for t in ObjectType:
+                occ[t.value] = 0.0
             occ[object.type().value] = 1.0
+
             occ[len(ObjectType) + 0] = object.speed()[0]
             occ[len(ObjectType) + 1] = object.speed()[1]
             occ[len(ObjectType) + 2] = object.speed()[2]

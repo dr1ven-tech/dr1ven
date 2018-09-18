@@ -2,22 +2,21 @@ import enum
 
 import numpy as np
 
-from constants import HIGHWAY_LANES_COUNT
-from constants import HIGHWAY_DEPTH
-from constants import HIGHWAY_WIDTH
-from constants import HIGHWAY_HEIGHT
+from symbolic.constants import HIGHWAY_LANES_COUNT
+from symbolic.constants import HIGHWAY_DEPTH
+from symbolic.constants import HIGHWAY_WIDTH
+from symbolic.constants import HIGHWAY_HEIGHT
 
 class RoadType(enum.Enum):
-    NONE = 0
+    INVALID = 0
     DRIVABLE = 1
     EMERGENCY = 2
     PARKING = 3
 
 class LineType(enum.Enum):
-    NONE = 0
-    CONTINUOUS = 1
-    DASHED = 2
-    DENSE = 3
+    CONTINUOUS = 0
+    DASHED = 1
+    DENSE = 2
 
 class Map:
     def __init__(
