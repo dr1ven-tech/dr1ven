@@ -27,6 +27,7 @@ class Highway:
             len(ObjectType) + 3
         ))
         self._objects = []
+        self.ego = None
 
     def add_object(
             self,
@@ -34,12 +35,16 @@ class Highway:
     ):
         for o in object._occupation:
             occ = self._objects_component[tuple(o)]
-            occ[object._type.value] = 1.0
-            occ[len(ObjectType) + 0] = object._speed[0]
-            occ[len(ObjectType) + 1] = object._speed[1]
-            occ[len(ObjectType) + 2] = object._speed[2]
+            occ[object.type().value] = 1.0
+            occ[len(ObjectType) + 0] = object.speed()[0]
+            occ[len(ObjectType) + 1] = object.speed()[1]
+            occ[len(ObjectType) + 2] = object.speed()[2]
 
         self._objects.append(object)
+
+        if object.type() == ObjectType.EGO:
+            assert self.ego is None
+            self.ego = object
 
     def set_map(
             self,

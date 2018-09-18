@@ -29,3 +29,13 @@ class Object:
         self._occupation = occupation
         self._type = type
         self._speed = speed
+
+    def type(
+            self,
+    ):
+        return self._type
+
+    def speed(
+            self,
+    ):
+        return self._speed
