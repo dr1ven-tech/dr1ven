@@ -1,58 +1,37 @@
 import numpy as np
 
-from symbolic.constants import HIGHWAY_LANES_COUNT
-from symbolic.constants import HIGHWAY_DEPTH
-from symbolic.constants import HIGHWAY_WIDTH
-from symbolic.constants import HIGHWAY_HEIGHT
+from symbolic.constants import HIGHWAY_LANE_COUNT
+from symbolic.constants import HIGHWAY_LANE_DEPTH
+from symbolic.constants import HIGHWAY_LANE_WIDTH
+from symbolic.constants import HIGHWAY_LANE_HEIGHT
 
-from symbolic.object import ObjectType
-from symbolic.object import Object
+from symbolic.entity import EntityType
+from symbolic.entity import Entity
 
 from symbolic.map import RoadType
-from symbolic.map import LineType
 from symbolic.map import Map
 
 class Highway:
     def __init__(
             self,
     ):
-        self._map_component = np.zeros((
-            HIGHWAY_LANES_COUNT,
-            HIGHWAY_DEPTH, HIGHWAY_WIDTH,
-            len(RoadType) + 2 * len(LineType),
-        ))
-        self._objects_component = np.zeros((
-            HIGHWAY_LANES_COUNT,
-            HIGHWAY_DEPTH, HIGHWAY_WIDTH, HIGHWAY_HEIGHT,
-            len(ObjectType) + 3
-        ))
-        self._objects = []
+        self._map = None
+        self._entities = []
         self.ego = None
 
-    def add_object(
+    def add_entity(
             self,
-            object,
+            entity,
     ):
-        for o in object._occupation:
-            occ = self._objects_component[tuple(o)]
+        self._entities.append(entity)
 
-            for t in ObjectType:
-                occ[t.value] = 0.0
-            occ[object.type().value] = 1.0
-
-            occ[len(ObjectType) + 0] = object.speed()[0]
-            occ[len(ObjectType) + 1] = object.speed()[1]
-            occ[len(ObjectType) + 2] = object.speed()[2]
-
-        self._objects.append(object)
-
-        if object.type() == ObjectType.EGO:
+        if entity.type() == EntityType.EGO:
             assert self.ego is None
-            self.ego = object
+            self.ego = entity
 
     def set_map(
             self,
-            map,
+            m,
     ):
-        self._map_component = map._component
+        self._map = m
 
