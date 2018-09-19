@@ -1,14 +1,14 @@
-var _socket = io.connect("ws://127.0.0.1:9090")
+var _socket = io.connect("ws://"+window.location.hostname)
 var _scene = new THREE.Scene();
 var _renderer = new THREE.WebGLRenderer({
   alpha: true,
 });
 var _camera = new THREE.PerspectiveCamera(
-  75, window.innerWidth / window.innerHeight, 0.1, 1000,
+  90, window.innerWidth / window.innerHeight, 0.1, 10000,
 );
 var _controls = new THREE.TrackballControls(_camera);
 
-var trace = (voxels) => {
+var trace = (voxels, opacity, offset) => {
   var geometry = new THREE.BoxGeometry(1, 1, 1);
   var result = GreedyMesh(voxels.voxels, voxels.dims)
 
@@ -52,24 +52,29 @@ var trace = (voxels) => {
   var material  = new THREE.MeshBasicMaterial({
     vertexColors: true, transparent: true
   });
-  material.opacity = 0.4;
+  material.opacity = opacity;
   surfacemesh = new THREE.Mesh(geometry, material);
   surfacemesh.doubleSided = false;
 
   // Create wire mesh
-  var material = new THREE.MeshBasicMaterial({
-    color : 0xffffff, wireframe : true, transparent: true,
-  });
-  material.opacity = 0.1;
-  wiremesh = new THREE.Mesh(geometry, material);
-  wiremesh.doubleSided = true;
+  // var material = new THREE.MeshBasicMaterial({
+  //   color : 0xffffff, wireframe : true, transparent: true,
+  // });
+  // material.opacity = 0.1;
+  // wiremesh = new THREE.Mesh(geometry, material);
+  // wiremesh.doubleSided = true;
 
-  wiremesh.position.x = surfacemesh.position.x = -(bb.max.x + bb.min.x) / 2.0;
-  wiremesh.position.y = surfacemesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
-  wiremesh.position.z = surfacemesh.position.z = -(bb.max.z + bb.min.z) / 2.0;
+  // wiremesh.position.x = surfacemesh.position.x = -200;
+  // wiremesh.position.y = surfacemesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
+  // wiremesh.position.z = surfacemesh.position.z = -(bb.max.z + bb.min.z) / 2.0;
+
+  surfacemesh.position.x = -400;
+  surfacemesh.position.y = offset;
+  // surfacemesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
+  // surfacemesh.position.z = -(bb.max.z + bb.min.z) / 2.0;
 
   _scene.add(surfacemesh);
-  _scene.add(wiremesh);
+  // _scene.add(wiremesh);
 };
 
 var render = () => {
@@ -83,37 +88,66 @@ var animate = () => {
 };
 
 var build_map = (map_data) => {
-  var voxels = voxel.generate([0,0,0], [2000,8*7,10], function(x,y,z) {
+  COLOR_MAP = {
+    0: '0x150026',
+    1: '0x5e665d',
+    2: '0xdb7011',
+    3: '0x006600',
+  }
+
+  var voxels = voxel.generate([0,0,0], [2000,1,8*7], function(x,y,z) {
+    l = Math.floor(z / 7)
+    w = z % 7
+    d = x
+    return COLOR_MAP[map_data[l][d][w][0]]
+  })
+
+  trace(voxels, 0.5, -1.0)
+};
+
+var build_entity = (entity_data) => {
+  COLOR_MAP = {
+    1: '0xffffff',
+    2: '0xdb7011',
+    3: '0x006600',
+    4: '0x660000',
+    6: '0xdb7011',
+  }
+
+  occ_map = {}
+  entity_data['occupation'].forEach((occ) => {
+    occ_map[occ.join('_')] = entity_data['type']
+  });
+
+  var voxels = voxel.generate([0,0,0], [2000,10,8*7], function(x,y,z) {
+    l = Math.floor(z / 7)
+    w = z % 7
+    d = x
+    h = y
+    key = l+'_'+d+'_'+w+'_'+h
+    if(key in occ_map) {
+      return COLOR_MAP[occ_map[key]]
+    }
     return 0
   })
 
-  trace(voxels)
+  trace(voxels, 1.0, 0.0)
 };
-
-// var build_sphere = () => {
-//   var voxels = voxel.generate([0,0,0], [2000,8*7,10], function(x,y,z) {
-//     if(x*x+y*y+z*z <= 1*1) {
-//       return '0xff0000'
-//     }
-//     if(x*x+y*y+z*z <= 4*4) {
-//       return '0x00ff00'
-//     }
-//     return 0
-//   })
-//   trace(voxels)
-// };
 
 (() => {
   _renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(_renderer.domElement);
 
   _camera.position.z = 0;
-  _camera.position.y = 0;
+  _camera.position.y = +30;
   _camera.position.x = -40;
 
   animate();
 })();
 
 _socket.on('highway', (data) => {
-  build_map(data['map'])
+  build_map(data['map']);
+  data['entities'].forEach((e) => {
+    build_entity(e);
+  })
 })

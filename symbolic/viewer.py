@@ -26,12 +26,17 @@ _highway = None
 @_sio.on('connect')
 def connect(sid, environ):
     print("Received connect: sid={}".format(sid))
+    entities = []
+    for e in _highway._entities:
+        entities.append({
+            'occupation': e._occupation,
+            'type': e.type().value,
+        })
+
     _sio.emit('highway', {
-        'map': _highway._map_component.tolist(),
-        # 'entities': _highway._entities_component.tolist(),
+        'map': _highway._map._component.tolist(),
+        'entities': entities,
     })
-    # _sio.emit('transition', transition())
-    # _sio.emit('next')
 
 def run_server():
     global _app
@@ -102,7 +107,7 @@ def main():
         Entity(
             EntityType.TRAFFIC_CONE,
             Entity.forward_occupation(
-                3, 1400, 1, 1, 6,
+                3, 450, 1, 1, 6,
             ),
             np.array([0.0, 0.0, 0.0]),
         ),
@@ -111,7 +116,7 @@ def main():
         Entity(
             EntityType.TRAFFIC_CONE,
             Entity.forward_occupation(
-                3, 1402, 1, 1, 6,
+                3, 454, 1, 1, 6,
             ),
             np.array([0.0, 0.0, 0.0]),
         ),
@@ -121,7 +126,7 @@ def main():
         Entity(
             EntityType.EGO,
             Entity.forward_occupation(
-                3, 400, 4, 3, 1,
+                2, 400, 4, 3, 1,
             ),
             np.array([45.0, 0.0, 0.0]),
         ),
