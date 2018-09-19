@@ -73,13 +73,13 @@ class Entity:
             height,
             lane_offset,
     ):
-        assert offset < HIGHWAY_LANE_WIDTH
+        assert lane_offset < HIGHWAY_LANE_WIDTH
 
         occupation = []
         for w in range(width):
             for h in range(height):
                 occupation.append(
-                    (lane, forward_position + depth, lane_offset, h),
+                    (lane, forward_position + w, lane_offset, h),
                 )
 
         return occupation

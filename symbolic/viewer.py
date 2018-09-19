@@ -77,8 +77,8 @@ def main():
         [
             [
                 0, HIGHWAY_LANE_DEPTH,
-                [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1) + \
-                [RoadType.INVALID],
+                [RoadType.INVALID] + \
+                [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1),
             ],
         ],
     ])
@@ -126,9 +126,29 @@ def main():
         Entity(
             EntityType.EGO,
             Entity.forward_occupation(
-                2, 400, 4, 3, 1,
+                2, 400, 4, 3, 2,
             ),
             np.array([45.0, 0.0, 0.0]),
+        ),
+    )
+
+    _highway.add_entity(
+        Entity(
+            EntityType.CAR,
+            Entity.forward_occupation(
+                2, 410, 4, 3, 0,
+            ),
+            np.array([45.0, 0.0, 0.0]),
+        ),
+    )
+
+    _highway.add_entity(
+        Entity(
+            EntityType.UNKNOWN,
+            Entity.lateral_occupation(
+                1, 397, 6, 3, 1,
+            ),
+            np.array([42.0, 0.0, 0.0]),
         ),
     )
 

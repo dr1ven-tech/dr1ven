@@ -99,7 +99,7 @@ var build_map = (map_data) => {
     l = Math.floor(z / 7)
     w = z % 7
     d = x
-    return COLOR_MAP[map_data[l][d][w][0]]
+    return COLOR_MAP[map_data[l][d][6-w][0]]
   })
 
   trace(voxels, 0.5, -1.0)
@@ -108,7 +108,7 @@ var build_map = (map_data) => {
 var build_entity = (entity_data) => {
   COLOR_MAP = {
     1: '0xffffff',
-    2: '0xdb7011',
+    2: '0xaaaaaa',
     3: '0x006600',
     4: '0x660000',
     6: '0xdb7011',
@@ -124,7 +124,7 @@ var build_entity = (entity_data) => {
     w = z % 7
     d = x
     h = y
-    key = l+'_'+d+'_'+w+'_'+h
+    key = l+'_'+d+'_'+(6-w)+'_'+h
     if(key in occ_map) {
       return COLOR_MAP[occ_map[key]]
     }
