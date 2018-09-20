@@ -43,8 +43,7 @@ def connect(sid, environ):
             'occupation': [
                 e.occupation()._orientation.value,
                 e.occupation()._lane,
-                e.occupation()._forward_position,
-                e.occupation()._lateral_position,
+                e.occupation()._position,
                 e.occupation()._width,
                 e.occupation()._height,
             ]
@@ -98,6 +97,30 @@ def main():
                 [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1),
             ],
         ],
+        [
+            [
+                0, HIGHWAY_LANE_DEPTH,
+                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
+            ],
+        ],
+        [
+            [
+                0, HIGHWAY_LANE_DEPTH,
+                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
+            ],
+        ],
+        [
+            [
+                0, HIGHWAY_LANE_DEPTH,
+                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
+            ],
+        ],
+        [
+            [
+                0, HIGHWAY_LANE_DEPTH,
+                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
+            ],
+        ],
     ])
 
     _highway.set_map(m)
@@ -107,7 +130,7 @@ def main():
             EntityType.CAR,
             EntityOccupation(
                 EntityOrientation.FORWARD,
-                0, 850, 2, 4, 3,
+                0, [850, 2, 0], 4, 3,
             ),
             np.array([60.0, -1.0, 0.0]),
         ),
@@ -117,7 +140,7 @@ def main():
             EntityType.TRUCK,
             EntityOccupation(
                 EntityOrientation.FORWARD,
-                2, 950, 1, 6, 5,
+                2, [950, 1, 0], 6, 5,
             ),
             np.array([40.0, -1.0, 0.0]),
         ),
@@ -127,7 +150,7 @@ def main():
             EntityType.TRAFFIC_CONE,
             EntityOccupation(
                 EntityOrientation.FORWARD,
-                3, 450, 6, 1, 1,
+                3, [450, 6, 0], 1, 1,
             ),
             np.array([0.0, 0.0, 0.0]),
         ),
@@ -137,7 +160,7 @@ def main():
             EntityType.TRAFFIC_CONE,
             EntityOccupation(
                 EntityOrientation.FORWARD,
-                3, 454, 6, 1, 1,
+                3, [454, 6, 0], 1, 1,
             ),
             np.array([0.0, 0.0, 0.0]),
         ),
@@ -148,7 +171,7 @@ def main():
             EntityType.EGO,
             EntityOccupation(
                 EntityOrientation.FORWARD,
-                2, 400, 2, 4, 3,
+                2, [400, 2, 0], 4, 3,
             ),
             np.array([45.0, 0.0, 0.0]),
         ),
@@ -159,7 +182,7 @@ def main():
             EntityType.CAR,
             EntityOccupation(
                 EntityOrientation.FORWARD,
-                2, 410, 0, 4, 3,
+                2, [410, 0, 0], 4, 3,
             ),
             np.array([45.0, 0.0, 0.0]),
         ),
@@ -170,7 +193,7 @@ def main():
             EntityType.UNKNOWN,
             EntityOccupation(
                 EntityOrientation.LATERAL,
-                1, 397, 1, 6, 3,
+                1, [397, 1, 0], 6, 3,
             ),
             np.array([42.0, 0.0, 0.0]),
         ),

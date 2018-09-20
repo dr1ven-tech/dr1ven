@@ -29,19 +29,19 @@ class EntityOccupation:
             self,
             orientation,
             lane,
-            forward_position,
-            lateral_position,
+            position,
             width,
             height,
     ):
         assert lane < HIGHWAY_LANE_COUNT
-        assert lateral_position < HIGHWAY_LANE_WIDTH
-        assert forward_position < HIGHWAY_LANE_DEPTH
+
+        assert position[0] < HIGHWAY_LANE_DEPTH
+        assert position[1] < HIGHWAY_LANE_WIDTH
+        assert position[2] < HIGHWAY_LANE_HEIGHT
 
         self._orientation = orientation
         self._lane = lane
-        self._forward_position = forward_position
-        self._lateral_position = lateral_position
+        self._position = position
         self._width = width
         self._height = height
 

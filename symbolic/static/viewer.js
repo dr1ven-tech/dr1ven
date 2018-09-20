@@ -99,11 +99,11 @@ var trace = (map_specification, entities) => {
   };
 
   ENTITIES_COLORS = {
-    1: '0xffffff',
-    2: '0xaaaaaa',
-    3: '0x006600',
-    4: '0x660000',
-    6: '0xff0000',
+    1: 0xffffff,
+    2: 0xaaaaaa,
+    3: 0x006600,
+    4: 0x660000,
+    6: 0xff0000,
   };
 
   var geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -115,10 +115,10 @@ var trace = (map_specification, entities) => {
     for (var s = 0; s < map_specification[l].length; s++) {
       segment = map_specification[l][s]
       for(var w = 0; w < segment[2].length; w++) {
-        v0 = new THREE.Vector3(segment[0], (7-l) * 7 + w, 0)
-        v1 = new THREE.Vector3(segment[1], (7-l) * 7 + w, 0)
-        v2 = new THREE.Vector3(segment[0], (7-l) * 7 + w+1, 0)
-        v3 = new THREE.Vector3(segment[1], (7-l) * 7 + w+1, 0)
+        v0 = new THREE.Vector3(segment[0], (7-l) * 7 + w, 0);
+        v1 = new THREE.Vector3(segment[1], (7-l) * 7 + w, 0);
+        v2 = new THREE.Vector3(segment[0], (7-l) * 7 + w+1, 0);
+        v3 = new THREE.Vector3(segment[1], (7-l) * 7 + w+1, 0);
         geometry.vertices.push(v0);
         geometry.vertices.push(v1);
         geometry.vertices.push(v2);
@@ -147,6 +147,56 @@ var trace = (map_specification, entities) => {
     }
   }
 
+  for (var e = 0; e < entities.length; e++) {
+    type = entities[e]['type']
+    occupation = entities[e]['occupation']
+
+    orientation = occupation[0]
+    lane = occupation[1]
+    position = occupation[2]
+    width = occupation[3]
+    height = occupation[4]
+
+    // Forward orientation.
+    var v0, v1, v2, v3;
+    if (orientation == 1) {
+      v0 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2]);
+      v1 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1] + width, position[2]);
+      v2 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2] + height);
+      v3 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1] + width, position[2] + height);
+    } else {
+      v0 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2]);
+      v1 = new THREE.Vector3(position[0] + width, (7-lane) * 7 + position[1], position[2]);
+      v2 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2] + height);
+      v3 = new THREE.Vector3(position[0] + width, (7-lane) * 7 + position[1], position[2] + height);
+    }
+
+    geometry.vertices.push(v0);
+    geometry.vertices.push(v1);
+    geometry.vertices.push(v2);
+    geometry.vertices.push(v3);
+
+    var f = new THREE.Face3(
+      geometry.vertices.length-4,
+      geometry.vertices.length-3,
+      geometry.vertices.length-2,
+      THREE.Vector3(-1, 0, 0)
+    );
+    f.color = new THREE.Color(ENTITIES_COLORS[type]);
+    f.vertexColors = [f.color,f.color,f.color,f.color];
+    geometry.faces.push(f);
+
+    var f = new THREE.Face3(
+      geometry.vertices.length-1,
+      geometry.vertices.length-2,
+      geometry.vertices.length-3,
+      THREE.Vector3(-1, 0, 0)
+    );
+    f.color = new THREE.Color(ENTITIES_COLORS[type]);
+    f.vertexColors = [f.color,f.color,f.color,f.color];
+    geometry.faces.push(f);
+  }
+
   // geometry.computeFaceNormals();
   geometry.verticesNeedUpdate = true;
   geometry.elementsNeedUpdate = true;
@@ -159,12 +209,15 @@ var trace = (map_specification, entities) => {
     vertexColors: true, transparent: true
   });
   material.opacity = 0.8;
+  material.side = THREE.DoubleSide;
   surfacemesh = new THREE.Mesh(geometry, material);
   surfacemesh.doubleSided = false;
 
   surfacemesh.position.x = -400;
   surfacemesh.position.y = 0;
-  surfacemesh.position.z = 0;
+  surfacemesh.position.z = 8*4;
+
+  surfacemesh.rotation.x = -Math.PI/2
 
   _scene.add(surfacemesh);
 
@@ -218,8 +271,8 @@ var trace = (map_specification, entities) => {
   document.body.appendChild(_renderer.domElement);
 
   _camera.position.x = -40;
-  _camera.position.y = 0;
-  _camera.position.z = +30;
+  _camera.position.y = +30;
+  _camera.position.z = 0;
 
   animate();
 })();
