@@ -19,6 +19,32 @@ class EntityType(enum.Enum):
     HUMAN = 8
     ANIMAL = 9
 
+class EntityOrientation(enum.Enum):
+    FORWARD = 1
+    LATERAL = 2
+
+
+class EntityOccupation:
+    def __init__(
+            self,
+            orientation,
+            lane,
+            forward_position,
+            lateral_position,
+            width,
+            height,
+    ):
+        assert lane < HIGHWAY_LANE_COUNT
+        assert lateral_position < HIGHWAY_LANE_WIDTH
+        assert forward_position < HIGHWAY_LANE_DEPTH
+
+        self._orientation = orientation
+        self._lane = lane
+        self._forward_position = forward_position
+        self._lateral_position = lateral_position
+        self._width = width
+        self._height = height
+
 class Entity:
     def __init__(
             self,
@@ -40,46 +66,7 @@ class Entity:
     ):
         return self._speed
 
-    @staticmethod
-    def forward_occupation(
-            lane,
-            forward_position,
-            width,
-            height,
-            lane_offset,
+    def occupation(
+            self,
     ):
-        assert lane_offset < HIGHWAY_LANE_WIDTH
-
-        occupation = []
-        for w in range(width):
-            for h in range(height):
-                wp = w + lane_offset
-                if wp < HIGHWAY_LANE_WIDTH:
-                    occupation.append(
-                        (lane, forward_position, wp, h),
-                    )
-                elif lane > 0:
-                    occupation.append(
-                        (lane-1, forward_position, HIGHWAY_LANE_WIDTH - wp, h),
-                    )
-
-        return occupation
-
-    @staticmethod
-    def lateral_occupation(
-            lane,
-            forward_position,
-            width,
-            height,
-            lane_offset,
-    ):
-        assert lane_offset < HIGHWAY_LANE_WIDTH
-
-        occupation = []
-        for w in range(width):
-            for h in range(height):
-                occupation.append(
-                    (lane, forward_position + w, lane_offset, h),
-                )
-
-        return occupation
+        return self._occupation
