@@ -10,75 +10,6 @@ var _camera = new THREE.PerspectiveCamera(
 );
 var _controls = new THREE.TrackballControls(_camera);
 
-// var trace = (voxels, opacity) => {
-//   var geometry = new THREE.BoxGeometry(1, 1, 1);
-//   var result = GreedyMesh(voxels.voxels, voxels.dims)
-// 
-//   geometry.vertices.length = 0;
-//   geometry.faces.length = 0;
-// 
-//   for(var i=0; i<result.vertices.length; ++i) {
-//     var q = result.vertices[i];
-//     geometry.vertices.push(new THREE.Vector3(q[0], q[1], q[2]));
-//   }
-// 
-//   for(var i=0; i<result.faces.length; ++i) {
-//     var q = result.faces[i];
-//     if(q.length === 5) {
-//       var f1 = new THREE.Face3(q[0], q[1], q[2]);
-//       f1.color = new THREE.Color(q[4]);
-//       f1.vertexColors = [f1.color,f1.color,f1.color,f1.color];
-//       geometry.faces.push(f1);
-//       var f2 = new THREE.Face3(q[2], q[3], q[0]);
-//       f2.color = new THREE.Color(q[4]);
-//       f2.vertexColors = [f2.color,f2.color,f2.color,f2.color];
-//       geometry.faces.push(f2);
-//     } else if(q.length == 4) {
-//       var f = new THREE.Face3(q[0], q[1], q[2]);
-//       f.color = new THREE.Color(q[3]);
-//       f.vertexColors = [f.color,f.color,f.color];
-//       geometry.faces.push(f);
-//     }
-//   }
-// 
-//   geometry.computeFaceNormals();
-//   geometry.verticesNeedUpdate = true;
-//   geometry.elementsNeedUpdate = true;
-//   geometry.normalsNeedUpdate = true;
-//   geometry.computeBoundingBox();
-//   geometry.computeBoundingSphere();
-// 
-//   var bb = geometry.boundingBox;
-// 
-//   // Create surface mesh
-//   var material  = new THREE.MeshBasicMaterial({
-//     vertexColors: true, transparent: true
-//   });
-//   material.opacity = opacity;
-//   surfacemesh = new THREE.Mesh(geometry, material);
-//   surfacemesh.doubleSided = false;
-// 
-//   // Create wire mesh
-//   // var material = new THREE.MeshBasicMaterial({
-//   //   color : 0xffffff, wireframe : true, transparent: true,
-//   // });
-//   // material.opacity = 0.1;
-//   // wiremesh = new THREE.Mesh(geometry, material);
-//   // wiremesh.doubleSided = true;
-// 
-//   // wiremesh.position.x = surfacemesh.position.x = -200;
-//   // wiremesh.position.y = surfacemesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
-//   // wiremesh.position.z = surfacemesh.position.z = -(bb.max.z + bb.min.z) / 2.0;
-// 
-//   surfacemesh.position.x = -400;
-//   surfacemesh.position.y = 0;
-//   // surfacemesh.position.y = -(bb.max.y + bb.min.y) / 2.0;
-//   // surfacemesh.position.z = -(bb.max.z + bb.min.z) / 2.0;
-// 
-//   _scene.add(surfacemesh);
-//   // _scene.add(wiremesh);
-// };
-
 var render = () => {
   _controls.update();
   _renderer.render(_scene, _camera);
@@ -210,60 +141,17 @@ var trace = (map_specification, entities) => {
   });
   material.opacity = 0.8;
   material.side = THREE.DoubleSide;
-  surfacemesh = new THREE.Mesh(geometry, material);
-  surfacemesh.doubleSided = false;
+  surface = new THREE.Mesh(geometry, material);
+  surface.doubleSided = false;
 
-  surfacemesh.position.x = -400;
-  surfacemesh.position.y = 0;
-  surfacemesh.position.z = 8*4;
+  surface.position.x = -400;
+  surface.position.y = 0;
+  surface.position.z = 8*4;
 
-  surfacemesh.rotation.x = -Math.PI/2
+  surface.rotation.x = -Math.PI/2
+  surface.name = "all"
 
-  _scene.add(surfacemesh);
-
-  // entities_occupation = {}
-  // entities.forEach((entity) => {
-  //   entity['occupation'].forEach((occ) => {
-  //     entities_occupation[occ.join('_')] = entity['type']
-  //   });
-  // });
-
-  //   var voxels = voxel.generate([0,0,0], [2000,11,8*7], function(x,y,z) {
-  //     l = Math.floor(z / 7)
-  //     w = z % 7
-  //     d = x
-  //     h = y-1
-  //
-  //     if (y == 0) {
-  //       // Map
-  //       if (l < map_specification.length) {
-  //         for (var s = 0; s < map_specification[l].length; s++) {
-  //           segment = map_specification[l][s]
-  //           if(d >= segment[0] && d < segment[1]) {
-  //             return MAP_COLORS[segment[2][6-w]];
-  //           }
-  //         }
-  //       }
-  //     } else {
-  //       // Entties
-  //       for (var e = 0; e < entities.length; e++) {
-  //         type = entities[e]['type']
-  //         occupation = entities[e]['occupation']
-  //
-  //         if(occupation[1] == l) {
-  //         }
-  //         if(occupation[0] == 1) {
-  //           }
-  //         }
-  //       }
-  //       key = l+'_'+d+'_'+(6-w)+'_'+h
-  //       if(key in entities_occupation) {
-  //         return ENTITIES_COLORS[entities_occupation[key]];
-  //       }
-  //     }
-  //
-  //     return 0
-  //   })
+  return surface
 };
 
 (() => {
@@ -278,6 +166,9 @@ var trace = (map_specification, entities) => {
 })();
 
 _socket.on('highway', (data) => {
-  console.log(data)
-  trace(data['map'], data['entities']);
+  // console.log(data)
+  var obj = _scene.getObjectByName("all");
+  _scene.remove(obj);
+  surface = trace(data['map'], data['entities']);
+  _scene.add(surface);
 })
