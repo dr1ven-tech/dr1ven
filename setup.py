@@ -6,17 +6,17 @@ setup(
     install_requires=[
     ],
     packages=[
-        'symbolic',
+        'state',
     ],
     package_data={
-        'symbolic': [
+        'state': [
             'static',
         ],
     },
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'symbolic_viewer=symbolic.viewer:main',
+            'state_viewer=state.viewer:main',
         ],
     },
 )

@@ -13,11 +13,11 @@ from flask import send_file
 
 from eventlet.green import threading
 
-from symbolic.constants import HIGHWAY_LANE_DEPTH
-from symbolic.constants import HIGHWAY_LANE_WIDTH
-from symbolic.highway import Highway
-from symbolic.map import Map, RoadType
-from symbolic.entity import Entity, EntityType, EntityOccupation, EntityOrientation
+from state.constants import HIGHWAY_LANE_DEPTH
+from state.constants import HIGHWAY_LANE_WIDTH
+from state.highway import Highway
+from state.lane import Lane, RoadType
+from state.entity import Entity, EntityType, EntityOccupation, EntityOrientation
 
 _sio = socketio.Server(logging=False, engineio_logger=False)
 _app = Flask(__name__)
@@ -27,30 +27,16 @@ _highway = None
 def connect(sid, environ):
     print("Received connect: sid={}".format(sid))
 
-    map_specification = []
-    for lane in _highway._map._specification:
-        l = []
-        for s in lane:
-            l.append([
-                s[0], s[1], [t.value for t in s[2]]
-            ])
-        map_specification.append(l)
+    lanes = []
+    for l in _highway._lanes:
+        lanes.append(dict(l))
 
     entities = []
     for e in _highway._entities:
-        entities.append({
-            'type': e.type().value,
-            'occupation': [
-                e.occupation()._orientation.value,
-                e.occupation()._lane,
-                e.occupation()._position,
-                e.occupation()._width,
-                e.occupation()._height,
-            ]
-        })
+        entities.append(dict(e))
 
     _sio.emit('highway', {
-        'map': map_specification,
+        'lanes': lanes,
         'entities': entities,
     })
 
@@ -132,7 +118,7 @@ def main():
                 EntityOrientation.FORWARD,
                 0, [850, 2, 0], 4, 3,
             ),
-            np.array([60.0, -1.0, 0.0]),
+            [60.0, -1.0, 0.0],
         ),
     )
     _highway.add_entity(
@@ -142,7 +128,7 @@ def main():
                 EntityOrientation.FORWARD,
                 2, [950, 1, 0], 6, 5,
             ),
-            np.array([40.0, -1.0, 0.0]),
+            [40.0, -1.0, 0.0],
         ),
     )
     _highway.add_entity(
@@ -152,7 +138,7 @@ def main():
                 EntityOrientation.FORWARD,
                 3, [450, 6, 0], 1, 1,
             ),
-            np.array([0.0, 0.0, 0.0]),
+            [0.0, 0.0, 0.0],
         ),
     )
     _highway.add_entity(
@@ -162,7 +148,7 @@ def main():
                 EntityOrientation.FORWARD,
                 3, [454, 6, 0], 1, 1,
             ),
-            np.array([0.0, 0.0, 0.0]),
+            [0.0, 0.0, 0.0],
         ),
     )
 
@@ -173,7 +159,7 @@ def main():
                 EntityOrientation.FORWARD,
                 2, [400, 2, 0], 4, 3,
             ),
-            np.array([45.0, 0.0, 0.0]),
+            [45.0, 0.0, 0.0],
         ),
     )
 
@@ -184,7 +170,7 @@ def main():
                 EntityOrientation.FORWARD,
                 2, [410, 0, 0], 4, 3,
             ),
-            np.array([45.0, 0.0, 0.0]),
+            [45.0, 0.0, 0.0],
         ),
     )
 
@@ -195,7 +181,7 @@ def main():
                 EntityOrientation.LATERAL,
                 1, [397, 1, 0], 6, 3,
             ),
-            np.array([42.0, 0.0, 0.0]),
+            [42.0, 0.0, 0.0],
         ),
     )
 

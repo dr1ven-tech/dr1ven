@@ -2,4 +2,4 @@
 .DS_Store
 __pycache__
 .ipynb_checkpoints
-dr1ven.egg-info
+*.egg-info
