@@ -165,7 +165,6 @@ var trace = (highway) => {
 })();
 
 _socket.on('highway', (highway) => {
-  // console.log(highway)
   var obj = _scene.getObjectByName("all");
   _scene.remove(obj);
 

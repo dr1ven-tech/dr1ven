@@ -37,6 +37,17 @@ class Section:
         yield 'end', self._end
         yield 'slice', [t.value for t in self._slice]
 
+    @staticmethod
+    def from_dict(
+            spec,
+    ) -> Section:
+        return Section(
+            spec['start'],
+            spec['end'],
+            [RoadType(t) for t in spec['slice']],
+        )
+
+
 class Lane:
     def __init__(
             self,
@@ -50,3 +61,11 @@ class Lane:
             self,
     ):
         yield 'sections', [dict(s) for s in self._sections]
+
+    @staticmethod
+    def from_dict(
+            spec,
+    ) -> Lane:
+        return Section(
+            [Section.from_dict(s) for s in spec['sections']],
+        )
