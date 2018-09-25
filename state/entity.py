@@ -31,8 +31,8 @@ class EntityOccupation:
             height: int,
     ) -> None:
         assert len(position) == 3
-        assert position[0] >= 0 and position[0] < HIGHWAY_LANE_DEPTH
-        assert position[1] >= 0 and position[1] < HIGHWAY_LANE_WIDTH
+        assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDTH
+        assert position[1] >= 0 and position[1] < HIGHWAY_LANE_DEPTH
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
 
         self._orientation = orientation

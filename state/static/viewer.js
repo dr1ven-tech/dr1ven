@@ -45,10 +45,10 @@ var trace = (highway) => {
     for (var s = 0; s < highway['lanes'][l]['sections'].length; s++) {
       section = highway['lanes'][l]['sections'][s]
       for(var w = 0; w < section['slice'].length; w++) {
-        v0 = new THREE.Vector3(section['start'], (7-l) * 7 + w, 0);
-        v1 = new THREE.Vector3(section['end'], (7-l) * 7 + w, 0);
-        v2 = new THREE.Vector3(section['start'], (7-l) * 7 + w+1, 0);
-        v3 = new THREE.Vector3(section['end'], (7-l) * 7 + w+1, 0);
+        v0 = new THREE.Vector3(7*l + w, section['start'], 0);
+        v1 = new THREE.Vector3(7*l + w, section['end'], 0);
+        v2 = new THREE.Vector3(7*l + w + 1, section['start'], 0);
+        v3 = new THREE.Vector3(7*l + w + 1, section['end'], 0);
         geometry.vertices.push(v0);
         geometry.vertices.push(v1);
         geometry.vertices.push(v2);
@@ -82,7 +82,7 @@ var trace = (highway) => {
     occupation = highway['entities'][e]['occupation']
 
     orientation = occupation['orientation']
-    lane = occupation['lane']
+    l = occupation['lane']
     position = occupation['position']
     width = occupation['width']
     height = occupation['height']
@@ -90,15 +90,15 @@ var trace = (highway) => {
     // Forward orientation.
     var v0, v1, v2, v3;
     if (orientation == 1) {
-      v0 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2]);
-      v1 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1] + width, position[2]);
-      v2 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2] + height);
-      v3 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1] + width, position[2] + height);
+      v0 = new THREE.Vector3(7*l + position[0], position[1], position[2]);
+      v1 = new THREE.Vector3(7*l + position[0] + width, position[1], position[2]);
+      v2 = new THREE.Vector3(7*l + position[0], position[1], position[2] + height);
+      v3 = new THREE.Vector3(7*l + position[0] + width, position[1], position[2] + height);
     } else {
-      v0 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2]);
-      v1 = new THREE.Vector3(position[0] + width, (7-lane) * 7 + position[1], position[2]);
-      v2 = new THREE.Vector3(position[0], (7-lane) * 7 + position[1], position[2] + height);
-      v3 = new THREE.Vector3(position[0] + width, (7-lane) * 7 + position[1], position[2] + height);
+      v0 = new THREE.Vector3(7*l + position[0], position[1], position[2]);
+      v1 = new THREE.Vector3(7*l + position[0], position[1] + width, position[2]);
+      v2 = new THREE.Vector3(7*l + position[0], position[1], position[2] + height);
+      v3 = new THREE.Vector3(7*l + position[0], position[1] + width, position[2] + height);
     }
 
     geometry.vertices.push(v0);
@@ -143,11 +143,11 @@ var trace = (highway) => {
   surface = new THREE.Mesh(geometry, material);
   surface.doubleSided = false;
 
-  surface.position.x = -400;
-  surface.position.y = 0;
-  surface.position.z = 8*4;
+  surface.position.x = -18;
+  surface.position.y = -400;
+  surface.position.z = 0;
 
-  surface.rotation.x = -Math.PI/2
+  surface.rotation.y = 0
   surface.name = "all"
 
   return surface
@@ -157,9 +157,9 @@ var trace = (highway) => {
   _renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(_renderer.domElement);
 
-  _camera.position.x = -40;
-  _camera.position.y = +30;
-  _camera.position.z = 0;
+  _camera.position.x = 0;
+  _camera.position.y = -5;
+  _camera.position.z = 4;
 
   animate();
 })();

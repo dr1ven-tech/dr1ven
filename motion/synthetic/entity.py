@@ -9,20 +9,18 @@ class Entity:
             self,
             lane: int,
             position: typing.List[int],
-            width: int,
-            height: int,
-            depth: int,
+            shape: typing.List[int],
     ) -> None:
         assert len(position) == 3
-        assert position[0] >= 0
-        assert position[1] >= 0 and position[1] < HIGHWAY_LANE_WIDTH
+        assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDGH
+        assert position[1] >= 0
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
+
+        assert len(shape) == 3
 
         self._lane = 0
         self._position = position
-        self._width = width
-        self._height = height
-        self._depth = depth
+        self._shape = shape
 
     def step(
             self,
@@ -45,17 +43,7 @@ class Entity:
     ) -> typing.List[int]:
         return self._position
 
-    def width(
+    def shape(
             self,
-    ) -> int:
-        return self._width
-
-    def height(
-            self,
-    ) -> int:
-        return self._height
-
-    def depth(
-            self,
-    ) -> int:
-        return self._depth
+    ) -> typing.List[int]:
+        return self._shape

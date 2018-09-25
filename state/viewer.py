@@ -73,15 +73,15 @@ def main():
             Lane([
                 Section(
                     0, 500,
-                    [I, E, E, E, E, E, E],
+                    [E, E, E, E, E, E, I],
                 ),
                 Section(
                     500, 550,
-                    [P, E, E, E, E, E, E],
+                    [E, E, E, E, E, E, P],
                 ),
                 Section(
                     550, HIGHWAY_LANE_DEPTH-1,
-                    [I, E, E, E, E, E, E],
+                    [E, E, E, E, E, E, I],
                 ),
             ]),
             Lane([
@@ -91,7 +91,7 @@ def main():
                 ),
                 Section(
                     500, 503,
-                    [I, I, I, I, P, P, P],
+                    [P, P, P, I, I, I, I],
                 ),
                 Section(
                     503, 547,
@@ -99,7 +99,7 @@ def main():
                 ),
                 Section(
                     547, 550,
-                    [I, I, I, I, P, P, P],
+                    [P, P, P, I, I, I, I],
                 ),
                 Section(
                     550, HIGHWAY_LANE_DEPTH-1,
@@ -112,23 +112,23 @@ def main():
                 EntityType.CAR,
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    0, [850, 2, 0], 4, 3,
+                    0, [2, 850, 0], 4, 3,
                 ),
-                [60.0, -1.0, 0.0],
+                [-1.0, 60.0, 0.0],
             ),
             Entity(
                 EntityType.TRUCK,
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    2, [950, 1, 0], 6, 5,
+                    2, [1, 950, 0], 6, 5,
                 ),
-                [40.0, -1.0, 0.0],
+                [-1.0, 40.0, 0.0],
             ),
             Entity(
                 EntityType.TRAFFIC_CONE,
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    3, [450, 6, 0], 1, 1,
+                    3, [5, 450, 0], 1, 1,
                 ),
                 [0.0, 0.0, 0.0],
             ),
@@ -136,7 +136,7 @@ def main():
                 EntityType.TRAFFIC_CONE,
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    3, [454, 6, 0], 1, 1,
+                    3, [5, 454, 0], 1, 1,
                 ),
                 [0.0, 0.0, 0.0],
             ),
@@ -144,25 +144,25 @@ def main():
                 EntityType.EGO,
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    2, [400, 2, 0], 4, 3,
+                    2, [2, 400, 0], 4, 3,
                 ),
-                [45.0, 0.0, 0.0],
+                [0.0, 45.0, 0.0],
             ),
             Entity(
                 EntityType.CAR,
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    2, [410, 0, 0], 4, 3,
+                    2, [2, 410, 0], 4, 3,
                 ),
-                [45.0, 0.0, 0.0],
+                [0.0, 45.0, 0.0],
             ),
             Entity(
                 EntityType.UNKNOWN,
                 EntityOccupation(
                     EntityOrientation.LATERAL,
-                    1, [397, 1, 0], 6, 3,
+                    1, [6, 397, 0], 6, 3,
                 ),
-                [42.0, 0.0, 0.0],
+                [0.0, 42.0, 0.0],
             ),
         ],
     )
