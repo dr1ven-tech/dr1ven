@@ -14,7 +14,7 @@ class Highway:
             self,
             lanes: typing.List[Lane] = [],
             entities: typing.List[Entity] = [],
-    ):
+    ) -> None:
         self._lanes = lanes
         self._entities = entities
         self._ego = None
@@ -41,7 +41,7 @@ class Highway:
 
     def ego(
             self,
-    ) -> Entity:
+    ) -> typing.Optional[Entity]:
         return self._ego
 
     def __iter__(

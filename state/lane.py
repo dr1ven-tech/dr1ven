@@ -1,8 +1,6 @@
 import enum
 import typing
 
-import numpy as np
-
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
@@ -21,7 +19,7 @@ class Section:
             slice: typing.List[RoadType] = (
                 [RoadType.INVALID] * HIGHWAY_LANE_WIDTH
             ),
-    ):
+    ) -> None:
         assert len(slice) == HIGHWAY_LANE_WIDTH
         assert start >= 0
         assert end >= 0
@@ -73,7 +71,7 @@ class Lane:
             sections: typing.List[Section] = [
                 Section(),
             ],
-    ):
+    ) -> None:
         self._sections = sections
 
     def sections(

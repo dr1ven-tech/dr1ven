@@ -13,7 +13,7 @@ class Map:
     def __init__(
             self,
             lanes: typing.List[Lane] = [],
-    ):
+    ) -> None:
         self._lanes = lanes
 
     def __iter__(

@@ -29,7 +29,7 @@ class EntityOccupation:
             position: typing.List[int],
             width: int,
             height: int,
-    ):
+    ) -> None:
         assert len(position) == 3
         assert position[0] >= 0 and position[0] < HIGHWAY_LANE_DEPTH
         assert position[1] >= 0 and position[1] < HIGHWAY_LANE_WIDTH
@@ -81,7 +81,7 @@ class Entity:
             type: EntityType,
             occupation: EntityOccupation,
             speed: typing.List[float],
-    ):
+    ) -> None:
         assert len(speed) == 3
 
         self._occupation = occupation
