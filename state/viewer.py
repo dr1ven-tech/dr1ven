@@ -16,8 +16,10 @@ from eventlet.green import threading
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.highway import Highway
-from state.lane import Lane, RoadType
-from state.entity import Entity, EntityType, EntityOccupation, EntityOrientation
+from state.lane import Lane, Section
+from state.lane import RoadType
+from state.entity import Entity, EntityOccupation
+from state.entity import EntityType, EntityOrientation
 
 _sio = socketio.Server(logging=False, engineio_logger=False)
 _app = Flask(__name__)
@@ -26,19 +28,7 @@ _highway = None
 @_sio.on('connect')
 def connect(sid, environ):
     print("Received connect: sid={}".format(sid))
-
-    lanes = []
-    for l in _highway._lanes:
-        lanes.append(dict(l))
-
-    entities = []
-    for e in _highway._entities:
-        entities.append(dict(e))
-
-    _sio.emit('highway', {
-        'lanes': lanes,
-        'entities': entities,
-    })
+    _sio.emit('highway', dict(_highway))
 
 def run_server():
     global _app
@@ -55,134 +45,126 @@ def run_server():
 def main():
     global _highway
 
-    _highway = Highway()
+    D = RoadType.DRIVABLE
+    I = RoadType.INVALID
+    E = RoadType.EMERGENCY
+    P = RoadType.PARKING
 
-    m = Map([
+    _highway = Highway(
         [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.DRIVABLE] * HIGHWAY_LANE_WIDTH,
-            ],
+            Lane([
+                Section(
+                    0, HIGHWAY_LANE_DEPTH-1,
+                    [D, D, D, D, D, D, D],
+                ),
+            ]),
+            Lane([
+                Section(
+                    0, HIGHWAY_LANE_DEPTH-1,
+                    [D, D, D, D, D, D, D],
+                ),
+            ]),
+            Lane([
+                Section(
+                    0, HIGHWAY_LANE_DEPTH-1,
+                    [D, D, D, D, D, D, D],
+                ),
+            ]),
+            Lane([
+                Section(
+                    0, 500,
+                    [I, E, E, E, E, E, E],
+                ),
+                Section(
+                    500, 550,
+                    [P, E, E, E, E, E, E],
+                ),
+                Section(
+                    550, HIGHWAY_LANE_DEPTH-1,
+                    [I, E, E, E, E, E, E],
+                ),
+            ]),
+            Lane([
+                Section(
+                    0, 500,
+                    [I, I, I, I, I, I, I],
+                ),
+                Section(
+                    500, 503,
+                    [I, I, I, I, P, P, P],
+                ),
+                Section(
+                    503, 547,
+                    [P, P, P, P, P, P, P],
+                ),
+                Section(
+                    547, 550,
+                    [I, I, I, I, P, P, P],
+                ),
+                Section(
+                    550, HIGHWAY_LANE_DEPTH-1,
+                    [I, I, I, I, I, I, I],
+                ),
+            ]),
         ],
         [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.DRIVABLE] * HIGHWAY_LANE_WIDTH,
-            ],
-        ],
-        [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.DRIVABLE] * HIGHWAY_LANE_WIDTH,
-            ],
-        ],
-        [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.INVALID] + \
-                [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1),
-            ],
-        ],
-        [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
-            ],
-        ],
-        [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
-            ],
-        ],
-        [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
-            ],
-        ],
-        [
-            [
-                0, HIGHWAY_LANE_DEPTH,
-                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH,
-            ],
-        ],
-    ])
-
-    _highway.set_map(m)
-
-    _highway.add_entity(
-        Entity(
-            EntityType.CAR,
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                0, [850, 2, 0], 4, 3,
+            Entity(
+                EntityType.CAR,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
+                    0, [850, 2, 0], 4, 3,
+                ),
+                [60.0, -1.0, 0.0],
             ),
-            [60.0, -1.0, 0.0],
-        ),
-    )
-    _highway.add_entity(
-        Entity(
-            EntityType.TRUCK,
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                2, [950, 1, 0], 6, 5,
+            Entity(
+                EntityType.TRUCK,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
+                    2, [950, 1, 0], 6, 5,
+                ),
+                [40.0, -1.0, 0.0],
             ),
-            [40.0, -1.0, 0.0],
-        ),
-    )
-    _highway.add_entity(
-        Entity(
-            EntityType.TRAFFIC_CONE,
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                3, [450, 6, 0], 1, 1,
+            Entity(
+                EntityType.TRAFFIC_CONE,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
+                    3, [450, 6, 0], 1, 1,
+                ),
+                [0.0, 0.0, 0.0],
             ),
-            [0.0, 0.0, 0.0],
-        ),
-    )
-    _highway.add_entity(
-        Entity(
-            EntityType.TRAFFIC_CONE,
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                3, [454, 6, 0], 1, 1,
+            Entity(
+                EntityType.TRAFFIC_CONE,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
+                    3, [454, 6, 0], 1, 1,
+                ),
+                [0.0, 0.0, 0.0],
             ),
-            [0.0, 0.0, 0.0],
-        ),
-    )
-
-    _highway.add_entity(
-        Entity(
-            EntityType.EGO,
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                2, [400, 2, 0], 4, 3,
+            Entity(
+                EntityType.EGO,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
+                    2, [400, 2, 0], 4, 3,
+                ),
+                [45.0, 0.0, 0.0],
             ),
-            [45.0, 0.0, 0.0],
-        ),
-    )
-
-    _highway.add_entity(
-        Entity(
-            EntityType.CAR,
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                2, [410, 0, 0], 4, 3,
+            Entity(
+                EntityType.CAR,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
+                    2, [410, 0, 0], 4, 3,
+                ),
+                [45.0, 0.0, 0.0],
             ),
-            [45.0, 0.0, 0.0],
-        ),
-    )
-
-    _highway.add_entity(
-        Entity(
-            EntityType.UNKNOWN,
-            EntityOccupation(
-                EntityOrientation.LATERAL,
-                1, [397, 1, 0], 6, 3,
+            Entity(
+                EntityType.UNKNOWN,
+                EntityOccupation(
+                    EntityOrientation.LATERAL,
+                    1, [397, 1, 0], 6, 3,
+                ),
+                [42.0, 0.0, 0.0],
             ),
-            [42.0, 0.0, 0.0],
-        ),
+        ],
     )
 
     t = threading.Thread(target = run_server)

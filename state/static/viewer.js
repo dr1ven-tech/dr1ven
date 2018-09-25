@@ -21,7 +21,7 @@ var animate = () => {
 
 };
 
-var trace = (map_specification, entities) => {
+var trace = (highway) => {
   MAP_COLORS = {
     0: 0x150026,
     1: 0x5e665d,
@@ -41,15 +41,14 @@ var trace = (map_specification, entities) => {
   geometry.vertices.length = 0;
   geometry.faces.length = 0;
 
-
-  for (var l = 0; l < map_specification.length; l++) {
-    for (var s = 0; s < map_specification[l].length; s++) {
-      segment = map_specification[l][s]
-      for(var w = 0; w < segment[2].length; w++) {
-        v0 = new THREE.Vector3(segment[0], (7-l) * 7 + w, 0);
-        v1 = new THREE.Vector3(segment[1], (7-l) * 7 + w, 0);
-        v2 = new THREE.Vector3(segment[0], (7-l) * 7 + w+1, 0);
-        v3 = new THREE.Vector3(segment[1], (7-l) * 7 + w+1, 0);
+  for (var l = 0; l < highway['lanes'].length; l++) {
+    for (var s = 0; s < highway['lanes'][l]['sections'].length; s++) {
+      section = highway['lanes'][l]['sections'][s]
+      for(var w = 0; w < section['slice'].length; w++) {
+        v0 = new THREE.Vector3(section['start'], (7-l) * 7 + w, 0);
+        v1 = new THREE.Vector3(section['end'], (7-l) * 7 + w, 0);
+        v2 = new THREE.Vector3(section['start'], (7-l) * 7 + w+1, 0);
+        v3 = new THREE.Vector3(section['end'], (7-l) * 7 + w+1, 0);
         geometry.vertices.push(v0);
         geometry.vertices.push(v1);
         geometry.vertices.push(v2);
@@ -61,7 +60,7 @@ var trace = (map_specification, entities) => {
           geometry.vertices.length-2,
           THREE.Vector3(0, 0, 1)
         );
-        f.color = new THREE.Color(MAP_COLORS[segment[2][w]]);
+        f.color = new THREE.Color(MAP_COLORS[section['slice'][w]]);
         f.vertexColors = [f.color,f.color,f.color,f.color];
         geometry.faces.push(f);
 
@@ -71,22 +70,22 @@ var trace = (map_specification, entities) => {
           geometry.vertices.length-3,
           THREE.Vector3(0, 0, 1)
         );
-        f.color = new THREE.Color(MAP_COLORS[segment[2][w]]);
+        f.color = new THREE.Color(MAP_COLORS[section['slice'][w]]);
         f.vertexColors = [f.color,f.color,f.color,f.color];
         geometry.faces.push(f);
       }
     }
   }
 
-  for (var e = 0; e < entities.length; e++) {
-    type = entities[e]['type']
-    occupation = entities[e]['occupation']
+  for (var e = 0; e < highway['entities'].length; e++) {
+    type = highway['entities'][e]['type']
+    occupation = highway['entities'][e]['occupation']
 
-    orientation = occupation[0]
-    lane = occupation[1]
-    position = occupation[2]
-    width = occupation[3]
-    height = occupation[4]
+    orientation = occupation['orientation']
+    lane = occupation['lane']
+    position = occupation['position']
+    width = occupation['width']
+    height = occupation['height']
 
     // Forward orientation.
     var v0, v1, v2, v3;
@@ -165,10 +164,11 @@ var trace = (map_specification, entities) => {
   animate();
 })();
 
-_socket.on('highway', (data) => {
-  // console.log(data)
+_socket.on('highway', (highway) => {
+  // console.log(highway)
   var obj = _scene.getObjectByName("all");
   _scene.remove(obj);
-  surface = trace(data['map'], data['entities']);
+
+  surface = trace(highway);
   _scene.add(surface);
 })

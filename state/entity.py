@@ -1,7 +1,6 @@
 import enum
 import typing
 
-from state.constants import HIGHWAY_LANE_COUNT
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
@@ -31,11 +30,10 @@ class EntityOccupation:
             width: int,
             height: int,
     ):
-        assert lane < HIGHWAY_LANE_COUNT
-
-        assert position[0] < HIGHWAY_LANE_DEPTH
-        assert position[1] < HIGHWAY_LANE_WIDTH
-        assert position[2] < HIGHWAY_LANE_HEIGHT
+        assert len(position) == 3
+        assert position[0] >= 0 and position[0] < HIGHWAY_LANE_DEPTH
+        assert position[1] >= 0 and position[1] < HIGHWAY_LANE_WIDTH
+        assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
 
         self._orientation = orientation
         self._lane = lane
@@ -52,6 +50,31 @@ class EntityOccupation:
         yield 'width', self._width
         yield 'height', self._height,
 
+    def orientation(
+            self,
+    ) -> EntityOrientation:
+        return self._orientation
+
+    def lane(
+            self,
+    ) -> int:
+        return self._lane
+
+    def position(
+            self,
+    ) -> typing.List[int]:
+        return self._position
+
+    def width(
+            self,
+    ) -> int:
+        return self._width
+
+    def height(
+            self,
+    ) -> int:
+        return self._height
+
 class Entity:
     def __init__(
             self,
@@ -59,6 +82,8 @@ class Entity:
             occupation: EntityOccupation,
             speed: typing.List[float],
     ):
+        assert len(speed) == 3
+
         self._occupation = occupation
         self._type = type
         self._speed = speed
@@ -70,7 +95,7 @@ class Entity:
 
     def speed(
             self,
-    ) -> EntitySpeed:
+    ) -> typing.List[float]:
         return self._speed
 
     def occupation(
