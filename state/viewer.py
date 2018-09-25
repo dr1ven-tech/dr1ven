@@ -30,8 +30,6 @@ def connect(sid, environ):
     print("Received connect: sid={}".format(sid))
     _sio.emit('highway', dict(_highway))
 
-    print("{}".format(dict(_highway)['lanes']))
-
 def run_server():
     global _app
     global _sio

@@ -19,6 +19,10 @@ class Highway:
         self._entities = entities
         self._ego = None
 
+        for l in lanes:
+            for s in l.sections():
+                assert s.start() >= 0
+                assert s.end() < HIGHWAY_LANE_DEPTH
         for e in entities:
             if e.type() == EntityType.EGO:
                 assert self._ego is None

@@ -24,11 +24,30 @@ class Section:
     ):
         assert len(slice) == HIGHWAY_LANE_WIDTH
         assert start >= 0
-        assert end < HIGHWAY_LANE_DEPTH
+        assert end >= 0
+
+        # We don't assert that end or start are smaller than HIGHWAY_LANE_DEPTH
+        # as longer Lanes are relied upon by `motion.synthetic.Map`. Note that
+        # this is checked when passed to a `state.Highway` constructor.
 
         self._start = start
         self._end = end
         self._slice = slice
+
+    def start(
+            self,
+    ) -> int:
+        return self._start
+
+    def end(
+            self,
+    ) -> int:
+        return self._end
+
+    def slice(
+            self,
+    ) -> typing.List[RoadType]:
+        return self._slice
 
     def __iter__(
             self,
@@ -40,7 +59,7 @@ class Section:
     @staticmethod
     def from_dict(
             spec,
-    ) -> Section:
+    ):
         return Section(
             spec['start'],
             spec['end'],
@@ -57,6 +76,11 @@ class Lane:
     ):
         self._sections = sections
 
+    def sections(
+            self,
+    ) -> typing.List[Section]:
+        return self._sections
+
     def __iter__(
             self,
     ):
@@ -65,7 +89,7 @@ class Lane:
     @staticmethod
     def from_dict(
             spec,
-    ) -> Lane:
-        return Section(
+    ):
+        return Lane(
             [Section.from_dict(s) for s in spec['sections']],
         )
