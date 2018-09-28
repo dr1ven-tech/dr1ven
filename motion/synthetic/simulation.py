@@ -3,6 +3,7 @@ import typing
 
 from motion.synthetic.map import Map
 from motion.synthetic.entity import Entity
+from motion.synthetic.entity import ADASCar
 from motion.agent import Agent
 
 from state.highway import Highway
@@ -38,7 +39,20 @@ class SimulationScenario(Scenario):
             config: Config,
             spec: ScenarioSpec,
     ) -> None:
-        super(SimulationScenario, self).__init__(config, spec)
+        super(SimulationScenario, self).__init__(
+            config,
+            spec,
+        )
+
+        entities = []
+        for e in spec.data()['entities']:
+            if e['type'] == 'adas_car':
+                entities.append(ADASCar.from_dict(e))
+
+        self._simulation = Simulation(
+            None,
+            entities,
+        )
 
     def run(
             self,

@@ -1,6 +1,16 @@
 {
   "module": "motion.synthetic.simulation",
   "type": "SimulationScenario",
-  "data": {}
+  "data": {
+    "entities": [
+      {
+        "type": "adas_car",
+        "lane": 0,
+        "position": [1, 200, 0],
+        "shape": [4, 8, 3],
+        "speed": 66.0
+      }
+    ]
+  }
 }
 

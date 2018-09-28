@@ -2,6 +2,7 @@ import typing
 
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
+from state.constants import HIGHWAY_VOXEL_WIDTH
 from state.entity import EntityType
 
 class Entity:
@@ -10,6 +11,7 @@ class Entity:
             lane: int,
             position: typing.List[int],
             shape: typing.List[int],
+            speed: typing.List[float],
     ) -> None:
         assert len(position) == 3
         assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDTH
@@ -18,19 +20,22 @@ class Entity:
 
         assert len(shape) == 3
 
+        assert len(speed) == 3
+
         self._lane = 0
         self._position = position
         self._shape = shape
-
-    def step(
-            self,
-            delta: float,
-    ):
-        raise Exception("Not implemented")
+        self._speed = speed
 
     def type(
             self,
     ) -> EntityType:
+        raise Exception("Not implemented")
+
+    def step(
+            self,
+            delta: float,
+    ) -> None:
         raise Exception("Not implemented")
 
     def lane(
@@ -47,3 +52,47 @@ class Entity:
             self,
     ) -> typing.List[int]:
         return self._shape
+
+class ADASCar(Entity):
+    def __init__(
+            self,
+            lane: int,
+            position: typing.List[int],
+            shape: typing.List[int],
+            speed: float,
+    ) -> None:
+        super(ADASCar, self).__init__(
+            lane,
+            position,
+            shape,
+            [0.0, speed, 0.0],
+        )
+
+        # _float_position is the float position of the car in voxel width. The
+        # speed is also expressed in voxels per seconds.
+        self._float_position = float(self._position[1])
+
+    def type(
+            self,
+    ) -> EntityType:
+        return EntityType.CAR
+
+    def step(
+            self,
+            delta: float,
+    ):
+        # Maintain current speed and lateral position.
+        self._float_position[1] = self._float_position[1] + delta * self._speed
+        self._position[1] = int(self._float_position[1])
+
+    @staticmethod
+    def from_dict(
+            spec,
+    ):
+        return ADASCar(
+            spec['lane'],
+            spec['position'],
+            spec['shape'],
+            spec['speed'],
+        )
+
