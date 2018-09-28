@@ -2,6 +2,7 @@
   "module": "motion.synthetic.simulation",
   "type": "SimulationScenario",
   "data": {
+    "map": "highway_3lanes_10k",
     "entities": [
       {
         "type": "adas_car",
