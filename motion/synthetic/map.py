@@ -35,15 +35,3 @@ class Map:
     ):
         with open(path) as f:
             return Map.from_dict(json.load(f))
-
-
-
-def test():
-    m = Map.from_file(
-        os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            './maps/highway_3lanes_10k.json',
-        )
-    )
-
-    print("{}".format(dict(m)))

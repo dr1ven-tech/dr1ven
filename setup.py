@@ -7,6 +7,8 @@ setup(
     ],
     packages=[
         'state',
+        'scenarios',
+        'motion.synthetic',
     ],
     package_data={
         'state': [
@@ -14,13 +16,14 @@ setup(
         ],
         'motion.synthetic': [
             'maps',
+            'scenarios',
         ]
     },
     include_package_data=True,
     entry_points={
         'console_scripts': [
             'state_viewer=state.viewer:main',
-            'map_tester=motion.synthetic.map:test',
+            'run_scenario=scenarios.scenario:run',
         ],
     },
 )

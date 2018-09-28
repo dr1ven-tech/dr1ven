@@ -1,8 +1,16 @@
+import os
 import typing
 
 from motion.synthetic.map import Map
 from motion.synthetic.entity import Entity
 from motion.agent import Agent
+
+from state.highway import Highway
+
+from scenarios.scenario import Scenario
+from scenarios.scenario import ScenarioSpec
+
+from utils.config import Config
 
 class Simulation:
     def __init__(
@@ -17,6 +25,28 @@ class Simulation:
             self,
             delta: float,
     ):
-        # step entities
-        # check for collisions
         pass
+
+    def state(
+            self,
+    ) -> Highway:
+        pass
+
+class SimulationScenario(Scenario):
+    def __init__(
+            self,
+            config: Config,
+            spec: ScenarioSpec,
+    ) -> None:
+        super(SimulationScenario, self).__init__(config, spec)
+
+    def run(
+            self,
+    ) -> bool:
+        pass
+
+    def view(
+            self,
+    ) -> str:
+        return self._config('scenarios_viewer_url') + \
+            '/motion/synthetic/simulation/' + self._id
