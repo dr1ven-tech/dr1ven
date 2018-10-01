@@ -107,9 +107,19 @@ def main():
                 ),
             ]),
         ],
+        Entity(
+            EntityType.CAR,
+            "4",
+            EntityOccupation(
+                EntityOrientation.FORWARD,
+                2, [2, 600, 0], 4, 3,
+            ),
+            [0.0, 45.0, 0.0],
+        ),
         [
             Entity(
                 EntityType.CAR,
+                "0",
                 EntityOccupation(
                     EntityOrientation.FORWARD,
                     0, [2, 850, 0], 4, 3,
@@ -118,6 +128,7 @@ def main():
             ),
             Entity(
                 EntityType.TRUCK,
+                "1",
                 EntityOccupation(
                     EntityOrientation.FORWARD,
                     2, [1, 950, 0], 6, 5,
@@ -126,41 +137,37 @@ def main():
             ),
             Entity(
                 EntityType.TRAFFIC_CONE,
+                "2",
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    3, [5, 450, 0], 1, 1,
+                    3, [5, 650, 0], 1, 1,
                 ),
                 [0.0, 0.0, 0.0],
             ),
             Entity(
                 EntityType.TRAFFIC_CONE,
+                "3",
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    3, [5, 454, 0], 1, 1,
+                    3, [5, 654, 0], 1, 1,
                 ),
                 [0.0, 0.0, 0.0],
             ),
             Entity(
-                EntityType.EGO,
-                EntityOccupation(
-                    EntityOrientation.FORWARD,
-                    2, [2, 400, 0], 4, 3,
-                ),
-                [0.0, 45.0, 0.0],
-            ),
-            Entity(
                 EntityType.CAR,
+                "5",
                 EntityOccupation(
                     EntityOrientation.FORWARD,
-                    2, [2, 410, 0], 4, 3,
+                    2, [2, 610, 0], 4, 3,
                 ),
                 [0.0, 45.0, 0.0],
             ),
             Entity(
                 EntityType.UNKNOWN,
+                "6",
                 EntityOccupation(
                     EntityOrientation.LATERAL,
-                    1, [6, 397, 0], 6, 3,
+                    1, [6, 597, 0], 6, 3,
                 ),
                 [0.0, 42.0, 0.0],
             ),

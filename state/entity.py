@@ -7,15 +7,14 @@ from state.constants import HIGHWAY_LANE_HEIGHT
 
 class EntityType(enum.Enum):
     NONE = 0
-    EGO = 1
-    UNKNOWN = 2
-    CAR = 3
-    TRUCK = 4
-    MOTORBIKE = 5
-    TRAFFIC_CONE = 6
-    SAFETY_SIGN = 7
-    HUMAN = 8
-    ANIMAL = 9
+    UNKNOWN = 1
+    CAR = 2
+    TRUCK = 3
+    MOTORBIKE = 4
+    TRAFFIC_CONE = 5
+    SAFETY_SIGN = 6
+    HUMAN = 7
+    ANIMAL = 8
 
 class EntityOrientation(enum.Enum):
     FORWARD = 1
@@ -79,11 +78,13 @@ class Entity:
     def __init__(
             self,
             type: EntityType,
+            id: str,
             occupation: EntityOccupation,
             speed: typing.List[float],
     ) -> None:
         assert len(speed) == 3
 
+        self._id = id
         self._occupation = occupation
         self._type = type
         self._speed = speed
@@ -92,6 +93,11 @@ class Entity:
             self,
     ) -> EntityType:
         return self._type
+
+    def id(
+            self,
+    ) -> str:
+        return self._id
 
     def speed(
             self,
