@@ -24,13 +24,21 @@ class Simulation:
 
     def step(
             self,
+            step: int,
             delta: float,
     ):
-        pass
+        for e in self._entities:
+            e.step(step, delta)
 
     def state(
             self,
+            entity: Entity,
     ) -> Highway:
+        """ `state` returns the current `state.Highway` for an entity.
+
+        The state is computed from the "point of view" of the entity passed as
+        argument (impacts depth position).
+        """
         pass
 
 class SimulationScenario(Scenario):
@@ -43,21 +51,33 @@ class SimulationScenario(Scenario):
             config,
             spec,
         )
+        self._delta = spec.data()['delta']
+        self._steps = spec.data()['steps']
 
         entities = []
         for e in spec.data()['entities']:
             if e['type'] == 'adas_car':
                 entities.append(ADASCar.from_dict(e))
 
+        map_path = os.path.join(
+            os.path.dirname(__file__),
+            "maps",
+            spec.data()['map'] + '.json',
+        )
+
         self._simulation = Simulation(
-            None,
+            Map.from_file(map_path),
             entities,
         )
 
     def run(
             self,
     ) -> bool:
-        pass
+        # TODO(stan): initiate dump_dir
+        for s in range(self._steps):
+            self._simulation.step(s, self._delta)
+            # TODO(stan): build state
+        # TODO(stan): dump state
 
     def view(
             self,

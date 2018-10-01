@@ -2,6 +2,8 @@
   "module": "motion.synthetic.simulation",
   "type": "SimulationScenario",
   "data": {
+    "delta": 0.020,
+    "steps": 500,
     "map": "highway_3lanes_10k",
     "entities": [
       {
@@ -10,6 +12,13 @@
         "position": [1, 200, 0],
         "shape": [4, 8, 3],
         "speed": 66.0
+      },
+      {
+        "type": "adas_car",
+        "lane": 1,
+        "position": [1, 300, 0],
+        "shape": [4, 9, 3],
+        "speed": 50.0
       }
     ]
   }

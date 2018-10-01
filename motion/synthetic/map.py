@@ -2,6 +2,8 @@ import json
 import os
 import typing
 
+from utils.log import Log
+
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
@@ -33,5 +35,8 @@ class Map:
     def from_file(
             path: str,
     ):
+        Log.out("Loading map", {
+            'path': path,
+        })
         with open(path) as f:
             return Map.from_dict(json.load(f))

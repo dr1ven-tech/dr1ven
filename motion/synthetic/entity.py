@@ -34,6 +34,7 @@ class Entity:
 
     def step(
             self,
+            step: int,
             delta: float,
     ) -> None:
         raise Exception("Not implemented")
@@ -79,11 +80,12 @@ class ADASCar(Entity):
 
     def step(
             self,
+            step: int,
             delta: float,
     ):
         # Maintain current speed and lateral position.
-        self._float_position[1] = self._float_position[1] + delta * self._speed
-        self._position[1] = int(self._float_position[1])
+        self._float_position = self._float_position + delta * self._speed[1]
+        self._position[1] = int(self._float_position)
 
     @staticmethod
     def from_dict(
