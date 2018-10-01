@@ -30,11 +30,10 @@ var trace = (highway) => {
   };
 
   ENTITIES_COLORS = {
-    1: 0xffffff,
-    2: 0xaaaaaa,
-    3: 0x006600,
-    4: 0x660000,
-    6: 0xff0000,
+    1: 0xaaaaaa,
+    2: 0x006600,
+    3: 0x660000,
+    4: 0xff0000,
   };
 
   var geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -77,9 +76,9 @@ var trace = (highway) => {
     }
   }
 
-  for (var e = 0; e < highway['entities'].length; e++) {
-    type = highway['entities'][e]['type']
-    occupation = highway['entities'][e]['occupation']
+  var render_entity = (entity, is_ego) => {
+    type = entity['type']
+    occupation = entity['occupation']
 
     orientation = occupation['orientation']
     l = occupation['lane']
@@ -125,7 +124,12 @@ var trace = (highway) => {
     f.color = new THREE.Color(ENTITIES_COLORS[type]);
     f.vertexColors = [f.color,f.color,f.color,f.color];
     geometry.faces.push(f);
+  };
+
+  for (var e = 0; e < highway['entities'].length; e++) {
+    render_entity(highway['entities'][e], false)
   }
+  render_entity(highway['ego'], true)
 
   // geometry.computeFaceNormals();
   geometry.verticesNeedUpdate = true;
@@ -144,7 +148,7 @@ var trace = (highway) => {
   surface.doubleSided = false;
 
   surface.position.x = -18;
-  surface.position.y = -400;
+  surface.position.y = -600;
   surface.position.z = 0;
 
   surface.rotation.y = 0

@@ -59,6 +59,6 @@ class Highway:
             self,
     ):
         yield 'lanes', [dict(l) for l in self._lanes]
-        yield 'ego', [dict(self._ego)]
+        yield 'ego', dict(self._ego)
         yield 'entities', [dict(e) for e in self._entities]
 
