@@ -1,3 +1,4 @@
+import uuid
 import typing
 
 from state.constants import HIGHWAY_LANE_WIDTH
@@ -26,11 +27,17 @@ class Entity:
         self._position = position
         self._shape = shape
         self._speed = speed
+        self._id = str(uuid.uuid4())
 
     def type(
             self,
     ) -> EntityType:
         raise Exception("Not implemented")
+
+    def id(
+            self,
+    ) -> str:
+        return self._id
 
     def step(
             self,
