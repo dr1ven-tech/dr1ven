@@ -1,3 +1,4 @@
+import copy
 import os
 import typing
 
@@ -6,7 +7,10 @@ from motion.synthetic.entity import Entity
 from motion.synthetic.entity import ADASCar
 from motion.agent import Agent
 
+import state
 from state.highway import Highway
+from state.constants import HIGHWAY_LANE_DEPTH
+from state.constants import EGO_POSITION_DEPTH
 
 from scenarios.scenario import Scenario
 from scenarios.scenario import ScenarioSpec
@@ -21,6 +25,17 @@ class Simulation:
     ) -> None:
         self._map = map
         self._entities = entities
+
+    def entities(
+            self,
+    ) -> typing.List[Entity]:
+        return self._entities
+
+    def map(
+            self,
+    ) -> Map:
+        return self._map
+
 
     def step(
             self,
@@ -39,7 +54,38 @@ class Simulation:
         The state is computed from the "point of view" of the entity passed as
         argument (impacts depth position).
         """
-        pass
+        start = entity.position()[1]-EGO_POSITION_DEPTH
+        end = entity.position()[1]-EGO_POSITION_DEPTH+HIGHWAY_LANE_DEPTH-1
+
+        def entity_state(e):
+            p = copy.copy(e.position())
+            p[1] -= start
+
+            return state.entity.Entity(
+                e.type(),
+                e.id(),
+                state.entity.EntityOccupation(
+                    state.entity.EntityOrientation.FORWARD,
+                    e.lane(),
+                    p,
+                    e.shape()[0],
+                    e.shape()[2],
+                ),
+                e.speed(),
+            )
+
+        lanes = self._map.truncate(start, end)
+        ego = entity_state(entity)
+        entities = [
+            entity_state(e) \
+            for e in self._entities if e.id() != entity.id()
+        ]
+
+        return Highway(
+            lanes,
+            ego,
+            entities,
+        )
 
 class SimulationScenario(Scenario):
     def __init__(
@@ -76,6 +122,10 @@ class SimulationScenario(Scenario):
         # TODO(stan): initiate dump_dir
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
+            states = [
+                self._simulation.state(e) \
+                for e in self._simulation.entities()
+            ]
             # TODO(stan): build state
         # TODO(stan): dump state
 

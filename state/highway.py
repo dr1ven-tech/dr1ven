@@ -37,7 +37,7 @@ class Highway:
         assert ego.occupation().position()[1] == EGO_POSITION_DEPTH
 
         for e in entities:
-            assert self._ego.id () != e.id()
+            assert ego.id () != e.id()
             assert e.occupation().lane() < len(self._lanes)
 
     def lanes(

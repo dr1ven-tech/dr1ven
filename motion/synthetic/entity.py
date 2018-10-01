@@ -15,13 +15,12 @@ class Entity:
             speed: typing.List[float],
     ) -> None:
         assert len(position) == 3
+        assert len(shape) == 3
+        assert len(speed) == 3
+
         assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDTH
         assert position[1] >= 0
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
-
-        assert len(shape) == 3
-
-        assert len(speed) == 3
 
         self._lane = 0
         self._position = position
@@ -60,6 +59,11 @@ class Entity:
             self,
     ) -> typing.List[int]:
         return self._shape
+
+    def speed(
+            self,
+    ) -> typing.List[float]:
+        return self._speed
 
 class ADASCar(Entity):
     def __init__(

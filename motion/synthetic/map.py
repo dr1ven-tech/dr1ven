@@ -18,6 +18,13 @@ class Map:
     ) -> None:
         self._lanes = lanes
 
+    def truncate(
+            self,
+            start: int,
+            end: int,
+    ) -> typing.List[Lane]:
+        return [l.truncate(start, end) for l in self._lanes]
+
     def __iter__(
             self,
     ):

@@ -1,3 +1,4 @@
+import copy
 import enum
 import typing
 
@@ -23,6 +24,7 @@ class Section:
         assert len(slice) == HIGHWAY_LANE_WIDTH
         assert start >= 0
         assert end >= 0
+        assert start < end
 
         # We don't assert that end or start are smaller than HIGHWAY_LANE_DEPTH
         # as longer Lanes are relied upon by `motion.synthetic.Map`. Note that
@@ -46,6 +48,24 @@ class Section:
             self,
     ) -> typing.List[RoadType]:
         return self._slice
+
+    def truncate(
+            self,
+            start: int,
+            end: int,
+    ):
+        assert start >= 0
+        assert end >= 0
+        assert start < end
+
+        if start > self._end or end < self._start:
+            return None
+
+        return Section(
+            max(start, self._start)-start,
+            min(end, self._end)-start,
+            copy.copy(self._slice),
+        )
 
     def __iter__(
             self,
@@ -78,6 +98,18 @@ class Lane:
             self,
     ) -> typing.List[Section]:
         return self._sections
+
+    def truncate(
+            self,
+            start: int,
+            end: int,
+    ):
+        sections = [s.truncate(start, end) for s in self._sections]
+        sections = [s for s in sections if s != None]
+
+        return Lane(
+            sections,
+        )
 
     def __iter__(
             self,

@@ -9,14 +9,14 @@
       {
         "type": "adas_car",
         "lane": 0,
-        "position": [1, 200, 0],
+        "position": [1, 600, 0],
         "shape": [4, 8, 3],
         "speed": 66.0
       },
       {
         "type": "adas_car",
         "lane": 1,
-        "position": [1, 300, 0],
+        "position": [1, 700, 0],
         "shape": [4, 9, 3],
         "speed": 50.0
       }
