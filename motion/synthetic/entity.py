@@ -6,7 +6,7 @@ from state.constants import HIGHWAY_LANE_HEIGHT
 from state.constants import HIGHWAY_VOXEL_WIDTH
 from state.entity import EntityType
 
-class Entity:
+class SyntheticEntity:
     def __init__(
             self,
             lane: int,
@@ -65,7 +65,7 @@ class Entity:
     ) -> typing.List[float]:
         return self._speed
 
-class ADASCar(Entity):
+class ADASCar(SyntheticEntity):
     def __init__(
             self,
             lane: int,

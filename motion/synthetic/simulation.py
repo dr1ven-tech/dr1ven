@@ -2,12 +2,12 @@ import copy
 import os
 import typing
 
-from motion.synthetic.map import Map
-from motion.synthetic.entity import Entity
+from motion.synthetic.map import SyntheticMap
+from motion.synthetic.entity import SyntheticEntity
 from motion.synthetic.entity import ADASCar
 from motion.agent import Agent
 
-import state
+from state.entity import Entity, EntityOccupation, EntityOrientation
 from state.highway import Highway
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import EGO_POSITION_DEPTH
@@ -20,20 +20,20 @@ from utils.config import Config
 class Simulation:
     def __init__(
             self,
-            map: Map,
-            entities: typing.List[Entity]
+            map: SyntheticMap,
+            entities: typing.List[SyntheticEntity]
     ) -> None:
         self._map = map
         self._entities = entities
 
     def entities(
             self,
-    ) -> typing.List[Entity]:
+    ) -> typing.List[SyntheticEntity]:
         return self._entities
 
     def map(
             self,
-    ) -> Map:
+    ) -> SyntheticMap:
         return self._map
 
 
@@ -47,7 +47,7 @@ class Simulation:
 
     def state(
             self,
-            entity: Entity,
+            entity: SyntheticEntity,
     ) -> Highway:
         """ `state` returns the current `state.Highway` for an entity.
 
@@ -61,11 +61,11 @@ class Simulation:
             p = copy.copy(e.position())
             p[1] -= start
 
-            return state.entity.Entity(
+            return Entity(
                 e.type(),
                 e.id(),
-                state.entity.EntityOccupation(
-                    state.entity.EntityOrientation.FORWARD,
+                EntityOccupation(
+                    EntityOrientation.FORWARD,
                     e.lane(),
                     p,
                     e.shape()[0],
@@ -112,7 +112,7 @@ class SimulationScenario(Scenario):
         )
 
         self._simulation = Simulation(
-            Map.from_file(map_path),
+            SyntheticMap.from_file(map_path),
             entities,
         )
 

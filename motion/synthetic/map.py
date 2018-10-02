@@ -11,7 +11,7 @@ from state.constants import HIGHWAY_LANE_HEIGHT
 from state.lane import Lane, Section
 from state.lane import RoadType
 
-class Map:
+class SyntheticMap:
     def __init__(
             self,
             lanes: typing.List[Lane] = [],
@@ -34,7 +34,7 @@ class Map:
     def from_dict(
             spec,
     ):
-        return Map(
+        return SyntheticMap(
             [Lane.from_dict(l) for l in spec['lanes']],
         )
 
@@ -46,4 +46,4 @@ class Map:
             'path': path,
         })
         with open(path) as f:
-            return Map.from_dict(json.load(f))
+            return SyntheticMap.from_dict(json.load(f))
