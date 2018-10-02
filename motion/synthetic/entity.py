@@ -1,22 +1,23 @@
-import uuid
 import typing
 
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
+from state.highway import Highway
 from state.entity import EntityType
 
 
 class SyntheticEntity:
     def __init__(
             self,
+            id: str,
             lane: int,
             position: typing.List[int],
             shape: typing.List[int],
-            speed: typing.List[float],
+            velocity: typing.List[float],
     ) -> None:
         assert len(position) == 3
         assert len(shape) == 3
-        assert len(speed) == 3
+        assert len(velocity) == 3
 
         assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDTH
         assert position[1] >= 0
@@ -25,8 +26,8 @@ class SyntheticEntity:
         self._lane = 0
         self._position = position
         self._shape = shape
-        self._speed = speed
-        self._id = str(uuid.uuid4())
+        self._velocity = velocity
+        self._id = id
 
     def type(
             self,
@@ -42,6 +43,7 @@ class SyntheticEntity:
             self,
             step: int,
             delta: float,
+            state: Highway,
     ) -> None:
         raise Exception("Not implemented")
 
@@ -60,21 +62,23 @@ class SyntheticEntity:
     ) -> typing.List[int]:
         return self._shape
 
-    def speed(
+    def velocity(
             self,
     ) -> typing.List[float]:
-        return self._speed
+        return self._velocity
 
 
 class ADASCar(SyntheticEntity):
     def __init__(
             self,
+            id: str,
             lane: int,
             position: typing.List[int],
             shape: typing.List[int],
             speed: float,
     ) -> None:
         super(ADASCar, self).__init__(
+            id,
             lane,
             position,
             shape,
@@ -94,9 +98,10 @@ class ADASCar(SyntheticEntity):
             self,
             step: int,
             delta: float,
+            state: Highway,
     ):
         # Maintain current speed and lateral position.
-        self._float_position = self._float_position + delta * self._speed[1]
+        self._float_position = self._float_position + delta * self._velocity[1]
         self._position[1] = int(self._float_position)
 
     @staticmethod
@@ -104,6 +109,7 @@ class ADASCar(SyntheticEntity):
             spec,
     ):
         return ADASCar(
+            spec['id'],
             spec['lane'],
             spec['position'],
             spec['shape'],

@@ -42,7 +42,7 @@ class Simulation:
             delta: float,
     ):
         for e in self._entities:
-            e.step(step, delta)
+            e.step(step, delta, self.state(e))
 
     def state(
             self,
@@ -70,7 +70,7 @@ class Simulation:
                     e.shape()[0],
                     e.shape()[2],
                 ),
-                e.speed(),
+                e.velocity(),
             )
 
         lanes = self._map.truncate(start, end)
@@ -122,11 +122,7 @@ class SimulationScenario(Scenario):
         # TODO(stan): initiate dump_dir
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
-            # states = [
-            #     self._simulation.state(e)
-            #     for e in self._simulation.entities()
-            # ]
-        # TODO(stan): dump state
+            # TODO(stan): dump state
 
         return True
 

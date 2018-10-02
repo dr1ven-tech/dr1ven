@@ -84,14 +84,14 @@ class Entity:
             type: EntityType,
             id: str,
             occupation: EntityOccupation,
-            speed: typing.List[float],
+            velocity: typing.List[float],
     ) -> None:
-        assert len(speed) == 3
+        assert len(velocity) == 3
 
         self._id = id
         self._occupation = occupation
         self._type = type
-        self._speed = speed
+        self._velocity = velocity
 
     def type(
             self,
@@ -103,10 +103,10 @@ class Entity:
     ) -> str:
         return self._id
 
-    def speed(
+    def velocity(
             self,
     ) -> typing.List[float]:
-        return self._speed
+        return self._velocity
 
     def occupation(
             self,
@@ -118,4 +118,4 @@ class Entity:
     ):
         yield 'type', self._type.value
         yield 'occupation', dict(self._occupation)
-        yield 'speed', self._speed
+        yield 'velocity', self._velocity

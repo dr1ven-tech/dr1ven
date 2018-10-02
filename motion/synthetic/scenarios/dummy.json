@@ -8,6 +8,7 @@
     "entities": [
       {
         "type": "adas_car",
+        "id": "adas_car_0",
         "lane": 0,
         "position": [1, 600, 0],
         "shape": [4, 8, 3],
@@ -15,6 +16,7 @@
       },
       {
         "type": "adas_car",
+        "id": "adas_car_1",
         "lane": 1,
         "position": [1, 700, 0],
         "shape": [4, 9, 3],
