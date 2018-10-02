@@ -1,15 +1,10 @@
 import json
-import os
 import typing
 
 from utils.log import Log
 
-from state.constants import HIGHWAY_LANE_DEPTH
-from state.constants import HIGHWAY_LANE_WIDTH
-from state.constants import HIGHWAY_LANE_HEIGHT
+from state.lane import Lane
 
-from state.lane import Lane, Section
-from state.lane import RoadType
 
 class SyntheticMap:
     def __init__(

@@ -5,6 +5,7 @@ from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
 
+
 class EntityType(enum.Enum):
     NONE = 0
     UNKNOWN = 1
@@ -16,9 +17,11 @@ class EntityType(enum.Enum):
     HUMAN = 7
     ANIMAL = 8
 
+
 class EntityOrientation(enum.Enum):
     FORWARD = 1
     LATERAL = 2
+
 
 class EntityOccupation:
     def __init__(
@@ -74,6 +77,7 @@ class EntityOccupation:
     ) -> int:
         return self._height
 
+
 class Entity:
     def __init__(
             self,
@@ -115,4 +119,3 @@ class Entity:
         yield 'type', self._type.value
         yield 'occupation', dict(self._occupation)
         yield 'speed', self._speed
-

@@ -4,13 +4,14 @@ import typing
 
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
-from state.constants import HIGHWAY_LANE_HEIGHT
+
 
 class RoadType(enum.Enum):
     INVALID = 0
     DRIVABLE = 1
     EMERGENCY = 2
     PARKING = 3
+
 
 class Section:
     def __init__(
@@ -105,7 +106,7 @@ class Lane:
             end: int,
     ):
         sections = [s.truncate(start, end) for s in self._sections]
-        sections = [s for s in sections if s != None]
+        sections = [s for s in sections if s is not None]
 
         return Lane(
             sections,

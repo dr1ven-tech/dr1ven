@@ -1,6 +1,7 @@
 import datetime
 import typing
 
+
 class Log:
     @staticmethod
     def out(
@@ -15,4 +16,3 @@ class Log:
             message += " {}={}".format(k, data[k])
 
         print(message)
-

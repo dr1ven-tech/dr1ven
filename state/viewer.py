@@ -1,20 +1,12 @@
-import sys
 import socketio
-import os
 import eventlet
 import eventlet.wsgi
 
-import numpy as np
-
 from flask import Flask
-from flask import jsonify
-from flask import abort
-from flask import send_file
 
 from eventlet.green import threading
 
 from state.constants import HIGHWAY_LANE_DEPTH
-from state.constants import HIGHWAY_LANE_WIDTH
 from state.highway import Highway
 from state.lane import Lane, Section
 from state.lane import RoadType
@@ -25,10 +17,15 @@ _sio = socketio.Server(logging=False, engineio_logger=False)
 _app = Flask(__name__)
 _highway = None
 
+
 @_sio.on('connect')
-def connect(sid, environ):
+def connect(
+        sid,
+        environ,
+):
     print("Received connect: sid={}".format(sid))
     _sio.emit('highway', dict(_highway))
+
 
 def run_server():
     global _app
@@ -42,68 +39,69 @@ def run_server():
     except KeyboardInterrupt:
         print("Stopping shared server")
 
+
 def main():
     global _highway
 
-    D = RoadType.DRIVABLE
-    I = RoadType.INVALID
-    E = RoadType.EMERGENCY
-    P = RoadType.PARKING
+    tD = RoadType.DRIVABLE
+    tI = RoadType.INVALID
+    tE = RoadType.EMERGENCY
+    tP = RoadType.PARKING
 
     _highway = Highway(
         [
             Lane([
                 Section(
                     0, HIGHWAY_LANE_DEPTH-1,
-                    [D, D, D, D, D, D, D],
+                    [tD, tD, tD, tD, tD, tD, tD],
                 ),
             ]),
             Lane([
                 Section(
                     0, HIGHWAY_LANE_DEPTH-1,
-                    [D, D, D, D, D, D, D],
+                    [tD, tD, tD, tD, tD, tD, tD],
                 ),
             ]),
             Lane([
                 Section(
                     0, HIGHWAY_LANE_DEPTH-1,
-                    [D, D, D, D, D, D, D],
+                    [tD, tD, tD, tD, tD, tD, tD],
                 ),
             ]),
             Lane([
                 Section(
                     0, 500,
-                    [E, E, E, E, E, E, I],
+                    [tE, tE, tE, tE, tE, tE, tI],
                 ),
                 Section(
                     500, 550,
-                    [E, E, E, E, E, E, P],
+                    [tE, tE, tE, tE, tE, tE, tP],
                 ),
                 Section(
                     550, HIGHWAY_LANE_DEPTH-1,
-                    [E, E, E, E, E, E, I],
+                    [tE, tE, tE, tE, tE, tE, tI],
                 ),
             ]),
             Lane([
                 Section(
                     0, 500,
-                    [I, I, I, I, I, I, I],
+                    [tI, tI, tI, tI, tI, tI, tI],
                 ),
                 Section(
                     500, 503,
-                    [P, P, P, I, I, I, I],
+                    [tP, tP, tP, tI, tI, tI, tI],
                 ),
                 Section(
                     503, 547,
-                    [P, P, P, P, P, P, P],
+                    [tP, tP, tP, tP, tP, tP, tP],
                 ),
                 Section(
                     547, 550,
-                    [P, P, P, I, I, I, I],
+                    [tP, tP, tP, tI, tI, tI, tI],
                 ),
                 Section(
                     550, HIGHWAY_LANE_DEPTH-1,
-                    [I, I, I, I, I, I, I],
+                    [tI, tI, tI, tI, tI, tI, tI],
                 ),
             ]),
         ],
@@ -174,6 +172,6 @@ def main():
         ],
     )
 
-    t = threading.Thread(target = run_server)
+    t = threading.Thread(target=run_server)
     t.start()
     t.join()

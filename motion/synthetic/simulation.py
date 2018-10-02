@@ -5,7 +5,6 @@ import typing
 from motion.synthetic.map import SyntheticMap
 from motion.synthetic.entity import SyntheticEntity
 from motion.synthetic.entity import ADASCar
-from motion.agent import Agent
 
 from state.entity import Entity, EntityOccupation, EntityOrientation
 from state.highway import Highway
@@ -16,6 +15,7 @@ from scenarios.scenario import Scenario
 from scenarios.scenario import ScenarioSpec
 
 from utils.config import Config
+
 
 class Simulation:
     def __init__(
@@ -35,7 +35,6 @@ class Simulation:
             self,
     ) -> SyntheticMap:
         return self._map
-
 
     def step(
             self,
@@ -77,7 +76,7 @@ class Simulation:
         lanes = self._map.truncate(start, end)
         ego = entity_state(entity)
         entities = [
-            entity_state(e) \
+            entity_state(e)
             for e in self._entities if e.id() != entity.id()
         ]
 
@@ -86,6 +85,7 @@ class Simulation:
             ego,
             entities,
         )
+
 
 class SimulationScenario(Scenario):
     def __init__(
@@ -122,15 +122,16 @@ class SimulationScenario(Scenario):
         # TODO(stan): initiate dump_dir
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
-            states = [
-                self._simulation.state(e) \
-                for e in self._simulation.entities()
-            ]
-            # TODO(stan): build state
+            # states = [
+            #     self._simulation.state(e)
+            #     for e in self._simulation.entities()
+            # ]
         # TODO(stan): dump state
+
+        return True
 
     def view(
             self,
     ) -> str:
-        return self._config('scenarios_viewer_url') + \
+        return self._config.get('scenarios_viewer_url') + \
             '/motion/synthetic/simulation/' + self._id

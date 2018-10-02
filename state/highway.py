@@ -1,14 +1,12 @@
 import typing
 
 from state.constants import HIGHWAY_LANE_DEPTH
-from state.constants import HIGHWAY_LANE_WIDTH
-from state.constants import HIGHWAY_LANE_HEIGHT
 from state.constants import EGO_POSITION_DEPTH
 
-from state.entity import EntityType
 from state.entity import Entity
 
 from state.lane import Lane
+
 
 class Highway:
     """ `Highway` encodes a symbolic representation of an highway region.
@@ -21,9 +19,9 @@ class Highway:
     """
     def __init__(
             self,
-            lanes: typing.List[Lane] = [],
-            ego: Entity = None,
-            entities: typing.List[Entity] = [],
+            lanes: typing.List[Lane],
+            ego: Entity,
+            entities: typing.List[Entity],
     ) -> None:
         self._lanes = lanes
         self._entities = entities
@@ -37,7 +35,7 @@ class Highway:
         assert ego.occupation().position()[1] == EGO_POSITION_DEPTH
 
         for e in entities:
-            assert ego.id () != e.id()
+            assert ego.id() != e.id()
             assert e.occupation().lane() < len(self._lanes)
 
     def lanes(
@@ -61,4 +59,3 @@ class Highway:
         yield 'lanes', [dict(l) for l in self._lanes]
         yield 'ego', dict(self._ego)
         yield 'entities', [dict(e) for e in self._entities]
-

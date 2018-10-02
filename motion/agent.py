@@ -1,5 +1,6 @@
 from state.highway import Highway
 
+
 class Command:
     def __init__(
             self,
@@ -19,6 +20,7 @@ class Command:
     ) -> float:
         return self._delta
 
+
 class Action:
     def __init__(
             self,
@@ -37,6 +39,7 @@ class Action:
             self,
     ) -> Command:
         return self._lateral
+
 
 class Agent:
     def __init__(

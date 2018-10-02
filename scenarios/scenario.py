@@ -3,10 +3,10 @@ import datetime
 import importlib
 import json
 import os
-import typing
 
 from utils.config import Config
 from utils.log import Log
+
 
 class ScenarioSpec:
     def __init__(
@@ -58,6 +58,7 @@ class ScenarioSpec:
     ):
         with open(path) as f:
             return ScenarioSpec.from_dict(json.load(f))
+
 
 class Scenario:
     """ `Scenario` represents a generic runnable functional test scenario.
@@ -117,8 +118,14 @@ class Scenario:
 def run():
     parser = argparse.ArgumentParser(description="")
 
-    parser.add_argument('config_path', type=str, help="path to the config file")
-    parser.add_argument('spec_path', type=str, help="path to the spec file")
+    parser.add_argument(
+        'config_path',
+        type=str, help="path to the config file",
+    )
+    parser.add_argument(
+        'spec_path',
+        type=str, help="path to the spec file",
+    )
 
     args = parser.parse_args()
 
@@ -129,13 +136,13 @@ def run():
 
     Log.out(
         "Starting scenario", {
-        'id': scenario.id(),
-        'dump_dir': scenario.dump_dir(),
-    })
+            'id': scenario.id(),
+            'dump_dir': scenario.dump_dir(),
+        })
 
     scenario.run()
 
     Log.out(
         "Finished scenario", {
-        'id': scenario.id(),
-    })
+            'id': scenario.id(),
+        })
