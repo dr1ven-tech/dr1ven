@@ -11,10 +11,8 @@ from state.highway import Highway
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import EGO_POSITION_DEPTH
 
-from scenarios.scenario import Scenario
-from scenarios.scenario import ScenarioSpec
-
 from utils.config import Config
+from utils.scenario import Scenario, ScenarioSpec
 
 
 class Simulation:
@@ -120,6 +118,7 @@ class SimulationScenario(Scenario):
             self,
     ) -> bool:
         # TODO(stan): initiate dump_dir
+
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
             # TODO(stan): dump state

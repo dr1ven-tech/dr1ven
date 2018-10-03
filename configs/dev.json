@@ -1,3 +1,4 @@
 {
-  "scenarios_dump_dir": "~/tmp/scenarios"
+  "scenarios_dump_dir": "~/tmp/scenarios",
+  "scenarios_viewer_url": "http://localhost:9090/"
 }

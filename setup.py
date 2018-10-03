@@ -7,7 +7,6 @@ setup(
     ],
     packages=[
         'state',
-        'scenarios',
         'motion.synthetic',
     ],
     package_data={
@@ -23,7 +22,7 @@ setup(
     entry_points={
         'console_scripts': [
             'state_viewer=state.viewer:main',
-            'run_scenario=scenarios.scenario:run',
+            'run_scenario=utils.scenario:run',
         ],
     },
 )
