@@ -7,6 +7,12 @@ from state.entity import EntityType
 
 
 class SyntheticEntity:
+    """ `SyntheticEntity` represents a simulated entity.
+
+    While `state.Entity` does not have any depth, `SyntheticEntity` keeps track
+    of the depth of the object. The position of the entity is equivalent to the
+    position of the `state.Entity` (front-left corner).
+    """
     def __init__(
             self,
             id: str,

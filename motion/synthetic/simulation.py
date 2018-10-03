@@ -3,6 +3,11 @@ import json
 import os
 import typing
 
+from motion.synthetic.constants import FORWARD_ORIENTATION_FRONT_RANGE
+from motion.synthetic.constants import LATERAL_ORIENTATION_FRONT_RANGE
+from motion.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
+from motion.synthetic.constants import LATERAL_ORIENTATION_BACK_RANGE
+
 from motion.synthetic.map import SyntheticMap
 from motion.synthetic.entity import SyntheticEntity
 from motion.synthetic.entity import ADASCar
@@ -56,7 +61,7 @@ class Simulation:
         start = entity.position()[1]-EGO_POSITION_DEPTH
         end = entity.position()[1]-EGO_POSITION_DEPTH+HIGHWAY_LANE_DEPTH-1
 
-        def entity_state(e):
+        def entity_state(e, ego):
             p = copy.deepcopy(e.position())
             p[1] -= start
 
@@ -65,26 +70,56 @@ class Simulation:
             if p[1] < 0 or p[1] >= HIGHWAY_LANE_DEPTH:
                 return None
 
-            # TODO(stan): support entities positioning behind ego as well as
-            # LATERAL entity setup.
-
-            return Entity(
-                e.type(),
-                e.id(),
-                EntityOccupation(
-                    EntityOrientation.FORWARD,
-                    e.lane(),
-                    p,
-                    e.shape()[0],
-                    e.shape()[2],
-                ),
-                e.velocity(),
-            )
+            if not ego and (p[1] - e.shape()[1] >
+                            EGO_POSITION_DEPTH +
+                            FORWARD_ORIENTATION_FRONT_RANGE):
+                p[1] -= e.shape()[1]
+                return Entity(
+                    e.type(),
+                    e.id(),
+                    EntityOccupation(
+                        EntityOrientation.FORWARD,
+                        e.lane(),
+                        p,
+                        e.shape()[0],
+                        e.shape()[2],
+                    ),
+                    e.velocity(),
+                )
+            elif ego or (p[1] <
+                         EGO_POSITION_DEPTH -
+                         FORWARD_ORIENTATION_BACK_RANGE):
+                return Entity(
+                    e.type(),
+                    e.id(),
+                    EntityOccupation(
+                        EntityOrientation.FORWARD,
+                        e.lane(),
+                        p,
+                        e.shape()[0],
+                        e.shape()[2],
+                    ),
+                    e.velocity(),
+                )
+            else:
+                # TODO(stan): handle lateral orientation
+                return Entity(
+                    e.type(),
+                    e.id(),
+                    EntityOccupation(
+                        EntityOrientation.FORWARD,
+                        e.lane(),
+                        p,
+                        e.shape()[0],
+                        e.shape()[2],
+                    ),
+                    e.velocity(),
+                )
 
         lanes = self._map.truncate(start, end)
-        ego = entity_state(entity)
+        ego = entity_state(entity, True)
         entities = [
-            entity_state(e)
+            entity_state(e, False)
             for e in self._entities if e.id() != entity.id()
         ]
         entities = [e for e in entities if e is not None]
