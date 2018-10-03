@@ -60,6 +60,9 @@ class Simulation:
             p = copy.deepcopy(e.position())
             p[1] -= start
 
+            # TODO(stan): support entities positioning behind ego as well as
+            # LATERAL entity setup.
+
             return Entity(
                 e.type(),
                 e.id(),
@@ -128,11 +131,14 @@ class SimulationScenario(Scenario):
     def run(
             self,
     ) -> bool:
-        dump = []
+        dump = {
+            'delta': self._delta,
+            'steps': []
+        }
 
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
-            dump.append({
+            dump['steps'].append({
                 'step': s,
                 'state': dict(self._simulation.state(self._ego)),
             })
@@ -153,5 +159,5 @@ class SimulationScenario(Scenario):
     def view(
             self,
     ) -> str:
-        return self._config.get('scenarios_viewer_url') + \
-            '/motion/synthetic/simulation/' + self._id
+        return self._config.get('viewer_url') + \
+            'scenarios/motion/synthetic/' + self._id

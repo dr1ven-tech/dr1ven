@@ -71,6 +71,16 @@ class Scenario:
     and introspection.
     """
 
+    @staticmethod
+    def dump_dir_for_id(
+            config: Config,
+            id: str,
+    ) -> str:
+        return os.path.join(
+            os.path.expanduser(config.get('scenarios_dump_dir')),
+            id,
+        )
+
     def __init__(
             self,
             config: Config,
@@ -98,7 +108,10 @@ class Scenario:
     def dump_dir(
             self,
     ) -> str:
-        return self._dump_dir
+        return self.dump_dir_for_id(
+            self._config,
+            self._id,
+        )
 
     def run(
             self,
@@ -145,4 +158,5 @@ def run():
     Log.out(
         "Finished scenario", {
             'id': scenario.id(),
+            'viewer_url': scenario.view(),
         })

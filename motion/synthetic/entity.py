@@ -23,7 +23,7 @@ class SyntheticEntity:
         assert position[1] >= 0
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
 
-        self._lane = 0
+        self._lane = lane
         self._position = position
         self._shape = shape
         self._velocity = velocity

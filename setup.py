@@ -6,23 +6,24 @@ setup(
     install_requires=[
     ],
     packages=[
-        'state',
         'motion.synthetic',
+        'utils.viewer',
     ],
     package_data={
-        'state': [
-            'static',
-        ],
         'motion.synthetic': [
             'maps',
             'scenarios',
-        ]
+        ],
+        'utils.viewer': [
+            'templates',
+            'static',
+        ],
     },
     include_package_data=True,
     entry_points={
         'console_scripts': [
-            'state_viewer=state.viewer:main',
             'run_scenario=utils.scenario:run',
+            'viewer=utils.viewer.viewer:main',
         ],
     },
 )
