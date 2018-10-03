@@ -10,6 +10,7 @@
         height: 100%;
         background-color: #111;
         color: white;
+        font-family: sans-serif;
       }
       #canvas {
         background-color: #000;
@@ -21,10 +22,18 @@
         top: 40px;
         border: 1px solid #333;
       }
+      #data {
+        margin-top: 10px;
+        margin-left: 10px;
+      }
     </style>
   </head>
   <body>
     <div id="canvas"></div>
+    <div id="data">
+      step: <span id="step"></span><br/>
+      time: <span id="time"></span>
+    </div>
 
     <script src="/static/js/jquery-3.3.1.min.js"></script>
     <script src="/static/js/three.js"></script>
@@ -37,10 +46,24 @@
       var container = $('#canvas');
       var viewer = new StateViewer(container)
 
-      console.log(dump)
-
       viewer.animate()
-      viewer.update(dump['steps'][0]['state'])
+
+      var delta = dump['delta'] * 1000
+      var step = 0
+      var interval = null;
+
+      var update = () => {
+        if (step < dump['steps'].length) {
+          viewer.update(dump['steps'][step]['state'])
+          step += 1
+          $('#step').html(step)
+          $('#time').html('' + step * delta + 'ms')
+        } else {
+          clearInterval(interval)
+        }
+      }
+
+      interval = setInterval(update, delta)
     </script>
   </body>
 </html>

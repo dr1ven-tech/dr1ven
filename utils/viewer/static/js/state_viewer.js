@@ -35,8 +35,6 @@ class StateViewer {
       this.scene.getObjectByName("all")
     );
 
-    console.log(state)
-
     var MAP_COLORS = {
       0: 0x150026,
       1: 0x5e665d,

@@ -60,6 +60,11 @@ class Simulation:
             p = copy.deepcopy(e.position())
             p[1] -= start
 
+            # If the entity is out of the vicinity of the ego vehicule, just
+            # return None so that it will get filtererd out.
+            if p[1] < 0 or p[1] >= HIGHWAY_LANE_DEPTH:
+                return None
+
             # TODO(stan): support entities positioning behind ego as well as
             # LATERAL entity setup.
 
@@ -82,6 +87,7 @@ class Simulation:
             entity_state(e)
             for e in self._entities if e.id() != entity.id()
         ]
+        entities = [e for e in entities if e is not None]
 
         return Highway(
             lanes,

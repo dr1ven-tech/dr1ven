@@ -59,7 +59,7 @@ class Section:
         assert end >= 0
         assert start < end
 
-        if start > self._end or end < self._start:
+        if start >= self._end or end <= self._start:
             return None
 
         return Section(
