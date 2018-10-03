@@ -22,7 +22,8 @@
         "shape": [4, 9, 3],
         "speed": 50.0
       }
-    ]
+    ],
+    "ego_id": "adas_car_0"
   }
 }
 

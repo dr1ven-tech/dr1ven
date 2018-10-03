@@ -1,4 +1,5 @@
 import copy
+import json
 import os
 import typing
 
@@ -12,6 +13,7 @@ from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import EGO_POSITION_DEPTH
 
 from utils.config import Config
+from utils.log import Log
 from utils.scenario import Scenario, ScenarioSpec
 
 
@@ -55,7 +57,7 @@ class Simulation:
         end = entity.position()[1]-EGO_POSITION_DEPTH+HIGHWAY_LANE_DEPTH-1
 
         def entity_state(e):
-            p = copy.copy(e.position())
+            p = copy.deepcopy(e.position())
             p[1] -= start
 
             return Entity(
@@ -100,13 +102,22 @@ class SimulationScenario(Scenario):
 
         entities = []
         for e in spec.data()['entities']:
+            entity = None
+
             if e['type'] == 'adas_car':
-                entities.append(ADASCar.from_dict(e))
+                entity = ADASCar.from_dict(e)
+
+            assert entity is not None
+            entities.append(entity)
+
+            if entity.id() == spec.data()['ego_id']:
+                self._ego = entity
+        assert self._ego is not None
 
         map_path = os.path.join(
             os.path.dirname(__file__),
             "maps",
-            spec.data()['map'] + '.json',
+            spec.data()['map'] + ".json",
         )
 
         self._simulation = Simulation(
@@ -117,11 +128,25 @@ class SimulationScenario(Scenario):
     def run(
             self,
     ) -> bool:
-        # TODO(stan): initiate dump_dir
+        dump = []
 
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
-            # TODO(stan): dump state
+            dump.append({
+                'step': s,
+                'state': dict(self._simulation.state(self._ego)),
+            })
+
+        dump_path = os.path.join(self.dump_dir(), "dump.json")
+
+        Log.out(
+            "Dumping Simulation state", {
+                'path': dump_path,
+            })
+
+        os.makedirs(self.dump_dir())
+        with open(dump_path, 'w') as out:
+            json.dump(dump, out, indent=2)
 
         return True
 
