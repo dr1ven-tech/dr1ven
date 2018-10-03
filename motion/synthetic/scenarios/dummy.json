@@ -9,7 +9,7 @@
       {
         "type": "adas_car",
         "id": "adas_car_0",
-        "lane": 3,
+        "lane": 2,
         "position": [1, 800, 0],
         "shape": [4, 8, 3],
         "speed": 66.0
