@@ -53,39 +53,37 @@ class StateViewer {
     geometry.vertices.length = 0;
     geometry.faces.length = 0;
 
-    for (var l = 0; l < state['lanes'].length; l++) {
-      for (var s = 0; s < state['lanes'][l]['sections'].length; s++) {
-        var section = state['lanes'][l]['sections'][s]
-        for(var w = 0; w < section['slice'].length; w++) {
-          var v0 = new THREE.Vector3(7*l + w, section['start'], 0);
-          var v1 = new THREE.Vector3(7*l + w, section['end'], 0);
-          var v2 = new THREE.Vector3(7*l + w + 1, section['start'], 0);
-          var v3 = new THREE.Vector3(7*l + w + 1, section['end'], 0);
-          geometry.vertices.push(v0);
-          geometry.vertices.push(v1);
-          geometry.vertices.push(v2);
-          geometry.vertices.push(v3);
+    for (var s = 0; s < state['sections'].length; s++) {
+      var section = state['sections'][s]
+      for(var w = 0; w < section['slice'].length; w++) {
+        var v0 = new THREE.Vector3(w, section['start'], 0);
+        var v1 = new THREE.Vector3(w, section['end'], 0);
+        var v2 = new THREE.Vector3(w + 1, section['start'], 0);
+        var v3 = new THREE.Vector3(w + 1, section['end'], 0);
+        geometry.vertices.push(v0);
+        geometry.vertices.push(v1);
+        geometry.vertices.push(v2);
+        geometry.vertices.push(v3);
 
-          var f = new THREE.Face3(
-            geometry.vertices.length-4,
-            geometry.vertices.length-3,
-            geometry.vertices.length-2,
-            THREE.Vector3(0, 0, 1)
-          );
-          f.color = new THREE.Color(MAP_COLORS[section['slice'][w]]);
-          f.vertexColors = [f.color,f.color,f.color,f.color];
-          geometry.faces.push(f);
+        var f = new THREE.Face3(
+          geometry.vertices.length-4,
+          geometry.vertices.length-3,
+          geometry.vertices.length-2,
+          THREE.Vector3(0, 0, 1)
+        );
+        f.color = new THREE.Color(MAP_COLORS[section['slice'][w]]);
+        f.vertexColors = [f.color,f.color,f.color,f.color];
+        geometry.faces.push(f);
 
-          var f = new THREE.Face3(
-            geometry.vertices.length-1,
-            geometry.vertices.length-2,
-            geometry.vertices.length-3,
-            THREE.Vector3(0, 0, 1)
-          );
-          f.color = new THREE.Color(MAP_COLORS[section['slice'][w]]);
-          f.vertexColors = [f.color,f.color,f.color,f.color];
-          geometry.faces.push(f);
-        }
+        var f = new THREE.Face3(
+          geometry.vertices.length-1,
+          geometry.vertices.length-2,
+          geometry.vertices.length-3,
+          THREE.Vector3(0, 0, 1)
+        );
+        f.color = new THREE.Color(MAP_COLORS[section['slice'][w]]);
+        f.vertexColors = [f.color,f.color,f.color,f.color];
+        geometry.faces.push(f);
       }
     }
 
@@ -102,15 +100,15 @@ class StateViewer {
       // Forward orientation.
       var v0, v1, v2, v3;
       if (orientation == 1) {
-        v0 = new THREE.Vector3(7*l + position[0], position[1], position[2]);
-        v1 = new THREE.Vector3(7*l + position[0] + width, position[1], position[2]);
-        v2 = new THREE.Vector3(7*l + position[0], position[1], position[2] + height);
-        v3 = new THREE.Vector3(7*l + position[0] + width, position[1], position[2] + height);
+        v0 = new THREE.Vector3(position[0], position[1], position[2]);
+        v1 = new THREE.Vector3(position[0] + width, position[1], position[2]);
+        v2 = new THREE.Vector3(position[0], position[1], position[2] + height);
+        v3 = new THREE.Vector3(position[0] + width, position[1], position[2] + height);
       } else {
-        v0 = new THREE.Vector3(7*l + position[0], position[1], position[2]);
-        v1 = new THREE.Vector3(7*l + position[0], position[1] + width, position[2]);
-        v2 = new THREE.Vector3(7*l + position[0], position[1], position[2] + height);
-        v3 = new THREE.Vector3(7*l + position[0], position[1] + width, position[2] + height);
+        v0 = new THREE.Vector3(position[0], position[1], position[2]);
+        v1 = new THREE.Vector3(position[0], position[1] + width, position[2]);
+        v2 = new THREE.Vector3(position[0], position[1], position[2] + height);
+        v3 = new THREE.Vector3(position[0], position[1] + width, position[2] + height);
       }
 
       geometry.vertices.push(v0);
