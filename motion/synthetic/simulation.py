@@ -183,12 +183,24 @@ class SimulationScenario(Scenario):
             'steps': []
         }
 
+        outcome = True
+
         for s in range(self._steps):
             self._simulation.step(s, self._delta)
             dump['steps'].append({
                 'step': s,
                 'state': dict(self._simulation.state(self._ego)),
             })
+            for e in self._simulation.entities():
+                if e.id() != self._ego.id() and self._ego.collide(e):
+                    Log.out(
+                        "Collision detected", {
+                            'ego': self._ego.id(),
+                            'other': e.id(),
+                        })
+                    outcome = False
+            if not outcome:
+                break
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")
 
@@ -201,7 +213,7 @@ class SimulationScenario(Scenario):
         with open(dump_path, 'w') as out:
             json.dump(dump, out, indent=2)
 
-        return True
+        return outcome
 
     def view(
             self,

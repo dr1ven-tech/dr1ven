@@ -70,6 +70,18 @@ class SyntheticEntity:
     ) -> int:
         return int(self._position[0] / HIGHWAY_LANE_WIDTH)
 
+    def collide(
+            self,
+            other,
+    ) -> bool:
+        collide = True
+        for i in range(3):
+            collide = collide and (
+                self.position()[i] < other.position()[i] + other.shape()[i] and
+                self.position()[i] + self.shape()[i] > other.position()[i]
+            )
+        return collide
+
 
 class ADASCar(SyntheticEntity):
     def __init__(
