@@ -4,9 +4,7 @@ import os
 import typing
 
 from motion.synthetic.constants import FORWARD_ORIENTATION_FRONT_RANGE
-# from motion.synthetic.constants import LATERAL_ORIENTATION_FRONT_RANGE
 from motion.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
-# from motion.synthetic.constants import LATERAL_ORIENTATION_BACK_RANGE
 
 from motion.synthetic.map import SyntheticMap
 from motion.synthetic.entity import SyntheticEntity
@@ -103,14 +101,22 @@ class Simulation:
                     e.velocity(),
                 )
             else:
-                # TODO(stan): handle lateral orientation
+                # If the entity is on the left of the reference entity, Place
+                # the lateral occupation on the right-hand face of the entity.
+                if p[0] + e.shape()[0] <= entity.position()[0]:
+                    p[0] += e.shape()[0]
+                # The occupation is positioned at the back of the entity.
+                p[1] -= e.shape()[1]
+
+                # TODO(stan): for now we have a perfect coverage of the entity
+                # laterally which may not be true eventually.
                 return Entity(
                     e.type(),
                     e.id(),
                     EntityOccupation(
-                        EntityOrientation.FORWARD,
+                        EntityOrientation.LATERAL,
                         p,
-                        e.shape()[0],
+                        e.shape()[1],
                         e.shape()[2],
                     ),
                     e.velocity(),
