@@ -8,7 +8,7 @@ from planning.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
 
 from planning.synthetic.map import SyntheticMap
 from planning.synthetic.entity import SyntheticEntity
-from planning.synthetic.entity import ADASCar
+from planning.synthetic.entities.adas_car import ADASCar
 
 from state.entity import Entity, EntityOccupation, EntityOrientation
 from state.highway import Highway

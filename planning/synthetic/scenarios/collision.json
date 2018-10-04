@@ -11,14 +11,14 @@
         "id": "adas_car_0",
         "position": [15, 800, 0],
         "shape": [4, 8, 3],
-        "speed": 66.0
+        "desired_speed": 66.0
       },
       {
         "type": "adas_car",
         "id": "adas_car_2",
         "position": [15, 600, 0],
         "shape": [4, 8, 3],
-        "speed": 77.0
+        "desired_speed": 77.0
       }
     ],
     "ego_id": "adas_car_0"
