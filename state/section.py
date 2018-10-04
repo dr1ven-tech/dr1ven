@@ -22,7 +22,7 @@ class Section:
                 [RoadType.INVALID] * HIGHWAY_LANE_WIDTH * 5
             ),
     ) -> None:
-        assert len(slice) == HIGHWAY_LANE_WIDTH
+        assert len(slice) >= HIGHWAY_LANE_WIDTH
         assert start >= 0
         assert end >= 0
         assert start < end

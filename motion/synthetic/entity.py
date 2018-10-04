@@ -1,6 +1,5 @@
 import typing
 
-from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
 from state.highway import Highway
 from state.entity import EntityType
@@ -24,7 +23,6 @@ class SyntheticEntity:
         assert len(shape) == 3
         assert len(velocity) == 3
 
-        assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDTH
         assert position[1] >= 0
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
 

@@ -28,6 +28,9 @@ class Simulation:
             map: SyntheticMap,
             entities: typing.List[SyntheticEntity]
     ) -> None:
+        for e in entities:
+            assert e.position()[0] < map.width()
+
         self._map = map
         self._entities = entities
 

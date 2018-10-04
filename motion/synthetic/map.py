@@ -11,14 +11,30 @@ class SyntheticMap:
             self,
             sections: typing.List[Section] = [],
     ) -> None:
+        assert len(sections) > 0
+        slice_width = len(sections[0].slice())
+
+        for s in sections:
+            assert s.start() >= 0
+            assert s.start() < s.end()
+            assert len(s.slice()) == slice_width
+
         self._sections = sections
+
+    def width(
+            self,
+    ) -> int:
+        return len(self._sections[0].slice())
 
     def truncate(
             self,
             start: int,
             end: int,
     ) -> typing.List[Section]:
-        return [s.truncate(start, end) for s in self._sections]
+        sections = [s.truncate(start, end) for s in self._sections]
+        sections = [s for s in sections if s is not None]
+
+        return sections
 
     def __iter__(
             self,
