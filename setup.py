@@ -6,11 +6,11 @@ setup(
     install_requires=[
     ],
     packages=[
-        'motion.synthetic',
+        'planning.synthetic',
         'utils.viewer',
     ],
     package_data={
-        'motion.synthetic': [
+        'planning.synthetic': [
             'maps',
             'scenarios',
         ],

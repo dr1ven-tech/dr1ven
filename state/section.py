@@ -28,7 +28,7 @@ class Section:
         assert start < end
 
         # We don't assert that end or start are smaller than HIGHWAY_LANE_DEPTH
-        # as longer Lanes are relied upon by `motion.synthetic.Map`. Note that
+        # as longer Lanes are relied upon by `planning.synthetic.Map`. Note that
         # this is checked when passed to a `state.Highway` constructor.
 
         self._start = start

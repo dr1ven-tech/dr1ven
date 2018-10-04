@@ -3,12 +3,12 @@ import json
 import os
 import typing
 
-from motion.synthetic.constants import FORWARD_ORIENTATION_FRONT_RANGE
-from motion.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
+from planning.synthetic.constants import FORWARD_ORIENTATION_FRONT_RANGE
+from planning.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
 
-from motion.synthetic.map import SyntheticMap
-from motion.synthetic.entity import SyntheticEntity
-from motion.synthetic.entity import ADASCar
+from planning.synthetic.map import SyntheticMap
+from planning.synthetic.entity import SyntheticEntity
+from planning.synthetic.entity import ADASCar
 
 from state.entity import Entity, EntityOccupation, EntityOrientation
 from state.highway import Highway
@@ -219,4 +219,4 @@ class SimulationScenario(Scenario):
             self,
     ) -> str:
         return self._config.get('viewer_url') + \
-            'scenarios/motion/synthetic/' + self._id
+            'scenarios/planning/synthetic/' + self._id

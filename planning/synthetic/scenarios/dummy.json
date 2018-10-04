@@ -1,5 +1,5 @@
 {
-  "module": "motion.synthetic.simulation",
+  "module": "planning.synthetic.simulation",
   "type": "SimulationScenario",
   "data": {
     "delta": 0.040,
