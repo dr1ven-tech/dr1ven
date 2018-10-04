@@ -4,44 +4,50 @@ from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import EGO_POSITION_DEPTH
 
 from state.entity import Entity
-
-from state.lane import Lane
+from state.section import Section
 
 
 class Highway:
     """ `Highway` encodes a symbolic representation of an highway region.
 
     It represents the state of an highway in the vicinity (depth
-    `HIGHWAY_LANE_DEPTH`) of an ego entity.
+    `HIGHWAY_LANE_DEPTH`) of an ego entity and consists in:
 
-    By convention the ego entity must be positioned (depth) at
-    `EGO_POSITION_DEPTH`.
+    - `sections`: a list of sections that encode the state of the road in a
+      region going from `0` to `HIGHWAY_LANE_DEPTH`.
+    - `ego`: an ego entity positioned by convention at `EGO_POSITION_DEPTH`
+      (depth).
+    - `entities`: a list of entities present in the region.
     """
     def __init__(
             self,
-            lanes: typing.List[Lane],
+            sections: typing.List[Section],
             ego: Entity,
             entities: typing.List[Entity],
     ) -> None:
-        self._lanes = lanes
+        self._sections = sections
         self._entities = entities
         self._ego = ego
 
-        for l in lanes:
-            for s in l.sections():
-                assert s.start() >= 0
-                assert s.end() < HIGHWAY_LANE_DEPTH
+        assert len(sections) > 0
+        slice_width = len(sections[0].slice())
 
+        for s in sections:
+            assert s.start() >= 0
+            assert s.end() < HIGHWAY_LANE_DEPTH
+            assert len(s.slice()) == slice_width
+
+        assert ego.occupation().position()[0] < slice_width
         assert ego.occupation().position()[1] == EGO_POSITION_DEPTH
 
         for e in entities:
             assert ego.id() != e.id()
-            assert e.occupation().lane() < len(self._lanes)
+            assert e.occupation().position()[0] < slice_width
 
-    def lanes(
+    def sections(
             self,
-    ) -> typing.List[Lane]:
-        return self._lanes
+    ) -> typing.List[Section]:
+        return self._sections
 
     def entities(
             self,
@@ -56,6 +62,6 @@ class Highway:
     def __iter__(
             self,
     ):
-        yield 'lanes', [dict(l) for l in self._lanes]
+        yield 'sections', [dict(s) for s in self._sections]
         yield 'ego', dict(self._ego)
         yield 'entities', [dict(e) for e in self._entities]

@@ -3,34 +3,34 @@ import typing
 
 from utils.log import Log
 
-from state.lane import Lane
+from state.section import Section
 
 
 class SyntheticMap:
     def __init__(
             self,
-            lanes: typing.List[Lane] = [],
+            sections: typing.List[Section] = [],
     ) -> None:
-        self._lanes = lanes
+        self._sections = sections
 
     def truncate(
             self,
             start: int,
             end: int,
-    ) -> typing.List[Lane]:
-        return [l.truncate(start, end) for l in self._lanes]
+    ) -> typing.List[Section]:
+        return [s.truncate(start, end) for s in self._sections]
 
     def __iter__(
             self,
     ):
-        yield 'lanes', [dict(l) for l in self._lanes]
+        yield 'sections', [dict(l) for l in self._sections]
 
     @staticmethod
     def from_dict(
             spec,
     ):
         return SyntheticMap(
-            [Lane.from_dict(l) for l in spec['lanes']],
+            [Section.from_dict(s) for s in spec['sections']],
         )
 
     @staticmethod

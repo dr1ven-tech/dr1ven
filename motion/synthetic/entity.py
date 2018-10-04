@@ -16,7 +16,6 @@ class SyntheticEntity:
     def __init__(
             self,
             id: str,
-            lane: int,
             position: typing.List[int],
             shape: typing.List[int],
             velocity: typing.List[float],
@@ -29,7 +28,6 @@ class SyntheticEntity:
         assert position[1] >= 0
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
 
-        self._lane = lane
         self._position = position
         self._shape = shape
         self._velocity = velocity
@@ -53,11 +51,6 @@ class SyntheticEntity:
     ) -> None:
         raise Exception("Not implemented")
 
-    def lane(
-            self,
-    ) -> int:
-        return self._lane
-
     def position(
             self,
     ) -> typing.List[int]:
@@ -78,14 +71,12 @@ class ADASCar(SyntheticEntity):
     def __init__(
             self,
             id: str,
-            lane: int,
             position: typing.List[int],
             shape: typing.List[int],
             speed: float,
     ) -> None:
         super(ADASCar, self).__init__(
             id,
-            lane,
             position,
             shape,
             [0.0, speed, 0.0],
@@ -116,7 +107,6 @@ class ADASCar(SyntheticEntity):
     ):
         return ADASCar(
             spec['id'],
-            spec['lane'],
             spec['position'],
             spec['shape'],
             spec['speed'],

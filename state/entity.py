@@ -2,7 +2,6 @@ import enum
 import typing
 
 from state.constants import HIGHWAY_LANE_DEPTH
-from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
 
 
@@ -27,18 +26,15 @@ class EntityOccupation:
     def __init__(
             self,
             orientation: EntityOrientation,
-            lane: int,
             position: typing.List[int],
             width: int,
             height: int,
     ) -> None:
         assert len(position) == 3
-        assert position[0] >= 0 and position[0] < HIGHWAY_LANE_WIDTH
         assert position[1] >= 0 and position[1] < HIGHWAY_LANE_DEPTH
         assert position[2] >= 0 and position[2] < HIGHWAY_LANE_HEIGHT
 
         self._orientation = orientation
-        self._lane = lane
         self._position = position
         self._width = width
         self._height = height
@@ -47,7 +43,6 @@ class EntityOccupation:
             self,
     ):
         yield 'orientation', self._orientation.value
-        yield 'lane', self._lane
         yield 'position', self._position
         yield 'width', self._width
         yield 'height', self._height,
@@ -56,11 +51,6 @@ class EntityOccupation:
             self,
     ) -> EntityOrientation:
         return self._orientation
-
-    def lane(
-            self,
-    ) -> int:
-        return self._lane
 
     def position(
             self,

@@ -19,7 +19,7 @@ class Section:
             start: int = 0,
             end: int = HIGHWAY_LANE_DEPTH-1,
             slice: typing.List[RoadType] = (
-                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH
+                [RoadType.INVALID] * HIGHWAY_LANE_WIDTH * 5
             ),
     ) -> None:
         assert len(slice) == HIGHWAY_LANE_WIDTH
@@ -83,44 +83,4 @@ class Section:
             spec['start'],
             spec['end'],
             [RoadType(t) for t in spec['slice']],
-        )
-
-
-class Lane:
-    def __init__(
-            self,
-            sections: typing.List[Section] = [
-                Section(),
-            ],
-    ) -> None:
-        self._sections = sections
-
-    def sections(
-            self,
-    ) -> typing.List[Section]:
-        return self._sections
-
-    def truncate(
-            self,
-            start: int,
-            end: int,
-    ):
-        sections = [s.truncate(start, end) for s in self._sections]
-        sections = [s for s in sections if s is not None]
-
-        return Lane(
-            sections,
-        )
-
-    def __iter__(
-            self,
-    ):
-        yield 'sections', [dict(s) for s in self._sections]
-
-    @staticmethod
-    def from_dict(
-            spec,
-    ):
-        return Lane(
-            [Section.from_dict(s) for s in spec['sections']],
         )

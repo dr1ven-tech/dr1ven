@@ -4,9 +4,9 @@ import os
 import typing
 
 from motion.synthetic.constants import FORWARD_ORIENTATION_FRONT_RANGE
-from motion.synthetic.constants import LATERAL_ORIENTATION_FRONT_RANGE
+# from motion.synthetic.constants import LATERAL_ORIENTATION_FRONT_RANGE
 from motion.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
-from motion.synthetic.constants import LATERAL_ORIENTATION_BACK_RANGE
+# from motion.synthetic.constants import LATERAL_ORIENTATION_BACK_RANGE
 
 from motion.synthetic.map import SyntheticMap
 from motion.synthetic.entity import SyntheticEntity
@@ -79,7 +79,6 @@ class Simulation:
                     e.id(),
                     EntityOccupation(
                         EntityOrientation.FORWARD,
-                        e.lane(),
                         p,
                         e.shape()[0],
                         e.shape()[2],
@@ -94,7 +93,6 @@ class Simulation:
                     e.id(),
                     EntityOccupation(
                         EntityOrientation.FORWARD,
-                        e.lane(),
                         p,
                         e.shape()[0],
                         e.shape()[2],
@@ -108,7 +106,6 @@ class Simulation:
                     e.id(),
                     EntityOccupation(
                         EntityOrientation.FORWARD,
-                        e.lane(),
                         p,
                         e.shape()[0],
                         e.shape()[2],
@@ -116,7 +113,7 @@ class Simulation:
                     e.velocity(),
                 )
 
-        lanes = self._map.truncate(start, end)
+        sections = self._map.truncate(start, end)
         ego = entity_state(entity, True)
         entities = [
             entity_state(e, False)
@@ -125,7 +122,7 @@ class Simulation:
         entities = [e for e in entities if e is not None]
 
         return Highway(
-            lanes,
+            sections,
             ego,
             entities,
         )
