@@ -1,5 +1,6 @@
 import typing
 
+from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
 from state.highway import Highway
 from state.entity import EntityType
@@ -63,6 +64,11 @@ class SyntheticEntity:
             self,
     ) -> typing.List[float]:
         return self._velocity
+
+    def lane(
+            self,
+    ) -> int:
+        return int(self._position[0] / HIGHWAY_LANE_WIDTH)
 
 
 class ADASCar(SyntheticEntity):

@@ -2,6 +2,7 @@ import enum
 import typing
 
 from state.constants import HIGHWAY_LANE_DEPTH
+from state.constants import HIGHWAY_LANE_WIDTH
 from state.constants import HIGHWAY_LANE_HEIGHT
 
 
@@ -66,6 +67,11 @@ class EntityOccupation:
             self,
     ) -> int:
         return self._height
+
+    def lane(
+            self,
+    ) -> int:
+        return int(self._position[0] / HIGHWAY_LANE_WIDTH)
 
 
 class Entity:
