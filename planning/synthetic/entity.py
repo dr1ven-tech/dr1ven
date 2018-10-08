@@ -11,13 +11,15 @@ class SyntheticEntity:
 
     While `state.Entity` does not have any depth, `SyntheticEntity` keeps track
     of the depth of the object. The position of the entity is equivalent to the
-    position of the `state.Entity` (front-left corner).
+    position of the `state.Entity` (front-left corner) but stored as `float`
+    array.  Likewise, the velocity is stored as `float` array for precise
+    simulation.
     """
     def __init__(
             self,
             id: str,
-            position: typing.List[int],
-            shape: typing.List[int],
+            position: typing.List[float],
+            shape: typing.List[float],
             velocity: typing.List[float],
     ) -> None:
         assert len(position) == 3
@@ -52,12 +54,12 @@ class SyntheticEntity:
 
     def position(
             self,
-    ) -> typing.List[int]:
+    ) -> typing.List[float]:
         return self._position
 
     def shape(
             self,
-    ) -> typing.List[int]:
+    ) -> typing.List[float]:
         return self._shape
 
     def velocity(

@@ -7,42 +7,56 @@
     "map": "highway_3lanes_10k",
     "entities": [
       {
-        "type": "adas_car",
-        "id": "adas_car_0",
-        "position": [15, 1800, 0],
-        "shape": [4, 8, 3],
-        "desired_speed": 90.0
+        "type": "car",
+        "id": "car_adas_0",
+        "position": [15.0, 1800.0, 0.0],
+        "shape": [4.5, 8.0, 3.0],
+        "agent": {
+          "type": "adas",
+          "desired_speed": 90.0
+        }
       },
       {
-        "type": "adas_car",
-        "id": "adas_car_1",
-        "position": [15, 2400, 0],
-        "shape": [4, 9, 3],
-        "desired_speed": 60.0
+        "type": "car",
+        "id": "car_adas_1",
+        "position": [15.0, 2400.0, 0.0],
+        "shape": [4.5, 9.0, 3.0],
+        "agent": {
+          "type": "adas",
+          "desired_speed": 60.0
+        }
       },
       {
-        "type": "adas_car",
-        "id": "adas_car_2",
-        "position": [1, 1800, 0],
-        "shape": [4, 8, 3],
-        "desired_speed": 80.0
+        "type": "car",
+        "id": "car_adas_2",
+        "position": [1.0, 1800.0, 0.0],
+        "shape": [4.0, 8.0, 3.0],
+        "agent": {
+          "type": "adas",
+          "desired_speed": 80.0
+        }
       },
       {
-        "type": "adas_car",
-        "id": "adas_car_3",
-        "position": [1, 2000, 0],
-        "shape": [4, 8, 3],
-        "desired_speed": 75.0
+        "type": "car",
+        "id": "car_adas_3",
+        "position": [1.0, 2000.0, 0.0],
+        "shape": [4.2, 8.0, 3.0],
+        "agent": {
+          "type": "adas",
+          "desired_speed": 75.0
+        }
       },
       {
-        "type": "adas_car",
-        "id": "adas_car_4",
-        "position": [1, 2450, 0],
-        "shape": [4, 8, 3],
-        "desired_speed": 70.0
+        "type": "car",
+        "id": "car_adas_4",
+        "position": [3.0, 2450.0, 0.0],
+        "shape": [4.2, 8.0, 3.5],
+        "agent": {
+          "type": "adas",
+          "desired_speed": 70.0
+        }
       }
     ],
-    "ego_id": "adas_car_0"
+    "ego_id": "car_adas_0"
   }
 }
-

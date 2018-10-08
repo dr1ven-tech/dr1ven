@@ -13,8 +13,8 @@ class ADASCar(SyntheticEntity):
     def __init__(
             self,
             id: str,
-            position: typing.List[int],
-            shape: typing.List[int],
+            position: typing.List[float],
+            shape: typing.List[float],
             desired_speed: float,
     ) -> None:
         super(ADASCar, self).__init__(

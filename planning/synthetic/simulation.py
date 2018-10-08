@@ -59,34 +59,38 @@ class Simulation:
         The state is computed from the "point of view" of the entity passed as
         argument (impacts depth position).
         """
-        start = entity.position()[1]-EGO_POSITION_DEPTH
-        end = entity.position()[1]-EGO_POSITION_DEPTH+HIGHWAY_LANE_DEPTH-1
+        start = int(entity.position()[1]) - EGO_POSITION_DEPTH
+        end = int(entity.position()[1]) - \
+            EGO_POSITION_DEPTH+HIGHWAY_LANE_DEPTH-1
 
         def entity_state(e, ego):
-            p = copy.deepcopy(e.position())
-            p[1] -= start
+            position = [int(p) for p in e.position()]
+            velocity = [int(v) for v in e.velocity()]
+            shape = [int(s) for s in e.shape()]
+
+            position[1] -= start
 
             # If the entity is out of the vicinity of the ego vehicule, just
             # return None so that it will get filtererd out.
-            if p[1] < 0 or p[1] >= HIGHWAY_LANE_DEPTH:
+            if position[1] < 0 or position[1] >= HIGHWAY_LANE_DEPTH:
                 return None
 
-            if not ego and (p[1] - e.shape()[1] >
+            if not ego and (position[1] - shape[1] >
                             EGO_POSITION_DEPTH +
                             FORWARD_ORIENTATION_FRONT_RANGE):
-                p[1] -= e.shape()[1]
+                position[1] -= shape[1]
                 return Entity(
                     e.type(),
                     e.id(),
                     EntityOccupation(
                         EntityOrientation.FORWARD,
-                        p,
-                        e.shape()[0],
-                        e.shape()[2],
+                        position,
+                        shape[0],
+                        shape[2]
                     ),
-                    e.velocity(),
+                    velocity,
                 )
-            elif ego or (p[1] <
+            elif ego or (position[1] <
                          EGO_POSITION_DEPTH -
                          FORWARD_ORIENTATION_BACK_RANGE):
                 return Entity(
@@ -94,19 +98,19 @@ class Simulation:
                     e.id(),
                     EntityOccupation(
                         EntityOrientation.FORWARD,
-                        p,
-                        e.shape()[0],
-                        e.shape()[2],
+                        position,
+                        shape[0],
+                        shape[2],
                     ),
-                    e.velocity(),
+                    velocity,
                 )
             else:
                 # If the entity is on the left of the reference entity, Place
                 # the lateral occupation on the right-hand face of the entity.
-                if p[0] + e.shape()[0] <= entity.position()[0]:
-                    p[0] += e.shape()[0]
+                if position[0] + shape[0] <= int(entity.position()[0]):
+                    position[0] += shape[0]
                 # The occupation is positioned at the back of the entity.
-                p[1] -= e.shape()[1]
+                position[1] -= shape[1]
 
                 # TODO(stan): for now we have a perfect coverage of the entity
                 # laterally which may not be true eventually.
@@ -115,11 +119,11 @@ class Simulation:
                     e.id(),
                     EntityOccupation(
                         EntityOrientation.LATERAL,
-                        p,
-                        e.shape()[1],
-                        e.shape()[2],
+                        position,
+                        shape[1],
+                        shape[2],
                     ),
-                    e.velocity(),
+                    velocity,
                 )
 
         sections = self._map.truncate(start, end)
@@ -154,7 +158,7 @@ class SimulationScenario(Scenario):
         for e in spec.data()['entities']:
             entity = None
 
-            if e['type'] == 'adas_car':
+            if e['type'] == "adas_car":
                 entity = ADASCar.from_dict(e)
 
             assert entity is not None
