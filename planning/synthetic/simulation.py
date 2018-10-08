@@ -1,4 +1,3 @@
-import copy
 import json
 import os
 import typing
@@ -63,9 +62,11 @@ class Simulation:
         end = int(entity.position()[1]) - \
             EGO_POSITION_DEPTH+HIGHWAY_LANE_DEPTH-1
 
-        def entity_state(e, ego):
+        def entity_state(
+                e: SyntheticEntity,
+                ego: bool,
+        ):
             position = [int(p) for p in e.position()]
-            velocity = [int(v) for v in e.velocity()]
             shape = [int(s) for s in e.shape()]
 
             position[1] -= start
@@ -88,7 +89,7 @@ class Simulation:
                         shape[0],
                         shape[2]
                     ),
-                    velocity,
+                    e.velocity(),
                 )
             elif ego or (position[1] <
                          EGO_POSITION_DEPTH -
@@ -102,7 +103,7 @@ class Simulation:
                         shape[0],
                         shape[2],
                     ),
-                    velocity,
+                    e.velocity(),
                 )
             else:
                 # If the entity is on the left of the reference entity, Place
@@ -123,7 +124,7 @@ class Simulation:
                         shape[1],
                         shape[2],
                     ),
-                    velocity,
+                    e.velocity(),
                 )
 
         sections = self._map.truncate(start, end)

@@ -7,6 +7,9 @@ setup(
     ],
     packages=[
         'planning.synthetic',
+        'planning.synthetic.entities',
+        'planning.agents',
+        'state',
         'utils.viewer',
     ],
     package_data={
