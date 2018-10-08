@@ -47,14 +47,15 @@ class ADAS(Agent):
                     front = e
 
         forward = Command(
-            EGO_POSITION_DEPTH + self._desired_speed * ADAS_COMMAND_DELTA,
+            int(EGO_POSITION_DEPTH +
+                self._desired_speed * ADAS_COMMAND_DELTA),
             ADAS_COMMAND_DELTA,
         )
 
         if front is not None:
-            target = front.position()[1] + \
-                front.velocity()[1] * ADAS_COMMAND_DELTA
-            if target < forward.value:
+            target = int(front.position()[1] +
+                         front.velocity()[1] * ADAS_COMMAND_DELTA)
+            if target < forward.position:
                 forward = Command(target, ADAS_COMMAND_DELTA)
 
         lateral = Command(

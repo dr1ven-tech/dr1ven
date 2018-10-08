@@ -6,10 +6,12 @@ setup(
     install_requires=[
     ],
     packages=[
+        'planning',
+        'planning.agents',
         'planning.synthetic',
         'planning.synthetic.entities',
-        'planning.agents',
         'state',
+        'utils',
         'utils.viewer',
     ],
     package_data={

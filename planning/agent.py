@@ -2,18 +2,23 @@ from state.highway import Highway
 
 
 class Command:
+    """ `Command` reprensents a change of position over a period of time.
+
+    It is used to represent a target position (in `state.Highway` space) at a
+    target time. It is expressed in absolute coordinates in `state.Highway`.
+    """
     def __init__(
             self,
-            value,
+            position: int,
             delta: float,
     ) -> None:
-        self._value = value
+        self._position = position
         self._delta = delta
 
-    def value(
+    def position(
             self,
-    ):
-        return self._value
+    ) -> int:
+        return self._position
 
     def delta(
             self,
