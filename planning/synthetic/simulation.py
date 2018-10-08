@@ -7,7 +7,7 @@ from planning.synthetic.constants import FORWARD_ORIENTATION_BACK_RANGE
 
 from planning.synthetic.map import SyntheticMap
 from planning.synthetic.entity import SyntheticEntity
-from planning.synthetic.entities.adas_car import ADASCar
+from planning.synthetic.entities.car import Car
 
 from state.entity import Entity, EntityOccupation, EntityOrientation
 from state.highway import Highway
@@ -159,8 +159,8 @@ class SimulationScenario(Scenario):
         for e in spec.data()['entities']:
             entity = None
 
-            if e['type'] == "adas_car":
-                entity = ADASCar.from_dict(e)
+            if e['type'] == "car":
+                entity = Car.from_dict(e)
 
             assert entity is not None
             entities.append(entity)

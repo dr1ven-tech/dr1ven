@@ -2,6 +2,7 @@ from state.constants import EGO_POSITION_DEPTH
 from state.constants import HIGHWAY_LANE_DEPTH
 from state.constants import HIGHWAY_LANE_WIDTH
 from state.highway import Highway
+
 from planning.agent import Agent, Action, Command
 
 ADAS_SAFETY_DISTANCE = 150
@@ -35,7 +36,7 @@ class ADAS(Agent):
         front = None
         distance = HIGHWAY_LANE_DEPTH
         for e in state.entities():
-            if e.occupation().lane() == self.lane() and (
+            if e.occupation().lane() == self._lane and (
                     e.occupation().position()[1] > EGO_POSITION_DEPTH and
                     e.occupation().position()[1] <= (
                         EGO_POSITION_DEPTH + ADAS_SAFETY_DISTANCE
@@ -53,9 +54,10 @@ class ADAS(Agent):
         )
 
         if front is not None:
-            target = int(front.position()[1] +
-                         front.velocity()[1] * ADAS_COMMAND_DELTA)
-            if target < forward.position:
+            target = int(front.occupation().position()[1] +
+                         front.velocity()[1] * ADAS_COMMAND_DELTA -
+                         ADAS_SAFETY_DISTANCE)
+            if target < forward.position():
                 forward = Command(target, ADAS_COMMAND_DELTA)
 
         lateral = Command(

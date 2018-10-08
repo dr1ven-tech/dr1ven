@@ -3,6 +3,7 @@ import typing
 from state.constants import EGO_POSITION_DEPTH
 from state.entity import EntityType
 from state.highway import Highway
+
 from planning.agent import Agent
 from planning.agents.adas import ADAS
 from planning.synthetic.entity import SyntheticEntity
@@ -28,7 +29,7 @@ class Car(SyntheticEntity):
 
         assert agent is not None
 
-        self._agent = Agent
+        self._agent = agent
 
     def type(
             self,
@@ -46,16 +47,18 @@ class Car(SyntheticEntity):
 
         # Execute motion in simulated space based on received action.
         forward_speed = \
-            float(action.forward().value - EGO_POSITION_DEPTH) / delta
+            float(action.forward().position() - EGO_POSITION_DEPTH) / \
+            action.forward().delta()
         self._velocity[1] -= \
             (self._velocity[1] - forward_speed) / CAR_EXECUTION_DAMPING
         self._position[1] = self._position[1] + delta * self._velocity[1]
 
         lateral_speed = \
-            (float(action.lateral().value) - self.position[0]) / delta
+            (float(action.lateral().position()) - self.position()[0]) / \
+            action.lateral().delta()
         self._velocity[0] -= \
             (self._velocity[0] - lateral_speed) / CAR_EXECUTION_DAMPING
-        self._position[1] = self._position[1] + delta * self._velocity[1]
+        self._position[0] = self._position[0] + delta * self._velocity[0]
 
     @staticmethod
     def from_dict(
