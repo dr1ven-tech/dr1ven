@@ -1,10 +1,8 @@
 import typing
 
-import numpy as np
-
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
+
+from utils.config import Config
 
 
 class ResidualBlock(nn.Module):
@@ -78,6 +76,7 @@ class DownsampleBlock(nn.Module):
     ):
         return self.layers(x)
 
+
 class UpsampleBlock(nn.Module):
     """ `UpsampleBlock` implements an upsample block.
 
@@ -112,6 +111,7 @@ class UpsampleBlock(nn.Module):
     ):
         return self.layers(x)
 
+
 class DetectionLayer(nn.Module):
     """ `DetectionLayer` implements the final detection logic.
     """
@@ -131,9 +131,7 @@ class YOLOv3(nn.Module):
     ) -> None:
         super(YOLOv3, self).__init__()
 
-        layers = []
-
-        shared =[
+        shared = [
             [
                 nn.ReflectionPad2d(1),
                 nn.Conv2d(
@@ -158,7 +156,7 @@ class YOLOv3(nn.Module):
                 ResidualBlock(config, 256),
                 ResidualBlock(config, 256),
                 ResidualBlock(config, 256),
-                ResidualBlock(config, 256), # layers 36
+                ResidualBlock(config, 256),  # layers 36
             ],
             [
                 DownsampleBlock(config, 256),
@@ -169,14 +167,14 @@ class YOLOv3(nn.Module):
                 ResidualBlock(config, 512),
                 ResidualBlock(config, 512),
                 ResidualBlock(config, 512),
-                ResidualBlock(config, 512), # layers 61
+                ResidualBlock(config, 512),  # layers 61
             ],
             [
                 DownsampleBlock(config, 512),
                 ResidualBlock(config, 1024),
                 ResidualBlock(config, 1024),
                 ResidualBlock(config, 1024),
-                ResidualBlock(config, 1024), # layers 74
+                ResidualBlock(config, 1024),  # layers 74
             ]
         ]
 
@@ -282,7 +280,7 @@ class YOLOv3(nn.Module):
                         256, 512,
                         kernel_size=3, stride=1, padding=0, bias=False
                     ),
-                    nn.BatchNorm2d(dim),
+                    nn.BatchNorm2d(512),
                     nn.LeakyReLU(0.1, True),
 
                     nn.Conv2d(
@@ -338,7 +336,7 @@ class YOLOv3(nn.Module):
                         128, 256,
                         kernel_size=3, stride=1, padding=0, bias=False
                     ),
-                    nn.BatchNorm2d(dim),
+                    nn.BatchNorm2d(256),
                     nn.LeakyReLU(0.1, True),
 
                     nn.Conv2d(
@@ -364,4 +362,4 @@ class YOLOv3(nn.Module):
 
         y0 = self.yolo0(x2)
 
-        return x2
+        return y0
