@@ -1,4 +1,9 @@
 {
   "scenarios_dump_dir": "~/tmp/scenarios",
-  "viewer_url": "http://localhost:9090/"
+  "viewer_url": "http://localhost:9090/",
+
+  "perception_device": "cpu",
+  "perception_yolov3_ignore_threshold": 0.7,
+  "perception_yolov3_image_size": 512,
+  "perception_yolov3_classes_count": 10
 }
