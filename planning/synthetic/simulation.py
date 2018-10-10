@@ -223,5 +223,5 @@ class SimulationScenario(Scenario):
     def view(
             self,
     ) -> str:
-        return self._config.get('viewer_url') + \
+        return self._config.get('utils_viewer_url') + \
             'scenarios/planning/synthetic/' + self._id

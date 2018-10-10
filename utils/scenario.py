@@ -77,7 +77,7 @@ class Scenario:
             id: str,
     ) -> str:
         return os.path.join(
-            os.path.expanduser(config.get('scenarios_dump_dir')),
+            os.path.expanduser(config.get('utils_scenarios_dump_dir')),
             id,
         )
 
@@ -96,7 +96,7 @@ class Scenario:
         )
 
         self._dump_dir = os.path.join(
-            os.path.expanduser(config.get('scenarios_dump_dir')),
+            os.path.expanduser(config.get('utils_scenarios_dump_dir')),
             self._id,
         )
 
