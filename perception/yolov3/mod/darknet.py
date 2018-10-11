@@ -107,6 +107,17 @@ predict_image.argtypes = [c_void_p, IMAGE]
 predict_image.restype = POINTER(c_float)
 
 
+def load_meta_chdir(
+        path,
+):
+    cwd = os.getcwd()
+    os.chdir(os.path.join(module_dir, ".."))
+    meta = load_meta(path)
+    os.chdir(cwd)
+
+    return meta
+
+
 def classify(net, meta, im):
     out = predict_image(net, im)
     res = []
@@ -143,8 +154,6 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
 
 
 if __name__ == "__main__":
-    os.chdir(os.path.join(module_dir, ".."))
-
     net = load_net(
         bytes(
             os.path.join(module_dir, "../cfg/yolov3.cfg"),
@@ -156,7 +165,7 @@ if __name__ == "__main__":
         ),
         0,
     )
-    meta = load_meta(
+    meta = load_meta_chdir(
         bytes(
             os.path.join(module_dir, "../cfg/coco.data"),
             encoding='utf-8',
