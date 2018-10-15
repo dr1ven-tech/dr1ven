@@ -12,10 +12,11 @@ class EntityType(enum.Enum):
     CAR = 2
     TRUCK = 3
     MOTORBIKE = 4
-    TRAFFIC_CONE = 5
-    SAFETY_SIGN = 6
-    HUMAN = 7
-    ANIMAL = 8
+    BUS = 5
+    TRAFFIC_CONE = 6
+    SAFETY_SIGN = 7
+    HUMAN = 8
+    ANIMAL = 9
 
 
 class EntityOrientation(enum.Enum):
