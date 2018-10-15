@@ -1,7 +1,9 @@
 from ctypes import Structure
 from ctypes import c_float, c_int, c_char_p, c_void_p, pointer
 from ctypes import POINTER, CDLL, RTLD_GLOBAL
+import cv2
 import os
+import time
 
 
 class BOX(Structure):
@@ -127,7 +129,7 @@ def classify(net, meta, im):
     return res
 
 
-def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
+def detect_from_disk(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
     im = load_image(image, 0, 0)
     num = c_int(0)
     pnum = pointer(num)
@@ -153,7 +155,44 @@ def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
     return res
 
 
+def array_to_image(arr):
+    arr = arr.transpose(2, 0, 1)
+    c = arr.shape[0]
+    h = arr.shape[1]
+    w = arr.shape[2]
+    arr = (arr/255.0).flatten()
+    data = (c_float * len(arr))(*arr)
+    im = IMAGE(w, h, c, data)
+    return im
+
+
+def detect(net, meta, image, thresh=.5, hier_thresh=.5, nms=.45):
+    im = array_to_image(image)
+    num = c_int(0)
+    pnum = pointer(num)
+    predict_image(net, im)
+    dets = get_network_boxes(
+        net, im.w, im.h, thresh, hier_thresh, None, 0, pnum,
+    )
+    num = pnum[0]
+    if (nms):
+        do_nms_obj(dets, num, meta.classes, nms)
+
+    res = []
+    for j in range(num):
+        for i in range(meta.classes):
+            if dets[j].prob[i] > 0:
+                b = dets[j].bbox
+                res.append(
+                    (meta.names[i], dets[j].prob[i], (b.x, b.y, b.w, b.h))
+                )
+    res = sorted(res, key=lambda x: -x[1])
+    free_detections(dets, num)
+    return res
+
+
 if __name__ == "__main__":
+    start = time.time()
     net = load_net(
         bytes(
             os.path.join(module_dir, "../cfg/yolov3.cfg"),
@@ -165,13 +204,19 @@ if __name__ == "__main__":
         ),
         0,
     )
+    print("Network loaded: time={}".format(time.time()-start))
+
+    start = time.time()
     meta = load_meta_chdir(
         bytes(
             os.path.join(module_dir, "../cfg/coco.data"),
             encoding='utf-8',
         ),
     )
-    r = detect(
+    print("Metadata loaded: time={}".format(time.time()-start))
+
+    start = time.time()
+    r = detect_from_disk(
         net,
         meta,
         bytes(
@@ -179,4 +224,18 @@ if __name__ == "__main__":
             encoding='utf-8',
         ),
     )
+    print("Prediction from disk: time={}".format(time.time()-start))
+    print(r)
+
+    start = time.time()
+    image = cv2.imread(os.path.join(module_dir, "../data/dog.jpg"))
+    print("Image loaded: time={}".format(time.time()-start))
+
+    start = time.time()
+    r = detect(
+        net,
+        meta,
+        image,
+    )
+    print("Prediction in-memory: time={}".format(time.time()-start))
     print(r)
