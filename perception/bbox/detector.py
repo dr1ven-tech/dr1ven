@@ -2,6 +2,8 @@ import typing
 
 from state.entity import EntityType
 
+from utils.config import Config
+
 
 class BBox:
     def __init__(
@@ -55,15 +57,12 @@ class BBoxDetector:
     """
     def __init__(
             self,
+            config: Config,
     ) -> None:
         pass
 
-    @staticmethod
-    def expected_image_size(
-    ) -> typing.List[int]:
-        raise Exception("Not implemented")
-
     def detect(
+            self,
             image,
     ) -> typing.List[BBox]:
         raise Exception("Not implemented")

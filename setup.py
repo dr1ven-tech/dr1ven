@@ -6,6 +6,8 @@ setup(
     install_requires=[
     ],
     packages=[
+        'perception.bbox',
+        'perception.bbox.yolov3',
         'planning',
         'planning.agents',
         'planning.synthetic',

@@ -15,7 +15,7 @@ class EntityType(enum.Enum):
     BUS = 5
     TRAFFIC_CONE = 6
     SAFETY_SIGN = 7
-    HUMAN = 8
+    PERSON = 8
     ANIMAL = 9
 
 
