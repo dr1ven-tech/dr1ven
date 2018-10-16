@@ -1,4 +1,3 @@
-import cv2
 import os
 import perception.bbox.yolov3.darknet.python.darknet as darknet
 import typing
@@ -71,8 +70,7 @@ class YOLOv3(BBoxDetector):
                         classes[p[0].decode('utf-8')],
                         p[1],
                         [int(p[2][0]), int(p[2][1])],
-                        int(p[2][2]),
-                        int(p[2][3]),
+                        [int(p[2][2]), int(p[2][3])],
                     )
                 )
 
