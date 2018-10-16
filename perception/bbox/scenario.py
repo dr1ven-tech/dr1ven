@@ -53,6 +53,7 @@ class BBoxScenario(Scenario):
         # TODO(stan): test criteria
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")
+        image_path = os.path.join(self.dump_dir(), "image.png")
 
         Log.out(
             "Dumping Simulation state", {
@@ -63,10 +64,12 @@ class BBoxScenario(Scenario):
         with open(dump_path, 'w') as out:
             json.dump(dump, out, indent=2)
 
+        cv2.imwrite(image_path, self._image)
+
         return True
 
     def view(
             self,
     ) -> str:
         return self._config.get('utils_viewer_url') + \
-            'scenarios/perception.bbox.detector/' + self._id
+            'scenarios/perception.bbox/' + self._id

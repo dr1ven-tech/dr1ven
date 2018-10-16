@@ -1,4 +1,6 @@
 import argparse
+import cv2
+import io
 import json
 import eventlet
 import eventlet.wsgi
@@ -6,6 +8,7 @@ import os
 
 from flask import Flask
 from flask import render_template
+from flask import send_file
 
 from eventlet.green import threading
 
@@ -18,7 +21,7 @@ _config = None
 
 
 @_app.route('/scenarios/planning.synthetic/<scenario>')
-def view_scenarions_planning_synthetic(scenario):
+def view_scenarios_planning_synthetic(scenario):
 
     dump_dir = Scenario.dump_dir_for_id(_config, scenario)
     dump_path = os.path.join(dump_dir, "dump.json")
@@ -30,6 +33,37 @@ def view_scenarions_planning_synthetic(scenario):
             'scenarios_planning_synthetic.html',
             dump=dump,
         )
+
+
+@_app.route('/scenarios/perception.bbox/<scenario>')
+def view_scenarios_perception_bbox(scenario):
+
+    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
+    dump_path = os.path.join(dump_dir, "dump.json")
+
+    with open(dump_path) as f:
+        dump = json.load(f)
+
+        return render_template(
+            'scenarios_perception_bbox.html',
+            dump=dump,
+        )
+
+
+@_app.route('/scenarios/perception.bbox/<scenario>/image')
+def view_scenarios_perception_bbox_images(scenario):
+
+    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
+    image_path = os.path.join(dump_dir, "image.png")
+
+    image = cv2.imread(image_path)
+    _, encoded = cv2.imencode('.png', image)
+
+    return send_file(
+        io.BytesIO(encoded.tobytes()),
+        attachment_filename='image.png',
+        mimetype='image/png',
+    )
 
 
 def run_server():

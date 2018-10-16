@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>Perception BBox Scenario Viewer</title>
+    <style>
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+        color: white;
+        font-family: sans-serif;
+      }
+
+      #ground_truth .image {
+        background-size: contain;
+        position: absolute;
+        width: 640px;
+        left: 100px;
+        top: 100px;
+      }
+
+      #detection .image {
+        background-size: contain;
+        position: absolute;
+        width: 640px;
+        left: 790px;
+        top: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ground_truth">
+      <div class="image">
+      <canvas></canvas>
+    </div>
+
+    <div id="detection">
+      <div class="image">
+      <canvas></canvas>
+    </div>
+
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script type="module">
+      var dump = JSON.parse('{{dump | tojson | safe}}');
+      console.log(dump)
+
+      var preload = new Image();
+      $(preload).on('load', () => {
+        var width = 640
+        var height = preload.height * 640 / preload.width
+
+        // Load the image.
+        $('.image').css({
+          'background-image': 'url(' + $(location).attr("href") + '/image' + ')',
+          'width': width,
+          'height': height
+        })
+
+        // Draw the bounding boxes.
+      }).attr({
+        src: $(location).attr("href") + '/image'
+      });
+    </script>
+  </body>
+</html>
