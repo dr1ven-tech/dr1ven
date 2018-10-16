@@ -17,7 +17,7 @@ _app = Flask(__name__)
 _config = None
 
 
-@_app.route('/scenarios/planning.synthetic.simulation/<scenario>')
+@_app.route('/scenarios/planning.synthetic/<scenario>')
 def view_scenarions_planning_synthetic(scenario):
 
     dump_dir = Scenario.dump_dir_for_id(_config, scenario)
@@ -27,7 +27,7 @@ def view_scenarions_planning_synthetic(scenario):
         dump = json.load(f)
 
         return render_template(
-            'scenarios_planning_synthetic_simulation.html',
+            'scenarios_planning_synthetic.html',
             dump=dump,
         )
 
