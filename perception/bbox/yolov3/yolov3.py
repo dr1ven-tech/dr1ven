@@ -78,17 +78,17 @@ class YOLOv3(BBoxDetector):
 
 
 # def main():
+#     image = cv2.imread(
+#         "/home/spolu/scenarios/perception.bbox.detector/20181012_A6.png",
+#     )
+#     assert image is not None
+#
 #     yolov3 = YOLOv3(None)
 #
-#     darknet_dir = os.path.join(
-#         os.path.dirname(os.path.abspath(os.path.realpath(__file__))),
-#         "darknet",
-#     )
-#
-#     image = cv2.imread(os.path.join(darknet_dir, "data", "dog.jpg"))
 #     boxes = yolov3.detect(image)
 #
-#     print("{}".format(boxes))
+#     for b in boxes:
+#         print("{}".format(dict(b)))
 #
 #     import pdb
 #     pdb.set_trace()

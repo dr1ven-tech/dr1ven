@@ -3,7 +3,6 @@ import typing
 from state.entity import EntityType
 
 from utils.config import Config
-from utils.scenario import Scenario, ScenarioSpec
 
 
 class BBox:
@@ -43,6 +42,14 @@ class BBox:
     ) -> int:
         return self._shape
 
+    def __iter__(
+            self,
+    ):
+        yield 'type', self._type.value
+        yield 'confidence', self._confidence
+        yield 'position', self._position
+        yield 'shape', self._shape
+
     @staticmethod
     def from_dict(
             spec,
@@ -72,26 +79,3 @@ class BBoxDetector:
             image,
     ) -> typing.List[BBox]:
         raise Exception("Not implemented")
-
-
-class BBoxDetectorScenario(Scenario):
-    def __init__(
-            self,
-            config: Config,
-            spec: ScenarioSpec,
-    ) -> None:
-        super(BBoxDetectorScenario, self).__init__(
-            config,
-            spec,
-        )
-
-    def run(
-            self,
-    ) -> bool:
-        return True
-
-    def view(
-            self,
-    ) -> str:
-        return self._config.get('utils_viewer_url') + \
-            'scenarios/perception.bbox.detector/' + self._id

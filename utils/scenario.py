@@ -11,13 +11,20 @@ from utils.log import Log
 class ScenarioSpec:
     def __init__(
             self,
+            path: str,
             module: str,
             type: str,
             data,
     ) -> None:
+        self._path = path
         self._module = module
         self._type = type
         self._data = data
+
+    def path(
+            self,
+    ) -> str:
+        return self._path
 
     def module(
             self,
@@ -44,9 +51,11 @@ class ScenarioSpec:
 
     @staticmethod
     def from_dict(
+            path: str,
             spec,
     ):
         return ScenarioSpec(
+            path,
             spec['module'],
             spec['type'],
             spec['data'],
@@ -57,7 +66,7 @@ class ScenarioSpec:
             path: str,
     ):
         with open(path) as f:
-            return ScenarioSpec.from_dict(json.load(f))
+            return ScenarioSpec.from_dict(path, json.load(f))
 
 
 class Scenario:

@@ -31,6 +31,7 @@ setup(
         'console_scripts': [
             'run_scenario=utils.scenario:run',
             'viewer=utils.viewer.viewer:main',
+            'test_yolov3=perception.bbox.yolov3.yolov3:main',
         ],
     },
 )
