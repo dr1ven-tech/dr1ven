@@ -69,7 +69,7 @@ class YOLOv3(BBoxDetector):
                     BBox(
                         classes[p[0].decode('utf-8')],
                         p[1],
-                        [int(p[2][0]), int(p[2][1])],
+                        [int(p[2][0]-p[2][2]/2), int(p[2][1]-p[2][3]/2)],
                         [int(p[2][2]), int(p[2][3])],
                     )
                 )

@@ -13,43 +13,36 @@
         font-family: sans-serif;
       }
 
-      #ground_truth .image {
+      .image {
         background-size: contain;
         position: absolute;
         width: 640px;
         left: 100px;
         top: 100px;
       }
-
-      #detection .image {
-        background-size: contain;
+      canvas {
         position: absolute;
-        width: 640px;
-        left: 790px;
+        left: 100px;
         top: 100px;
+        z-index: 10;
       }
     </style>
   </head>
   <body>
-    <div id="ground_truth">
-      <div class="image">
-      <canvas></canvas>
-    </div>
-
-    <div id="detection">
-      <div class="image">
-      <canvas></canvas>
-    </div>
+    <div class="image"></div>
+    <canvas width="1000" height="1000"></canvas>
 
     <script src="/static/js/jquery-3.3.1.min.js"></script>
     <script type="module">
       var dump = JSON.parse('{{dump | tojson | safe}}');
-      console.log(dump)
 
       var preload = new Image();
       $(preload).on('load', () => {
+        var bx = 608 / preload.width
+        var by = 608 / preload.height
+        var scale = 640 / preload.width
         var width = 640
-        var height = preload.height * 640 / preload.width
+        var height = Math.floor(preload.height * scale)
 
         // Load the image.
         $('.image').css({
@@ -59,6 +52,29 @@
         })
 
         // Draw the bounding boxes.
+        var ctx = $('canvas')[0].getContext('2d')
+
+        ctx.lineWidth = 1
+        ctx.strokeStyle = '#00ff00'
+
+        dump['detected'].forEach((b) => {
+          ctx.strokeRect(
+            Math.floor(b['position'][0] * scale),
+            Math.floor(b['position'][1] * scale),
+            Math.floor(b['shape'][0] * scale),
+            Math.floor(b['shape'][1] * scale)
+          )
+        })
+
+        ctx.strokeStyle = '#0000ff'
+        dump['ground_truth'].forEach((b) => {
+          ctx.strokeRect(
+            Math.floor(b['position'][0] * scale),
+            Math.floor(b['position'][1] * scale),
+            Math.floor(b['shape'][0] * scale),
+            Math.floor(b['shape'][1] * scale)
+          )
+        })
       }).attr({
         src: $(location).attr("href") + '/image'
       });
