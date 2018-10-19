@@ -1,6 +1,6 @@
 {
   "utils_scenarios_dump_dir": "~/tmp/scenarios",
-  "utils_viewer_url": "http://localhost:9090/",
+  "utils_viewer_url": "http://localhost:5000/",
 
   "perception_device": "cpu",
   "perception_yolov3_ignore_threshold": 0.7,

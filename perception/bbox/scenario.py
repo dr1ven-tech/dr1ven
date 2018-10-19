@@ -56,7 +56,7 @@ class BBoxScenario(Scenario):
         image_path = os.path.join(self.dump_dir(), "image.png")
 
         Log.out(
-            "Dumping Simulation state", {
+            "Dumping detection", {
                 'path': dump_path,
             })
 
