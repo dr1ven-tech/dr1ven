@@ -111,7 +111,7 @@ def view_scenarios_perception_stereo(scenario):
 @_app.route('/scenarios/perception.stereo/<scenario>/images/<side>')
 def view_scenarios_perception_stereo_images(scenario, side):
 
-    if side not in ['left', 'right']:
+    if side not in ['left', 'right', 'disparity']:
         abort(400)
 
     dump_dir = Scenario.dump_dir_for_id(_config, scenario)
