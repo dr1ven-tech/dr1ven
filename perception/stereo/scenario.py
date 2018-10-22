@@ -44,22 +44,22 @@ class StereoScenario(Scenario):
             [0, 0, 1],
         ])
 
-    def white_lane_filter(
+    def detect_white_lines(
             self,
             image,
     ):
         mask = cv2.cvtColor(image, cv2.COLOR_BGR2HLS)
         mask = cv2.inRange(
-            mask, np.array([0, 160, 0]), np.array([255, 255, 255]),
+            mask, np.array([0, 130, 0]), np.array([255, 255, 255]),
         )
 
         mask[0:int(mask.shape[0]/2), :] = 0
 
         image = cv2.bitwise_and(image, image, mask=mask)
-        image = cv2.GaussianBlur(image, (25, 25), 0)
+        filtered = cv2.GaussianBlur(image, (25, 25), 0)
 
         edges = cv2.Canny(
-            image.astype(np.uint8), 100, 150, apertureSize=3,
+            filtered.astype(np.uint8), 100, 150, apertureSize=3,
         )
 
         # lines = cv2.HoughLinesP(edges, 1, np.pi / 180, 80, 30, 10)
@@ -112,13 +112,7 @@ class StereoScenario(Scenario):
                 sorted(selected_lines, key=lambda l: abs(l[2]))
         ))[0:2]
 
-        for l in final_lines:
-            if l[2] >= 0:
-                cv2.line(image, l[0], l[1], (0, 0, 255), 2)
-            else:
-                cv2.line(image, l[0], l[1], (255, 0, 0), 2)
-
-        return image
+        return final_lines, filtered
 
     def red_blue_color_filter(
             self,
@@ -182,25 +176,11 @@ class StereoScenario(Scenario):
 
     def stereo_rectify(
             self,
+            left,
+            right,
+            pts1,
+            pts2,
     ):
-        left = self._left
-        right = self._right
-
-        good, pts1, pts2 = self.extract_orb_matches()
-
-        for p in pts1:
-            left = cv2.rectangle(
-                left,
-                tuple(p-np.array([5, 5])), tuple(p+np.array([5, 5])),
-                (0, 255, 0), 1,
-            )
-        for p in pts2:
-            right = cv2.rectangle(
-                right,
-                tuple(p-np.array([5, 5])), tuple(p+np.array([5, 5])),
-                (0, 255, 0), 1,
-            )
-
         E, mask = cv2.findEssentialMat(
             pts1, pts2, self._A, method=cv2.LMEDS, prob=0.9
         )
@@ -241,12 +221,40 @@ class StereoScenario(Scenario):
     ) -> bool:
         dump_path = os.path.join(self.dump_dir(), "dump.json")
 
-        left = self.white_lane_filter(self._left)
-        right = self.white_lane_filter(self._right)
+        left = self._left
+        right = self._right
 
-        # left, right = self.stereo_rectify()
-        # left = self._left
-        # right = self._right
+        left_lines, _ = self.detect_white_lines(self._left)
+        right_lines, _ = self.detect_white_lines(self._right)
+
+        good, pts1, pts2 = self.extract_orb_matches()
+
+        for p in pts1:
+            left = cv2.rectangle(
+                left,
+                tuple(p-np.array([5, 5])), tuple(p+np.array([5, 5])),
+                (0, 255, 0), 1,
+            )
+        for p in pts2:
+            right = cv2.rectangle(
+                right,
+                tuple(p-np.array([5, 5])), tuple(p+np.array([5, 5])),
+                (0, 255, 0), 1,
+            )
+
+        for l in left_lines:
+            if l[2] >= 0:
+                cv2.line(left, l[0], l[1], (0, 0, 255), 2)
+            else:
+                cv2.line(left, l[0], l[1], (255, 0, 0), 2)
+
+        for l in right_lines:
+            if l[2] >= 0:
+                cv2.line(right, l[0], l[1], (0, 0, 255), 2)
+            else:
+                cv2.line(right, l[0], l[1], (255, 0, 0), 2)
+
+        # left, right = self.stereo_rectify(left, right, pts1, pts2)
 
         # T = np.float32([[1, 0, 360], [0, 1, 0]])
         # left = cv2.warpAffine(left, T, (3840, 2160))
