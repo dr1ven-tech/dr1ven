@@ -31,9 +31,6 @@ class StereoScenario(Scenario):
             ),
         )
 
-        self._left_size = (self._left.shape[0], self._left.shape[1])
-        self._right_size = (self._right.shape[0], self._right.shape[1])
-
         self._f = spec.data()['camera']['f']
         self._c_x = spec.data()['camera']['c_x']
         self._c_y = spec.data()['camera']['c_y']
@@ -44,7 +41,7 @@ class StereoScenario(Scenario):
             [0, 0, 1],
         ])
 
-    def detect_white_lines(
+    def detect_straight_lines(
             self,
             image,
     ):
@@ -138,10 +135,18 @@ class StereoScenario(Scenario):
 
     def extract_orb_matches(
             self,
+            left,
+            right,
     ):
         orb = cv2.ORB_create()
-        kp1, des1 = orb.detectAndCompute(self._left, None)
-        kp2, des2 = orb.detectAndCompute(self._right, None)
+        kp1, des1 = orb.detectAndCompute(
+            cv2.cvtColor(left, cv2.COLOR_BGR2GRAY),
+            None,
+        )
+        kp2, des2 = orb.detectAndCompute(
+            cv2.cvtColor(right, cv2.COLOR_BGR2GRAY),
+            None,
+        )
 
         bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         matches = bf.match(des1, des2)
@@ -174,6 +179,58 @@ class StereoScenario(Scenario):
 
         return good, pts1, pts2
 
+    def extract_sift_matches(
+            self,
+            left,
+            right,
+    ):
+        sift = cv2.xfeatures2d.SIFT_create()
+
+        kp1, des1 = sift.detectAndCompute(
+            cv2.cvtColor(left, cv2.COLOR_BGR2GRAY),
+            None,
+        )
+        kp2, des2 = sift.detectAndCompute(
+            cv2.cvtColor(right, cv2.COLOR_BGR2GRAY),
+            None,
+        )
+
+        bf = cv2.BFMatcher(cv2.NORM_L2)
+        matches = bf.knnMatch(des1, des2, k=2)
+
+        dxs = [
+            (kp1[m.queryIdx].pt[0] - kp2[m.trainIdx].pt[0]) for m, _ in matches
+        ]
+        dxm = np.median(dxs)
+        dys = [
+            (kp1[m.queryIdx].pt[1] - kp2[m.trainIdx].pt[1]) for m, _ in matches
+        ]
+        dym = np.median(dys)
+
+        good = []
+        pts1 = []
+        pts2 = []
+        for i, (m, n) in enumerate(matches):
+            ddx = np.abs(dxs[i] - dxm) / np.abs(dxm)
+            ddy = np.abs(dys[i] - dym) / np.abs(dym)
+            if m.distance < 0.75*n.distance and ddx < 0.2 and ddy < 0.2:
+                good.append(m)
+                pts2.append(kp2[m.trainIdx].pt)
+                pts1.append(kp1[m.queryIdx].pt)
+
+        # match = cv2.drawMatchesKnn(
+        #     left, kp1,
+        #     right, kp2,
+        #     good,
+        #     None,
+        #     flags=2,
+        # )
+
+        pts1 = np.array(pts1)
+        pts2 = np.array(pts2)
+
+        return good, pts1, pts2
+
     def stereo_rectify(
             self,
             left,
@@ -182,39 +239,52 @@ class StereoScenario(Scenario):
             pts2,
     ):
         E, mask = cv2.findEssentialMat(
-            pts1, pts2, self._A, method=cv2.LMEDS, prob=0.9
+            pts1, pts2, self._A, method=cv2.RANSAC,
         )
 
-        _, r, t, mask = cv2.recoverPose(E, pts1, pts2, self._A)
+        fpts1 = pts1[mask.ravel() == 1]
+        fpts2 = pts2[mask.ravel() == 1]
+
+        _, r, t, mask = cv2.recoverPose(E, fpts1, fpts2, self._A)
         # r1, r2, t = cv2.decomposeEssentialMat(E)
 
         R1, R2, P1, P2, Q, _, _ = cv2.stereoRectify(
-            self._A, np.zeros(5),
-            self._A, np.zeros(5),
-            self._left_size,
+            self._A, np.zeros(4),
+            self._A, np.zeros(4),
+            (left.shape[1], left.shape[0]),
             r, t,
-            newImageSize=self._left_size,
+            # newImageSize=(left.shape[1], left.shape[0]),
             flags=cv2.CALIB_ZERO_DISPARITY,
-            alpha=0.4,
         )
 
-        map11, map12 = cv2.initUndistortRectifyMap(
-            self._A, np.zeros(5),
+        # import pdb; pdb.set_trace()
+
+        map1x, map1y = cv2.initUndistortRectifyMap(
+            self._A, np.zeros(4),
             R1, P1,
-            self._left_size,
-            cv2.CV_16SC2,
+            (left.shape[1], left.shape[0]),
+            cv2.CV_32FC1,
         )
-        map21, map22 = cv2.initUndistortRectifyMap(
-            self._A, np.zeros(5),
+        map2x, map2y = cv2.initUndistortRectifyMap(
+            self._A, np.zeros(4),
             R2, P2,
-            self._left_size,
-            cv2.CV_16SC2,
+            (left.shape[1], left.shape[0]),
+            cv2.CV_32FC1,
         )
 
-        left = cv2.remap(left, map11, map12, cv2.INTER_LINEAR)
-        right = cv2.remap(right, map21, map22, cv2.INTER_LINEAR)
+        # import pdb; pdb.set_trace()
 
-        return left, right
+        left = cv2.remap(left, map1x, map1y, cv2.INTER_LINEAR)
+        right = cv2.remap(right, map2x, map2y, cv2.INTER_LINEAR)
+
+        rpts1 = cv2.undistortPoints(
+            np.expand_dims(fpts1, 1), self._A, np.zeros(4), R=R1, P=P1,
+        ).squeeze(1)
+        rpts2 = cv2.undistortPoints(
+            np.expand_dims(fpts2, 1), self._A, np.zeros(4), R=R2, P=P2,
+        ).squeeze(1)
+
+        return left, right, fpts1, fpts2, rpts1, rpts2
 
     def run(
             self,
@@ -224,37 +294,42 @@ class StereoScenario(Scenario):
         left = self._left
         right = self._right
 
-        left_lines, _ = self.detect_white_lines(self._left)
-        right_lines, _ = self.detect_white_lines(self._right)
+        # left_lines, _ = self.detect_straight_lines(self._left)
+        # right_lines, _ = self.detect_straight_lines(self._right)
 
-        good, pts1, pts2 = self.extract_orb_matches()
+        # good, pts1, pts2 = self.extract_orb_matches(left, right)
+        good, pts1, pts2 = self.extract_sift_matches(left, right)
 
-        for p in pts1:
+        # for l in left_lines:
+        #     if l[2] >= 0:
+        #         cv2.line(left, l[0], l[1], (0, 0, 255), 2)
+        #     else:
+        #         cv2.line(left, l[0], l[1], (255, 0, 0), 2)
+
+        # for l in right_lines:
+        #     if l[2] >= 0:
+        #         cv2.line(right, l[0], l[1], (0, 0, 255), 2)
+        #     else:
+        #         cv2.line(right, l[0], l[1], (255, 0, 0), 2)
+
+        left, right, fpts1, fpts2, rpts1, rpts2 = self.stereo_rectify(
+            left, right, pts1, pts2,
+        )
+
+        for p in rpts1:
             left = cv2.rectangle(
                 left,
-                tuple(p-np.array([5, 5])), tuple(p+np.array([5, 5])),
+                tuple(np.uint(p-np.array([5, 5]))),
+                tuple(np.uint(p+np.array([5, 5]))),
                 (0, 255, 0), 1,
             )
-        for p in pts2:
+        for p in rpts2:
             right = cv2.rectangle(
                 right,
-                tuple(p-np.array([5, 5])), tuple(p+np.array([5, 5])),
+                tuple(np.uint(p-np.array([5, 5]))),
+                tuple(np.uint(p+np.array([5, 5]))),
                 (0, 255, 0), 1,
             )
-
-        for l in left_lines:
-            if l[2] >= 0:
-                cv2.line(left, l[0], l[1], (0, 0, 255), 2)
-            else:
-                cv2.line(left, l[0], l[1], (255, 0, 0), 2)
-
-        for l in right_lines:
-            if l[2] >= 0:
-                cv2.line(right, l[0], l[1], (0, 0, 255), 2)
-            else:
-                cv2.line(right, l[0], l[1], (255, 0, 0), 2)
-
-        # left, right = self.stereo_rectify(left, right, pts1, pts2)
 
         # T = np.float32([[1, 0, 360], [0, 1, 0]])
         # left = cv2.warpAffine(left, T, (3840, 2160))
