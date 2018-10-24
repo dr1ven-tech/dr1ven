@@ -226,8 +226,8 @@ class StereoScenario(Scenario):
         #     flags=2,
         # )
 
-        pts1 = np.array(pts1)
-        pts2 = np.array(pts2)
+        pts1 = np.int32(pts1)
+        pts2 = np.int32(pts2)
 
         return good, pts1, pts2
 
@@ -278,13 +278,15 @@ class StereoScenario(Scenario):
         right = cv2.remap(right, map2x, map2y, cv2.INTER_LINEAR)
 
         rpts1 = cv2.undistortPoints(
-            np.expand_dims(fpts1, 1), self._A, np.zeros(4), R=R1, P=P1,
+            np.float64(np.expand_dims(fpts1, 1)),
+            self._A, np.zeros(4), R=R1, P=P1,
         ).squeeze(1)
         rpts2 = cv2.undistortPoints(
-            np.expand_dims(fpts2, 1), self._A, np.zeros(4), R=R2, P=P2,
+            np.float64(np.expand_dims(fpts2, 1)),
+            self._A, np.zeros(4), R=R2, P=P2,
         ).squeeze(1)
 
-        return left, right, fpts1, fpts2, rpts1, rpts2
+        return left, right, fpts1, fpts2, rpts1, rpts2, Q
 
     def run(
             self,
@@ -294,11 +296,37 @@ class StereoScenario(Scenario):
         left = self._left
         right = self._right
 
-        # left_lines, _ = self.detect_straight_lines(self._left)
-        # right_lines, _ = self.detect_straight_lines(self._right)
-
         # good, pts1, pts2 = self.extract_orb_matches(left, right)
         good, pts1, pts2 = self.extract_sift_matches(left, right)
+
+        left, right, fpts1, fpts2, rpts1, rpts2, Q = self.stereo_rectify(
+            left, right, pts1, pts2,
+        )
+
+        for p in rpts1:
+            left = cv2.rectangle(
+                left,
+                tuple(np.int64(p-np.array([5, 5]))),
+                tuple(np.int64(p+np.array([5, 5]))),
+                (0, 255, 0), 1,
+            )
+        for p in rpts2:
+            right = cv2.rectangle(
+                right,
+                tuple(np.int64(p-np.array([5, 5]))),
+                tuple(np.int64(p+np.array([5, 5]))),
+                (0, 255, 0), 1,
+            )
+
+        for i in range(len(rpts1)):
+            z = self._f / abs(rpts1[i][0] - rpts2[i][0])
+            left = cv2.putText(
+                left, "{}".format(z),
+                (int(rpts1[i][0]), int(rpts1[i][1])), 1, 1, (255, 0, 0), 2, 0,
+            )
+
+        # left_lines, _ = self.detect_straight_lines(left)
+        # right_lines, _ = self.detect_straight_lines(right)
 
         # for l in left_lines:
         #     if l[2] >= 0:
@@ -311,25 +339,6 @@ class StereoScenario(Scenario):
         #         cv2.line(right, l[0], l[1], (0, 0, 255), 2)
         #     else:
         #         cv2.line(right, l[0], l[1], (255, 0, 0), 2)
-
-        left, right, fpts1, fpts2, rpts1, rpts2 = self.stereo_rectify(
-            left, right, pts1, pts2,
-        )
-
-        for p in rpts1:
-            left = cv2.rectangle(
-                left,
-                tuple(np.uint(p-np.array([5, 5]))),
-                tuple(np.uint(p+np.array([5, 5]))),
-                (0, 255, 0), 1,
-            )
-        for p in rpts2:
-            right = cv2.rectangle(
-                right,
-                tuple(np.uint(p-np.array([5, 5]))),
-                tuple(np.uint(p+np.array([5, 5]))),
-                (0, 255, 0), 1,
-            )
 
         # T = np.float32([[1, 0, 360], [0, 1, 0]])
         # left = cv2.warpAffine(left, T, (3840, 2160))
