@@ -89,6 +89,45 @@ def view_scenarios_perception_bbox_image(scenario):
 
 
 #
+# perception.lane
+#
+
+
+@_app.route('/scenarios/perception.lane/<scenario>')
+def view_scenarios_perception_lane(scenario):
+
+    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
+    dump_path = os.path.join(dump_dir, "dump.json")
+
+    with open(dump_path) as f:
+        dump = json.load(f)
+
+        return render_template(
+            'scenarios_perception_lane.html',
+            dump=dump,
+        )
+
+
+@_app.route('/scenarios/perception.lane/<scenario>/images/<type>')
+def view_scenarios_perception_lane_images(scenario, type):
+
+    if type not in ['input', 'mask', 'resized']:
+        abort(400)
+
+    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
+    image_path = os.path.join(dump_dir, type + ".png")
+
+    image = cv2.imread(image_path)
+    _, encoded = cv2.imencode('.png', image)
+
+    return send_file(
+        io.BytesIO(encoded.tobytes()),
+        attachment_filename=type + ".png",
+        mimetype='image/png',
+    )
+
+
+#
 # perception.stereo
 #
 

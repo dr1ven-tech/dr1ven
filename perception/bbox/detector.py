@@ -63,7 +63,7 @@ class BBox:
 
 
 class BBoxDetector:
-    """ `Detector` is the interface for generic bounding box detection.
+    """ `BBoxDetector` is the interface for generic bounding box detection.
 
     Instantiating a detector might be a lengthy process as we're probably
     loading some pre-trained weights, etc...
