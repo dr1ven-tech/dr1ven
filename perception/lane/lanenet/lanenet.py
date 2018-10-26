@@ -72,7 +72,7 @@ class LaneNet(LaneDetector):
 
     def detect(
             self,
-            image,
+            image: np.ndarray,
     ) -> typing.List[Lane]:
         assert self._closed is False
         assert image.shape[2] == 3

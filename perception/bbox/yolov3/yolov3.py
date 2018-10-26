@@ -1,3 +1,4 @@
+import numpy as np
 import os
 import perception.bbox.yolov3.darknet.python.darknet as darknet
 import typing
@@ -41,7 +42,7 @@ class YOLOv3(BBoxDetector):
 
     def detect(
             self,
-            image,
+            image: np.ndarray,
     ) -> typing.List[BBox]:
         assert self._closed is False
         assert image.shape[2] == 3

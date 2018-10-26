@@ -1,3 +1,4 @@
+import numpy as np
 import typing
 
 from utils.config import Config
@@ -59,6 +60,6 @@ class LaneDetector:
 
     def detect(
             self,
-            image,
+            image: np.ndarray,
     ) -> typing.List[Lane]:
         raise Exception("Not implemented")

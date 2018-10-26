@@ -1,3 +1,4 @@
+import numpy as np
 import typing
 
 from state.entity import EntityType
@@ -81,6 +82,6 @@ class BBoxDetector:
 
     def detect(
             self,
-            image,
+            image: np.ndarray,
     ) -> typing.List[BBox]:
         raise Exception("Not implemented")
