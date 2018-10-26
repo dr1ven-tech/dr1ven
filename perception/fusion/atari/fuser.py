@@ -1,4 +1,5 @@
 import numpy as np
+import time
 import typing
 
 from perception.bbox.detector import BBox
@@ -22,14 +23,14 @@ class AtariFuser:
 
     def fuse(
             self,
-            time: float,
+            now: float,
             front_camera: np.ndarray,
     ) -> (Highway, typing.List[BBox], typing.List[Lane]):
         start = time.time()
         boxes = self._bbox_detector.detect(front_camera)
         Log.out(
             "Boxes detected", {
-                'time': time,
+                'now': now,
                 'count': len(boxes),
                 'processing_time': (time.time() - start),
             })
@@ -38,7 +39,7 @@ class AtariFuser:
         lanes = self._lane_detector.detect(front_camera)
         Log.out(
             "Lanes detected", {
-                'time': time,
+                'now': now,
                 'count': len(lanes),
                 'processing_time': (time.time() - start),
             })
