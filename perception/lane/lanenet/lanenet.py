@@ -150,9 +150,7 @@ class LaneNet(LaneDetector):
             sign = None
             for p in reversed(range(len(raw[0]))):
                 for l in range(len(raw)):
-                    x = raw[l][p][0]
-                    if x >= 0 and x <= image.shape[1]:
-                        filtered[l].append(raw[l][p])
+                    filtered[l].append(raw[l][p])
                 cur = np.sign([raw[0][p][0] - l[p][0] for l in raw])
                 if sign is None:
                     sign = cur
