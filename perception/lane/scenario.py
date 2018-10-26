@@ -1,6 +1,5 @@
 import cv2
 import json
-import numpy as np
 import os
 
 from perception.lane.lanenet.lanenet import LaneNet
@@ -46,16 +45,6 @@ class LaneScenario(Scenario):
         }
 
         assert len(lanes) > 1
-
-        # image = self._image
-        # for l in lanes:
-        #     for p in l.coordinates():
-        #         image = cv2.rectangle(
-        #             image,
-        #             tuple(np.int64(p-np.array([2, 2]))),
-        #             tuple(np.int64(p+np.array([2, 2]))),
-        #             (255, 0, 0), 2,
-        #         )
 
         # TODO(stan): test criteria
 

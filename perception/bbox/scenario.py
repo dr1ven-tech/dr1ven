@@ -2,7 +2,6 @@ import cv2
 import json
 import os
 
-from perception.bbox.detector import BBox
 from perception.bbox.yolov3.yolov3 import YOLOv3
 
 from utils.config import Config
@@ -20,10 +19,6 @@ class BBoxScenario(Scenario):
             config,
             spec,
         )
-
-        self._ground_truth = []
-        for b in spec.data()['ground_truth']:
-            self._ground_truth.append(BBox.from_dict(b))
 
         Log.out(
             "Initializing detector", {
@@ -43,10 +38,12 @@ class BBoxScenario(Scenario):
     def run(
             self,
     ) -> bool:
-        boxes = self._detector.detect(self._image)
+        image = cv2.resize(
+            self._image, (640, 360), interpolation=cv2.INTER_LINEAR,
+        )
+        boxes = self._detector.detect(image)
 
         dump = {
-            'ground_truth': [dict(b) for b in self._ground_truth],
             'detected': [dict(b) for b in boxes],
         }
 
@@ -64,7 +61,7 @@ class BBoxScenario(Scenario):
         with open(dump_path, 'w') as out:
             json.dump(dump, out, indent=2)
 
-        cv2.imwrite(image_path, self._image)
+        cv2.imwrite(image_path, image)
 
         return True
 
