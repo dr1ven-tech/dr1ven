@@ -3,7 +3,6 @@ import json
 import numpy as np
 import os
 
-from perception.lane.detector import Lane
 from perception.lane.lanenet.lanenet import LaneNet
 
 from utils.config import Config
@@ -40,31 +39,28 @@ class LaneScenario(Scenario):
     def run(
             self,
     ) -> bool:
-        resized = cv2.resize(
-            self._image, (512, 256), interpolation=cv2.INTER_LINEAR,
-        )
-
         lanes = self._detector.detect(self._image)
 
         dump = {
             'detected': [dict(l) for l in lanes],
         }
 
-        image = self._image
-        for l in lanes:
-            for p in l.coordinates():
-                image = cv2.rectangle(
-                    image,
-                    tuple(np.int64(p-np.array([1, 1]))),
-                    tuple(np.int64(p+np.array([1, 1]))),
-                    (0, 255, 0), 1,
-                )
+        assert len(lanes) > 1
+
+        # image = self._image
+        # for l in lanes:
+        #     for p in l.coordinates():
+        #         image = cv2.rectangle(
+        #             image,
+        #             tuple(np.int64(p-np.array([2, 2]))),
+        #             tuple(np.int64(p+np.array([2, 2]))),
+        #             (255, 0, 0), 2,
+        #         )
 
         # TODO(stan): test criteria
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")
         image_path = os.path.join(self.dump_dir(), "image.png")
-        resized_path = os.path.join(self.dump_dir(), "resized.png")
 
         Log.out(
             "Dumping detection", {
@@ -75,8 +71,7 @@ class LaneScenario(Scenario):
         with open(dump_path, 'w') as out:
             json.dump(dump, out, indent=2)
 
-        cv2.imwrite(image_path, image)
-        cv2.imwrite(resized_path, resized)
+        cv2.imwrite(image_path, self._image)
 
         return True
 

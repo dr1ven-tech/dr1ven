@@ -2,7 +2,7 @@
   "utils_scenarios_dump_dir": "~/tmp/scenarios",
   "utils_viewer_url": "http://localhost:5000/",
 
-  "perception_device": "cpu",
+  "perception_device": "cuda:0",
   "perception_yolov3_ignore_threshold": 0.7,
   "perception_yolov3_image_size": 512,
   "perception_yolov3_classes_count": 10

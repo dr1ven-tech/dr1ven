@@ -40,10 +40,10 @@ class LaneNet(LaneDetector):
 
         self._saver = tf.train.Saver()
 
-        # if config.get("perception_device") == "cpu":
-        sess_config = tf.ConfigProto(device_count={'GPU': 1})
-        # else:
-        #     sess_config = tf.ConfigProto(device_count={'GPU': 1})
+        if config.get("perception_device") == "cpu":
+            sess_config = tf.ConfigProto(device_count={'CPU': 1})
+        else:
+            sess_config = tf.ConfigProto(device_count={'GPU': 1})
 
         sess_config.gpu_options.per_process_gpu_memory_fraction = \
             CFG.TEST.GPU_MEMORY_FRACTION
@@ -124,13 +124,35 @@ class LaneNet(LaneDetector):
             for index, i in enumerate(cluster_index):
                 idx = np.where(labels == i)
                 points = np.flip(lane_coordinate[idx], axis=1)
-                points = np.multiply(
-                    points,
-                    [image.shape[1] / 512, image.shape[0] / 256],
+
+                x = np.float64(points)[:, 0]
+                y = np.float64(points)[:, 1]
+
+                # Y = np.ones((y.size, 3))
+                # Y[:, 0] = y*y
+                # Y[:, 1] = y
+
+                Y = np.ones((y.size, 2))
+                Y[:, 0] = y
+
+                w = np.dot(
+                    np.linalg.inv(np.dot(np.transpose(Y), Y)),
+                    np.dot(np.transpose(Y), x),
                 )
 
+                coordinates = []
+                for y in range(256):
+                    y = float(y)
+                    # v = np.float64([y*y, y, 1])
+                    v = np.float64([y, 1])
+                    x = np.dot(w, v)
+                    coordinates.append([
+                        int(round(x * image.shape[1] / 512)),
+                        int(round(y * image.shape[0] / 256)),
+                    ])
+
                 lanes.append(
-                    Lane(points.tolist()),
+                    Lane(coordinates),
                 )
 
         return lanes

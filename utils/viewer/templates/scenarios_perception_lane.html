@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset=utf-8>
-    <title>Perception BBox Scenario Viewer</title>
+    <title>Perception Lane Scenario Viewer</title>
     <style>
       body {
         margin: 0;
@@ -53,25 +53,16 @@
         var ctx = $('canvas')[0].getContext('2d')
 
         ctx.lineWidth = 1
-        ctx.strokeStyle = '#00ff00'
-
-        dump['detected'].forEach((b) => {
-          ctx.strokeRect(
-            Math.floor(b['position'][0] * scale),
-            Math.floor(b['position'][1] * scale),
-            Math.floor(b['shape'][0] * scale),
-            Math.floor(b['shape'][1] * scale)
-          )
-        })
-
         ctx.strokeStyle = '#0000ff'
-        dump['ground_truth'].forEach((b) => {
-          ctx.strokeRect(
-            Math.floor(b['position'][0] * scale),
-            Math.floor(b['position'][1] * scale),
-            Math.floor(b['shape'][0] * scale),
-            Math.floor(b['shape'][1] * scale)
-          )
+
+        dump['detected'].forEach((l) => {
+          l['coordinates'].forEach((p) => {
+            ctx.strokeRect(
+              Math.floor(p[0] * scale),
+              Math.floor(p[1] * scale),
+              1, 1
+            )
+          })
         })
       }).attr({
         src: $(location).attr("href") + '/images/image'
