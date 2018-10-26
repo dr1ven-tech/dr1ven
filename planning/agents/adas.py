@@ -26,7 +26,7 @@ class ADAS(Agent):
 
     def action(
             self,
-            time: float,
+            now: float,
             state: Highway,
     ) -> Action:
         if self._lane is None:

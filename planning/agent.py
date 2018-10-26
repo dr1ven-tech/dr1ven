@@ -59,7 +59,7 @@ class Agent:
 
     def action(
             self,
-            time: float,
+            now: float,
             state: Highway,
     ) -> Action:
         raise Exception("Not implemented")
