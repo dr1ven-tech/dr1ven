@@ -119,7 +119,7 @@ class LaneNet(LaneDetector):
             else:
                 cluster_index = range(num_clusters)
 
-            lanes = []
+            raw = []
 
             for index, i in enumerate(cluster_index):
                 idx = np.where(labels == i)
@@ -146,13 +146,28 @@ class LaneNet(LaneDetector):
                     # v = np.float64([y*y, y, 1])
                     v = np.float64([y, 1])
                     x = np.dot(w, v)
-                    coordinates.append([
-                        int(round(x * image.shape[1] / 512)),
-                        int(round(y * image.shape[0] / 256)),
-                    ])
 
-                lanes.append(
-                    Lane(coordinates),
-                )
+                    rx = int(round(x * image.shape[1] / 512))
+                    ry = int(round(y * image.shape[0] / 256))
 
-        return lanes
+                    coordinates.append([rx, ry])
+
+                if len(coordinates) > 0:
+                    raw.append(
+                        coordinates,
+                    )
+
+            filtered = [[] for _ in raw]
+            sign = None
+            for p in reversed(range(len(raw[0]))):
+                for l in range(len(raw)):
+                    x = raw[l][p][0]
+                    if x >= 0 and x <= image.shape[1]:
+                        filtered[l].append(raw[l][p])
+                cur = np.sign([raw[0][p][0] - l[p][0] for l in raw])
+                if sign is None:
+                    sign = cur
+                if not np.array_equal(sign, cur):
+                    break
+
+        return [Lane(l) for l in filtered]
