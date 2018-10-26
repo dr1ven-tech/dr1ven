@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import os
 import tensorflow as tf
 import typing
@@ -53,7 +54,8 @@ class LaneNet(LaneDetector):
 
         weights_path = os.path.join(
             os.path.dirname(os.path.abspath(os.path.realpath(__file__))),
-            "lanenet_tf", "weights", "tusimple_lanenet_vgg_2018-10-19-13-33-56.ckpt-200000",
+            "lanenet_tf", "weights",
+            "tusimple_lanenet_vgg_2018-10-19-13-33-56.ckpt-200000",
         )
 
         with self._sess.as_default():
@@ -87,35 +89,48 @@ class LaneNet(LaneDetector):
         assert image.shape[2] == 3
         assert image.shape[1] / image.shape[0] == 1280 / 720
 
-        image = cv2.resize(image, (512, 256), interpolation=cv2.INTER_LINEAR)
-        image = image - VGG_MEAN
+        resized = cv2.resize(image, (512, 256), interpolation=cv2.INTER_LINEAR)
+        resized = resized - VGG_MEAN
 
         with self._sess.as_default():
             binary_seg_image, instance_seg_image = self._sess.run(
                 [self._binary_seg_ret, self._instance_seg_ret],
-                feed_dict={self._input_tensor: [image]},
+                feed_dict={self._input_tensor: [resized]},
             )
 
             binary_seg_image[0] = self._postprocessor.postprocess(
                 binary_seg_image[0],
             )
-            mask_image = self._cluster.get_lane_mask(
-                binary_seg_ret=binary_seg_image[0],
-                instance_seg_ret=instance_seg_image[0],
-            )
 
-            # for i in range(4):
-            #     instance_seg_image[0][:, :, i] = minmax_scale(
-            #         instance_seg_image[0][:, :, i]
-            #     )
-            # embedding_image = np.array(instance_seg_image[0], np.uint8)
+            lane_embedding_feats, lane_coordinate = \
+                self._cluster._get_lane_area(
+                    binary_seg_ret=binary_seg_image[0],
+                    instance_seg_ret=instance_seg_image[0],
+                )
+            num_clusters, labels, cluster_centers = \
+                self._cluster._cluster(lane_embedding_feats, bandwidth=1.5)
 
-            # plt.figure('mask_image')
-            # plt.imshow(mask_image[:, :, (2, 1, 0)])
-            # plt.figure('instance_image')
-            # plt.imshow(embedding_image[:, :, (2, 1, 0)])
-            # plt.figure('binary_image')
-            # plt.imshow(binary_seg_image[0] * 255, cmap='gray')
-            # plt.show()
+            if num_clusters > 8:
+                cluster_sample_nums = []
+                for i in range(num_clusters):
+                    cluster_sample_nums.append(len(np.where(labels == i)[0]))
+                sort_idx = np.argsort(-np.array(cluster_sample_nums, np.int64))
+                cluster_index = np.array(range(num_clusters))[sort_idx[0:8]]
+            else:
+                cluster_index = range(num_clusters)
 
-        return mask_image
+            lanes = []
+
+            for index, i in enumerate(cluster_index):
+                idx = np.where(labels == i)
+                points = np.flip(lane_coordinate[idx], axis=1)
+                points = np.multiply(
+                    points,
+                    [image.shape[1] / 512, image.shape[0] / 256],
+                )
+
+                lanes.append(
+                    Lane(points.tolist()),
+                )
+
+        return lanes

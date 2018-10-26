@@ -31,6 +31,26 @@ def setup():
 
         _config = Config.from_file("configs/dev.json")
 
+#
+# images
+#
+
+
+@_app.route('/scenarios/<scenario_type>/<scenario>/images/<image_type>')
+def view_scenarios_images(scenario_type, scenario, image_type):
+
+    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
+    image_path = os.path.join(dump_dir, image_type + ".png")
+
+    image = cv2.imread(image_path)
+    _, encoded = cv2.imencode('.png', image)
+
+    return send_file(
+        io.BytesIO(encoded.tobytes()),
+        attachment_filename=image_type + ".png",
+        mimetype='image/png',
+    )
+
 
 #
 # planning.synthetic
@@ -72,22 +92,6 @@ def view_scenarios_perception_bbox(scenario):
         )
 
 
-@_app.route('/scenarios/perception.bbox/<scenario>/image')
-def view_scenarios_perception_bbox_image(scenario):
-
-    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
-    image_path = os.path.join(dump_dir, "image.png")
-
-    image = cv2.imread(image_path)
-    _, encoded = cv2.imencode('.png', image)
-
-    return send_file(
-        io.BytesIO(encoded.tobytes()),
-        attachment_filename='image.png',
-        mimetype='image/png',
-    )
-
-
 #
 # perception.lane
 #
@@ -108,25 +112,6 @@ def view_scenarios_perception_lane(scenario):
         )
 
 
-@_app.route('/scenarios/perception.lane/<scenario>/images/<type>')
-def view_scenarios_perception_lane_images(scenario, type):
-
-    if type not in ['input', 'mask', 'resized']:
-        abort(400)
-
-    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
-    image_path = os.path.join(dump_dir, type + ".png")
-
-    image = cv2.imread(image_path)
-    _, encoded = cv2.imencode('.png', image)
-
-    return send_file(
-        io.BytesIO(encoded.tobytes()),
-        attachment_filename=type + ".png",
-        mimetype='image/png',
-    )
-
-
 #
 # perception.stereo
 #
@@ -144,25 +129,6 @@ def view_scenarios_perception_stereo(scenario):
     return render_template(
         'scenarios_perception_stereo.html',
         dump="",
-    )
-
-
-@_app.route('/scenarios/perception.stereo/<scenario>/images/<side>')
-def view_scenarios_perception_stereo_images(scenario, side):
-
-    if side not in ['left', 'right', 'disparity']:
-        abort(400)
-
-    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
-    image_path = os.path.join(dump_dir, side + ".png")
-
-    image = cv2.imread(image_path)
-    _, encoded = cv2.imencode('.png', image)
-
-    return send_file(
-        io.BytesIO(encoded.tobytes()),
-        attachment_filename=side + ".png",
-        mimetype='image/png',
     )
 
 
