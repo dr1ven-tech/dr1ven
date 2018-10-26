@@ -72,7 +72,12 @@ class BBoxDetector:
             self,
             config: Config,
     ) -> None:
-        pass
+        self._closed = False
+
+    def close(
+            self,
+    ) -> None:
+        self._closed = True
 
     def detect(
             self,

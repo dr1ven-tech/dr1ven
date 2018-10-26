@@ -43,6 +43,7 @@ class YOLOv3(BBoxDetector):
             self,
             image,
     ) -> typing.List[BBox]:
+        assert self._closed is False
         assert image.shape[2] == 3
 
         r = darknet.detect(self._net, self._meta, image)

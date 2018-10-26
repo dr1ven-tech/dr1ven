@@ -62,6 +62,8 @@ class LaneScenario(Scenario):
 
         cv2.imwrite(image_path, self._image)
 
+        self._detector.close()
+
         return True
 
     def view(

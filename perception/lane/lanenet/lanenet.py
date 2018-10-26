@@ -64,28 +64,17 @@ class LaneNet(LaneDetector):
                 save_path=weights_path,
             )
 
-    def __enter__(
-            self,
-    ):
-        return self
-
-    def __exit__(
-            self,
-            exc_type,
-            exc_val,
-            exc_tb,
-    ):
-        self.close()
-
     def close(
             self,
     ):
-        self._session.close()
+        super(LaneNet, self).close()
+        self._sess.close()
 
     def detect(
             self,
             image,
     ) -> typing.List[Lane]:
+        assert self._closed is False
         assert image.shape[2] == 3
         assert image.shape[1] / image.shape[0] == 1280 / 720
 

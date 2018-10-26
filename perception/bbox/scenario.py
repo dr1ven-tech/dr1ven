@@ -63,6 +63,8 @@ class BBoxScenario(Scenario):
 
         cv2.imwrite(image_path, image)
 
+        self._detector.close()
+
         return True
 
     def view(
