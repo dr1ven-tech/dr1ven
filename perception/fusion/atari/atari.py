@@ -13,7 +13,7 @@ from utils.config import Config
 from utils.log import Log
 
 
-class AtariFuser:
+class Atari:
     def __init__(
             self,
             config: Config,
@@ -30,7 +30,7 @@ class AtariFuser:
         boxes = self._bbox_detector.detect(front_camera)
         Log.out(
             "Boxes detected", {
-                'now': now,
+                'now': "{:.3f}".format(now),
                 'count': len(boxes),
                 'processing_time': (time.time() - start),
             })
@@ -39,7 +39,7 @@ class AtariFuser:
         lanes = self._lane_detector.detect(front_camera)
         Log.out(
             "Lanes detected", {
-                'now': now,
+                'now': "{:.3f}".format(now),
                 'count': len(lanes),
                 'processing_time': (time.time() - start),
             })

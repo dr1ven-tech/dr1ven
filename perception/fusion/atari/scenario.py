@@ -2,7 +2,7 @@ import cv2
 import json
 import os
 
-from perception.fusion.atari.fuser import AtariFuser
+from perception.fusion.atari.atari import Atari
 
 from utils.config import Config
 from utils.log import Log
@@ -21,9 +21,10 @@ class AtariScenario(Scenario):
         )
 
         Log.out(
-            "Initializing \"Atari\" fuser", {
+            "Initializing fusion", {
+                'version': "atari",
             })
-        self._fuser = AtariFuser(config)
+        self._atari = Atari(config)
 
         front_camera_dir = os.path.join(
             os.path.dirname(spec.path()),
@@ -56,7 +57,7 @@ class AtariScenario(Scenario):
         os.makedirs(self.dump_dir())
 
         for i, front_camera in enumerate(self._front_cameras):
-            state, boxes, lanes = self._fuser.fuse(i/30, front_camera)
+            state, boxes, lanes = self._atari.fuse(i/30, front_camera)
 
             dump['bbox_detected'].append([dict(b) for b in boxes])
             dump['lane_detected'].append([dict(l) for l in lanes])
