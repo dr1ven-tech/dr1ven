@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.23.1" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina5_9" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.16.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Stereoscopic" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xld-pb-KJb">
+                                <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="yqB-bS-bdm" appends="YES" id="kkG-SX-Aoi"/>
+                                </connections>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7kd-Tt-DDF">
+                                <rect key="frame" x="375" y="293" width="62" height="41"/>
+                                <fontDescription key="fontDescription" type="system" weight="black" pointSize="24"/>
+                                <color key="tintColor" red="0.8392156959" green="0.0" blue="0.19607843459999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <state key="normal" title="Start"/>
+                                <connections>
+                                    <action selector="recordButtonWasTouched" destination="BYZ-38-t0r" eventType="touchUpInside" id="47z-3J-f5V"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hkh-n7-fcC">
+                                <rect key="frame" x="689" y="16" width="39" height="20"/>
+                                <color key="tintColor" red="0.8392156959" green="0.0" blue="0.19607843459999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
+                                <color key="textColor" red="0.8392156959" green="0.0" blue="0.19607843459999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jzm-e5-izJ">
+                                <rect key="frame" x="84" y="16" width="127" height="30"/>
+                                <state key="normal" title="Lock Photo Config"/>
+                                <connections>
+                                    <action selector="lockDevice" destination="BYZ-38-t0r" eventType="touchUpInside" id="vsB-1e-7gT"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="Xld-pb-KJb" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="4Yp-lS-BPR"/>
+                            <constraint firstItem="Hkh-n7-fcC" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="jzm-e5-izJ" secondAttribute="trailing" constant="8" symbolic="YES" id="BlL-mD-hOT"/>
+                            <constraint firstItem="Hkh-n7-fcC" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="6Tk-OE-BBY" secondAttribute="leading" symbolic="YES" id="GZQ-Qd-hJM"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="Hkh-n7-fcC" secondAttribute="trailing" constant="40" id="Hpj-Yn-11N"/>
+                            <constraint firstItem="jzm-e5-izJ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="Nnj-yW-Yk4"/>
+                            <constraint firstItem="Xld-pb-KJb" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="RfB-M5-mCn"/>
+                            <constraint firstItem="Hkh-n7-fcC" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="16" id="SSw-Md-QhW"/>
+                            <constraint firstAttribute="bottom" secondItem="Xld-pb-KJb" secondAttribute="bottom" id="Yac-bN-pw2"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="7kd-Tt-DDF" secondAttribute="bottom" constant="20" id="jd7-Pe-qyE"/>
+                            <constraint firstItem="7kd-Tt-DDF" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="yVQ-QJ-bOw"/>
+                            <constraint firstAttribute="trailing" secondItem="Xld-pb-KJb" secondAttribute="trailing" id="yZz-sa-ANc"/>
+                            <constraint firstItem="jzm-e5-izJ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="zXs-HN-2gs"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <outlet property="cameraConfigButton" destination="jzm-e5-izJ" id="I6j-Co-way"/>
+                        <outlet property="recordButton" destination="7kd-Tt-DDF" id="gsc-hK-fVs"/>
+                        <outlet property="recordLabel" destination="Hkh-n7-fcC" id="jgc-pz-tVe"/>
+                        <outlet property="videoView" destination="Xld-pb-KJb" id="dZ4-pb-J6s"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer numberOfTapsRequired="2" id="yqB-bS-bdm">
+                    <connections>
+                        <action selector="stopRecording" destination="BYZ-38-t0r" id="qte-or-Lwb"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="135.96059113300493" y="132"/>
+        </scene>
+    </scenes>
+</document>

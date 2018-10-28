@@ -1,0 +1,595 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DCBA77FD216CF6C800BD7AB2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA77FC216CF6C800BD7AB2 /* AppDelegate.swift */; };
+		DCBA77FF216CF6C800BD7AB2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA77FE216CF6C800BD7AB2 /* ViewController.swift */; };
+		DCBA7802216CF6C800BD7AB2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCBA7800216CF6C800BD7AB2 /* Main.storyboard */; };
+		DCBA7804216CF6CA00BD7AB2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCBA7803216CF6CA00BD7AB2 /* Assets.xcassets */; };
+		DCBA7807216CF6CA00BD7AB2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCBA7805216CF6CA00BD7AB2 /* LaunchScreen.storyboard */; };
+		DCBA7812216CF6CA00BD7AB2 /* StereoscopicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA7811216CF6CA00BD7AB2 /* StereoscopicTests.swift */; };
+		DCBA781D216CF6CA00BD7AB2 /* StereoscopicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA781C216CF6CA00BD7AB2 /* StereoscopicUITests.swift */; };
+		DCFD758B216FEF5C0075F5D8 /* dong.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DCFD758A216FEF5C0075F5D8 /* dong.mp3 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DCBA780E216CF6CA00BD7AB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DCBA77F1216CF6C800BD7AB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DCBA77F8216CF6C800BD7AB2;
+			remoteInfo = Stereoscopic;
+		};
+		DCBA7819216CF6CA00BD7AB2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DCBA77F1216CF6C800BD7AB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DCBA77F8216CF6C800BD7AB2;
+			remoteInfo = Stereoscopic;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DCBA77F9216CF6C800BD7AB2 /* Stereoscopic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stereoscopic.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCBA77FC216CF6C800BD7AB2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		DCBA77FE216CF6C800BD7AB2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		DCBA7801216CF6C800BD7AB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DCBA7803216CF6CA00BD7AB2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DCBA7806216CF6CA00BD7AB2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		DCBA7808216CF6CA00BD7AB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCBA780D216CF6CA00BD7AB2 /* StereoscopicTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StereoscopicTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCBA7811216CF6CA00BD7AB2 /* StereoscopicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoscopicTests.swift; sourceTree = "<group>"; };
+		DCBA7813216CF6CA00BD7AB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCBA7818216CF6CA00BD7AB2 /* StereoscopicUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StereoscopicUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCBA781C216CF6CA00BD7AB2 /* StereoscopicUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoscopicUITests.swift; sourceTree = "<group>"; };
+		DCBA781E216CF6CA00BD7AB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCFD758A216FEF5C0075F5D8 /* dong.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = dong.mp3; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DCBA77F6216CF6C800BD7AB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCBA780A216CF6CA00BD7AB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCBA7815216CF6CA00BD7AB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DCBA77F0216CF6C800BD7AB2 = {
+			isa = PBXGroup;
+			children = (
+				DCBA77FB216CF6C800BD7AB2 /* Stereoscopic */,
+				DCBA7810216CF6CA00BD7AB2 /* StereoscopicTests */,
+				DCBA781B216CF6CA00BD7AB2 /* StereoscopicUITests */,
+				DCBA77FA216CF6C800BD7AB2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DCBA77FA216CF6C800BD7AB2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DCBA77F9216CF6C800BD7AB2 /* Stereoscopic.app */,
+				DCBA780D216CF6CA00BD7AB2 /* StereoscopicTests.xctest */,
+				DCBA7818216CF6CA00BD7AB2 /* StereoscopicUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DCBA77FB216CF6C800BD7AB2 /* Stereoscopic */ = {
+			isa = PBXGroup;
+			children = (
+				DCBA77FC216CF6C800BD7AB2 /* AppDelegate.swift */,
+				DCBA77FE216CF6C800BD7AB2 /* ViewController.swift */,
+				DCFD758A216FEF5C0075F5D8 /* dong.mp3 */,
+				DCBA7800216CF6C800BD7AB2 /* Main.storyboard */,
+				DCBA7803216CF6CA00BD7AB2 /* Assets.xcassets */,
+				DCBA7805216CF6CA00BD7AB2 /* LaunchScreen.storyboard */,
+				DCBA7808216CF6CA00BD7AB2 /* Info.plist */,
+			);
+			path = Stereoscopic;
+			sourceTree = "<group>";
+		};
+		DCBA7810216CF6CA00BD7AB2 /* StereoscopicTests */ = {
+			isa = PBXGroup;
+			children = (
+				DCBA7811216CF6CA00BD7AB2 /* StereoscopicTests.swift */,
+				DCBA7813216CF6CA00BD7AB2 /* Info.plist */,
+			);
+			path = StereoscopicTests;
+			sourceTree = "<group>";
+		};
+		DCBA781B216CF6CA00BD7AB2 /* StereoscopicUITests */ = {
+			isa = PBXGroup;
+			children = (
+				DCBA781C216CF6CA00BD7AB2 /* StereoscopicUITests.swift */,
+				DCBA781E216CF6CA00BD7AB2 /* Info.plist */,
+			);
+			path = StereoscopicUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DCBA77F8216CF6C800BD7AB2 /* Stereoscopic */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCBA7821216CF6CA00BD7AB2 /* Build configuration list for PBXNativeTarget "Stereoscopic" */;
+			buildPhases = (
+				DCBA77F5216CF6C800BD7AB2 /* Sources */,
+				DCBA77F6216CF6C800BD7AB2 /* Frameworks */,
+				DCBA77F7216CF6C800BD7AB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Stereoscopic;
+			productName = Stereoscopic;
+			productReference = DCBA77F9216CF6C800BD7AB2 /* Stereoscopic.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DCBA780C216CF6CA00BD7AB2 /* StereoscopicTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCBA7824216CF6CA00BD7AB2 /* Build configuration list for PBXNativeTarget "StereoscopicTests" */;
+			buildPhases = (
+				DCBA7809216CF6CA00BD7AB2 /* Sources */,
+				DCBA780A216CF6CA00BD7AB2 /* Frameworks */,
+				DCBA780B216CF6CA00BD7AB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DCBA780F216CF6CA00BD7AB2 /* PBXTargetDependency */,
+			);
+			name = StereoscopicTests;
+			productName = StereoscopicTests;
+			productReference = DCBA780D216CF6CA00BD7AB2 /* StereoscopicTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DCBA7817216CF6CA00BD7AB2 /* StereoscopicUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCBA7827216CF6CA00BD7AB2 /* Build configuration list for PBXNativeTarget "StereoscopicUITests" */;
+			buildPhases = (
+				DCBA7814216CF6CA00BD7AB2 /* Sources */,
+				DCBA7815216CF6CA00BD7AB2 /* Frameworks */,
+				DCBA7816216CF6CA00BD7AB2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DCBA781A216CF6CA00BD7AB2 /* PBXTargetDependency */,
+			);
+			name = StereoscopicUITests;
+			productName = StereoscopicUITests;
+			productReference = DCBA7818216CF6CA00BD7AB2 /* StereoscopicUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DCBA77F1216CF6C800BD7AB2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1000;
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = Dr1ve;
+				TargetAttributes = {
+					DCBA77F8216CF6C800BD7AB2 = {
+						CreatedOnToolsVersion = 10.0;
+					};
+					DCBA780C216CF6CA00BD7AB2 = {
+						CreatedOnToolsVersion = 10.0;
+						TestTargetID = DCBA77F8216CF6C800BD7AB2;
+					};
+					DCBA7817216CF6CA00BD7AB2 = {
+						CreatedOnToolsVersion = 10.0;
+						TestTargetID = DCBA77F8216CF6C800BD7AB2;
+					};
+				};
+			};
+			buildConfigurationList = DCBA77F4216CF6C800BD7AB2 /* Build configuration list for PBXProject "Stereoscopic" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DCBA77F0216CF6C800BD7AB2;
+			productRefGroup = DCBA77FA216CF6C800BD7AB2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DCBA77F8216CF6C800BD7AB2 /* Stereoscopic */,
+				DCBA780C216CF6CA00BD7AB2 /* StereoscopicTests */,
+				DCBA7817216CF6CA00BD7AB2 /* StereoscopicUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DCBA77F7216CF6C800BD7AB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCBA7807216CF6CA00BD7AB2 /* LaunchScreen.storyboard in Resources */,
+				DCBA7804216CF6CA00BD7AB2 /* Assets.xcassets in Resources */,
+				DCFD758B216FEF5C0075F5D8 /* dong.mp3 in Resources */,
+				DCBA7802216CF6C800BD7AB2 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCBA780B216CF6CA00BD7AB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCBA7816216CF6CA00BD7AB2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DCBA77F5216CF6C800BD7AB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCBA77FF216CF6C800BD7AB2 /* ViewController.swift in Sources */,
+				DCBA77FD216CF6C800BD7AB2 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCBA7809216CF6CA00BD7AB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCBA7812216CF6CA00BD7AB2 /* StereoscopicTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCBA7814216CF6CA00BD7AB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCBA781D216CF6CA00BD7AB2 /* StereoscopicUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DCBA780F216CF6CA00BD7AB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DCBA77F8216CF6C800BD7AB2 /* Stereoscopic */;
+			targetProxy = DCBA780E216CF6CA00BD7AB2 /* PBXContainerItemProxy */;
+		};
+		DCBA781A216CF6CA00BD7AB2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DCBA77F8216CF6C800BD7AB2 /* Stereoscopic */;
+			targetProxy = DCBA7819216CF6CA00BD7AB2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DCBA7800216CF6C800BD7AB2 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DCBA7801216CF6C800BD7AB2 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DCBA7805216CF6CA00BD7AB2 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DCBA7806216CF6CA00BD7AB2 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DCBA781F216CF6CA00BD7AB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		DCBA7820216CF6CA00BD7AB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DCBA7822216CF6CA00BD7AB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T8RHT642EK;
+				INFOPLIST_FILE = Stereoscopic/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dr1ve..Stereoscopic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DCBA7823216CF6CA00BD7AB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T8RHT642EK;
+				INFOPLIST_FILE = Stereoscopic/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dr1ve..Stereoscopic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DCBA7825216CF6CA00BD7AB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T8RHT642EK;
+				INFOPLIST_FILE = StereoscopicTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dr1ve..StereoscopicTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Stereoscopic.app/Stereoscopic";
+			};
+			name = Debug;
+		};
+		DCBA7826216CF6CA00BD7AB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T8RHT642EK;
+				INFOPLIST_FILE = StereoscopicTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dr1ve..StereoscopicTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Stereoscopic.app/Stereoscopic";
+			};
+			name = Release;
+		};
+		DCBA7828216CF6CA00BD7AB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T8RHT642EK;
+				INFOPLIST_FILE = StereoscopicUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dr1ve..StereoscopicUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Stereoscopic;
+			};
+			name = Debug;
+		};
+		DCBA7829216CF6CA00BD7AB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = T8RHT642EK;
+				INFOPLIST_FILE = StereoscopicUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dr1ve..StereoscopicUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Stereoscopic;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DCBA77F4216CF6C800BD7AB2 /* Build configuration list for PBXProject "Stereoscopic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCBA781F216CF6CA00BD7AB2 /* Debug */,
+				DCBA7820216CF6CA00BD7AB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCBA7821216CF6CA00BD7AB2 /* Build configuration list for PBXNativeTarget "Stereoscopic" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCBA7822216CF6CA00BD7AB2 /* Debug */,
+				DCBA7823216CF6CA00BD7AB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCBA7824216CF6CA00BD7AB2 /* Build configuration list for PBXNativeTarget "StereoscopicTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCBA7825216CF6CA00BD7AB2 /* Debug */,
+				DCBA7826216CF6CA00BD7AB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCBA7827216CF6CA00BD7AB2 /* Build configuration list for PBXNativeTarget "StereoscopicUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCBA7828216CF6CA00BD7AB2 /* Debug */,
+				DCBA7829216CF6CA00BD7AB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DCBA77F1216CF6C800BD7AB2 /* Project object */;
+}
