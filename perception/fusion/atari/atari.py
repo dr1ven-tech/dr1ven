@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import random
 import time
 import typing
 
@@ -24,9 +25,11 @@ class Atari:
     def __init__(
             self,
             config: Config,
+            lane_count: int,
     ) -> None:
         self._lane_detector = LaneNet(config)
         self._bbox_detector = YOLOv3(config)
+        self._lane_count = lane_count
 
     def fuse(
             self,
@@ -91,11 +94,12 @@ class Atari:
         if ext_right == l:
             ext_right = None
 
-        # Default "Atari" environment for now (2 lanes highway).
+        # Default "Atari" environment for now (fixed `self._lane_count`). Note
+        # that the current implementation does not know how to localize the ego
+        # vehicle further than the 2 left-most lanes.
         section = Section(
             0, HIGHWAY_LANE_DEPTH-1,
-            [RoadType.DRIVABLE] * HIGHWAY_LANE_WIDTH +
-            [RoadType.DRIVABLE] * HIGHWAY_LANE_WIDTH +
+            [RoadType.DRIVABLE] * (HIGHWAY_LANE_WIDTH * self._lane_count) +
             [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1) +
             [RoadType.INVALID],
         )
@@ -106,7 +110,6 @@ class Atari:
         # sensor that produced them to retrieve its pose (eg. `CameraImage`).
 
         # For now we'll take pretty arbitrary constants.
-
         REAL_LANE_WIDTH = 3.5
         VEHICLE_WIDTH = 1.8
         VEHICLE_HEIGHT = 1.5
@@ -117,6 +120,8 @@ class Atari:
             (right.coordinates()[0][0] - left.coordinates()[0][0])
         ) * REAL_LANE_WIDTH - CAMERA_LATERAL_POSITION
 
+        # TODO(stan): be capable of locating the vehicle further than the 2
+        # left-most lanes.
         lane_index = 0
         if ext_left is not None:
             lane_index = 1
@@ -125,7 +130,7 @@ class Atari:
         # assume the spped to be constant for the ego vehicle. (50 voxel/s is
         # 90 km/h).
 
-        # TODO(stan): track lateral speed of ego vehicle
+        # TODO(stan): track lateral speed of ego vehicle.
         ego = Entity(
             EntityType.CAR,
             'ego',
@@ -145,8 +150,35 @@ class Atari:
             [0.0, 50.0, 0.0],
         )
 
-        state = Highway([section], ego, [])
+        # TODO(stan): track vehicles across frames, in particular their speed.
+        entities = []
+        for b in boxes:
+            box_bottom_height = b.position()[1] + b.shape()[1]
 
-        # evaluate distances
+            l = left.at_height(box_bottom_height)
+            r = right.at_height(box_bottom_height)
 
-        return state, boxes, lanes
+            assert r[0] > l[0]
+
+            real_width = b.shape()[0] / (r[0]-l[0]) * REAL_LANE_WIDTH
+            real_height = b.shape()[1] / b.shape()[0] * real_height
+
+            # z / f = DX / dx
+            distance =
+
+            entities.append(
+                Entity(
+                    b.type(),
+                    "{}".format(random.randrange(99999)),
+                    EntityOccupation(
+                        EntityOrientation.FORWARD,
+                        [
+                        ],
+                    ),
+                    [0.0, 50.0, 0.0],
+                )
+            )
+
+        import pdb; pdb.set_trace()
+
+        return Highway([section], ego, []), boxes, lanes
