@@ -22,7 +22,7 @@ class Lane:
         for p in coordinates:
             assert len(p) == 2
         assert len(coordinates) > 2
-        self._coordinates = sorted(coordinates, key=lambda p: p[1])
+        self._coordinates = reversed(sorted(coordinates, key=lambda p: p[1]))
 
     def coordinates(
             self,

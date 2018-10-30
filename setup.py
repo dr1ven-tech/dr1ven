@@ -19,7 +19,6 @@ setup(
     package_data={
         'planning.synthetic': [
             'maps',
-            'scenarios',
         ],
         'utils.viewer': [
             'templates',

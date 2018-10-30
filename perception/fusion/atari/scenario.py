@@ -4,6 +4,8 @@ import os
 
 from perception.fusion.atari.atari import Atari
 
+from sensors.camera import Camera, CameraImage
+
 from utils.config import Config
 from utils.log import Log
 from utils.scenario import Scenario, ScenarioSpec
@@ -24,7 +26,9 @@ class AtariScenario(Scenario):
             "Initializing fusion", {
                 'version': "atari",
             })
-        self._atari = Atari(config)
+        self._atari = Atari(config, spec.data()['lane_count'])
+
+        camera = Camera.from_dict(spec.data()['camera'])
 
         front_camera_dir = os.path.join(
             os.path.dirname(spec.path()),
@@ -40,11 +44,14 @@ class AtariScenario(Scenario):
         self._front_cameras = []
         for f in sorted(front_camera_paths):
             Log.out(
-                "Loading front camera raw image", {
+                "Loading front camera image", {
                     'filename': f,
                 })
             self._front_cameras.append(
-                cv2.imread(os.path.join(front_camera_dir, f)),
+                CameraImage.from_path_and_camera(
+                    os.path.join(front_camera_dir, f),
+                    camera,
+                )
             )
 
     def run(
