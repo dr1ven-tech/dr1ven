@@ -1,5 +1,6 @@
-import numpy as np
 import typing
+
+from sensors.camera import CameraImage
 
 from state.entity import EntityType
 
@@ -40,7 +41,7 @@ class BBox:
 
     def shape(
             self,
-    ) -> int:
+    ) -> typing.List[int]:
         return self._shape
 
     def __iter__(
@@ -82,6 +83,7 @@ class BBoxDetector:
 
     def detect(
             self,
-            image: np.ndarray,
+            image: CameraImage,
+            size: typing.Optional[typing.Tuple[int, int]] = None,
     ) -> typing.List[BBox]:
         raise Exception("Not implemented")

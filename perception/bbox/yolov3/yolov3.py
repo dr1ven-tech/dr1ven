@@ -1,13 +1,14 @@
-import numpy as np
 import os
 import perception.bbox.yolov3.darknet.python.darknet as darknet
 import typing
 
 from perception.bbox.detector import BBox, BBoxDetector
 
-from utils.config import Config
+from sensors.camera import CameraImage
 
 from state.entity import EntityType
+
+from utils.config import Config
 
 
 class YOLOv3(BBoxDetector):
@@ -42,12 +43,13 @@ class YOLOv3(BBoxDetector):
 
     def detect(
             self,
-            image: np.ndarray,
+            image: CameraImage,
+            size: typing.Optional[typing.Tuple[int, int]] = None,
     ) -> typing.List[BBox]:
         assert self._closed is False
-        assert image.shape[2] == 3
+        assert image.data().shape[2] == 3
 
-        r = darknet.detect(self._net, self._meta, image)
+        r = darknet.detect(self._net, self._meta, image.data(size=size))
 
         classes = {
             'car': EntityType.CAR,
