@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 import os
 import tensorflow as tf
@@ -9,6 +8,8 @@ from perception.lane.detector import Lane, LaneDetector
 from perception.lane.lanenet.lanenet_tf.config import global_config
 from perception.lane.lanenet.lanenet_tf.lanenet_model \
     import lanenet_merge_model, lanenet_cluster, lanenet_postprocess
+
+from sensors.camera import CameraImage
 
 from utils.config import Config
 
@@ -72,13 +73,13 @@ class LaneNet(LaneDetector):
 
     def detect(
             self,
-            image: np.ndarray,
+            image: CameraImage,
     ) -> typing.List[Lane]:
         assert self._closed is False
-        assert image.shape[2] == 3
-        assert image.shape[1] / image.shape[0] == 1280 / 720
+        assert image.data().shape[2] == 3
+        assert image.data().shape[1] / image.data().shape[0] == 1280 / 720
 
-        resized = cv2.resize(image, (512, 256), interpolation=cv2.INTER_LINEAR)
+        resized = image.data(size=(512, 256))
         resized = resized - VGG_MEAN
 
         with self._sess.as_default():
@@ -136,8 +137,8 @@ class LaneNet(LaneDetector):
                     v = np.float64([y, 1])
                     x = np.dot(w, v)
 
-                    rx = int(round(x * image.shape[1] / 512))
-                    ry = int(round(y * image.shape[0] / 256))
+                    rx = int(round(x * image.data().shape[1] / 512))
+                    ry = int(round(y * image.data().shape[0] / 256))
 
                     coordinates.append([rx, ry])
 

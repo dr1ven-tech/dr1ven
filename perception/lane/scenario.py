@@ -8,6 +8,8 @@ from utils.config import Config
 from utils.log import Log
 from utils.scenario import Scenario, ScenarioSpec
 
+from sensors.camera import Camera, CameraImage
+
 
 class LaneScenario(Scenario):
     def __init__(
@@ -28,11 +30,14 @@ class LaneScenario(Scenario):
         if spec.data()['detector'] == 'lanenet':
             self._detector = LaneNet(config)
 
-        self._image = cv2.imread(
+        camera = Camera.from_dict(spec.data()['camera'])
+
+        self._image = CameraImage.from_path_and_camera(
             os.path.join(
                 os.path.dirname(spec.path()),
                 spec.data()['image'],
             ),
+            camera,
         )
 
     def run(
@@ -60,7 +65,7 @@ class LaneScenario(Scenario):
         with open(dump_path, 'w') as out:
             json.dump(dump, out, indent=2)
 
-        cv2.imwrite(image_path, self._image)
+        cv2.imwrite(image_path, self._image.data())
 
         self._detector.close()
 
