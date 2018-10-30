@@ -1,9 +1,10 @@
-import numpy as np
 import typing
 
 from state.entity import EntityType
 
 from utils.config import Config
+
+from sensors.camera import CameraImage
 
 
 class BBox:
@@ -82,6 +83,6 @@ class BBoxDetector:
 
     def detect(
             self,
-            image: np.ndarray,
+            image: CameraImage,
     ) -> typing.List[BBox]:
         raise Exception("Not implemented")
