@@ -147,7 +147,8 @@ class LaneNet(LaneDetector):
                         coordinates,
                     )
 
-            filtered = [[] for _ in raw]
+            filtered: typing.List[typing.List[typing.List[int]]] = \
+                [[] for _ in raw]
             sign = None
             for p in reversed(range(len(raw[0]))):
                 for l in range(len(raw)):

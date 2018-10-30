@@ -41,7 +41,7 @@ class BBox:
 
     def shape(
             self,
-    ) -> int:
+    ) -> typing.List[int]:
         return self._shape
 
     def __iter__(
