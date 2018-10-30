@@ -44,7 +44,7 @@ class YOLOv3(BBoxDetector):
     def detect(
             self,
             image: CameraImage,
-            size: typing.Tuple[int, int],
+            size: typing.Optional[typing.Tuple[int, int]] = None,
     ) -> typing.List[BBox]:
         assert self._closed is False
         assert image.data().shape[2] == 3

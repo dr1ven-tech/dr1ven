@@ -84,5 +84,6 @@ class BBoxDetector:
     def detect(
             self,
             image: CameraImage,
+            size: typing.Optional[typing.Tuple[int, int]] = None,
     ) -> typing.List[BBox]:
         raise Exception("Not implemented")
