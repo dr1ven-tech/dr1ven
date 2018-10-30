@@ -12,7 +12,7 @@ Create the dr1ven conda environment:
 conda create -n dr1ven python=3.6
 ```
 
-Install pytorch and other dependencies:
+In the dr1ven conda environment, install pytorch and other dependencies:
 ```
 conda install pytorch torchvision cuda92 -c pytorch
 pip install -r requirements.txt
