@@ -6,8 +6,8 @@ import typing
 class Camera:
     """ `Camera` represents a camera sensor.
 
-    It is stores the intrinsic parameters of the camera under `camera_matrix`
-    as well as a `bird_eye_projection`.
+    It stores the intrinsic parameters of the camera under `camera_matrix` as
+    well as a `bird_eye_projection`.
     """
     def __init__(
             self,
