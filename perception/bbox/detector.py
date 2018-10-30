@@ -1,10 +1,10 @@
 import typing
 
+from sensors.camera import CameraImage
+
 from state.entity import EntityType
 
 from utils.config import Config
-
-from sensors.camera import CameraImage
 
 
 class BBox:

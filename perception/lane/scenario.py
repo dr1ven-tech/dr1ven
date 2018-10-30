@@ -4,11 +4,11 @@ import os
 
 from perception.lane.lanenet.lanenet import LaneNet
 
+from sensors.camera import Camera, CameraImage
+
 from utils.config import Config
 from utils.log import Log
 from utils.scenario import Scenario, ScenarioSpec
-
-from sensors.camera import Camera, CameraImage
 
 
 class LaneScenario(Scenario):
