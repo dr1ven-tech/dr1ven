@@ -9,8 +9,9 @@
         width: 100%;
         height: 100%;
         background-color: #fff;
-        color: white;
+        color: black;
         font-family: sans-serif;
+        font-size: 12px;
       }
 
       .image {
@@ -20,16 +21,92 @@
         left: 100px;
         top: 100px;
       }
-      canvas {
+      .canvas-container {
         position: absolute;
         left: 100px;
         top: 100px;
+        overflow: hidden;
+        width: 640px;
+        height: 360px;
+      }
+      canvas {
+        left: 0px;
+        top: 0px;
         z-index: 10;
+      }
+      .controls {
+        position: absolute;
+        left: 100px;
+        top: 50px;
       }
     </style>
   </head>
   <body>
+    <div class="controls">
+      step: <input type="number" name="step" id="step" value="0">
+    </div>
     <div class="image"></div>
-    <canvas width="1000" height="1000"></canvas>
+    <div class="canvas-container">
+      <canvas width="1000" height="1000"></canvas>
+    </div>
+
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script type="module">
+      var dump = JSON.parse('{{dump | tojson | safe}}');
+      var scale = dump['scale']
+
+      var show_step = (step) => {
+        var preload = new Image();
+        $(preload).on('load', () => {
+          // Load the image.
+          $('.image').css({
+            'background-image': 'url(' + $(location).attr("href") + '/images/' + step + ')',
+            'width': preload.width,
+            'height': preload.height
+          })
+
+          // Draw the bounding boxes.
+          var ctx = $('canvas')[0].getContext('2d')
+          ctx.clearRect(0, 0, $('canvas')[0].width, $('canvas')[0].height);
+
+          ctx.lineWidth = 1
+          ctx.strokeStyle = '#0000ff'
+          dump['lane_detected'][step].forEach((l) => {
+            l['coordinates'].forEach((p) => {
+              ctx.strokeRect(
+                Math.floor(p[0] * scale),
+                Math.floor(p[1] * scale),
+                1, 1
+              )
+            })
+          })
+
+          ctx.lineWidth = 1
+          ctx.strokeStyle = '#00ff00'
+          dump['bbox_detected'][step].forEach((b) => {
+            ctx.strokeRect(
+              Math.floor(b['position'][0] * scale),
+              Math.floor(b['position'][1] * scale),
+              Math.floor(b['shape'][0] * scale),
+              Math.floor(b['shape'][1] * scale)
+            )
+          })
+        }).attr({
+          src: $(location).attr("href") + '/images/' + step
+        });
+      };
+
+      $('#step').change(function() {
+        if($('#step').val() >= dump['steps'].length) {
+          $('#step').val(dump['steps'].length -1)
+        } else if($('#step').val() < 0) {
+          $('#step').val(0)
+        } else {
+          show_step($('#step').val())
+        }
+      })
+
+      show_step(0)
+    </script>
   </body>
 </html>
