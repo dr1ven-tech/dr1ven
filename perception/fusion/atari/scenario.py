@@ -61,6 +61,7 @@ class AtariScenario(Scenario):
             'bbox_detected': [],
             'lane_detected': [],
             'steps': [],
+            'scale': 640 / self._front_cameras[0].size()[0],
         }
         os.makedirs(self.dump_dir())
 
