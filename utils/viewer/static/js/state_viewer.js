@@ -9,7 +9,7 @@ class StateViewer {
     this.camera = new THREE.PerspectiveCamera(
       90, container.width() / container.height(), 0.1, 10000,
     );
-    this.controls = new THREE.TrackballControls(this.camera);
+    this.controls = new THREE.TrackballControls(this.camera, container[0]);
 
     this.renderer.setSize(container.width(), container.height())
     container.append(this.renderer.domElement);

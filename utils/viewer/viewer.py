@@ -131,6 +131,25 @@ def view_scenarios_perception_stereo(scenario):
         dump="",
     )
 
+#
+# perception.fusion.atari
+#
+
+
+@_app.route('/scenarios/perception.fusion.atari/<scenario>')
+def view_scenarios_perception_fusion_atari(scenario):
+
+    dump_dir = Scenario.dump_dir_for_id(_config, scenario)
+    dump_path = os.path.join(dump_dir, "dump.json")
+
+    with open(dump_path) as f:
+        dump = json.load(f)
+
+        return render_template(
+            'scenarios_perception_fusion_atari.html',
+            dump=dump,
+        )
+
 
 def run_server():
     global _app

@@ -63,16 +63,6 @@
             Math.floor(b['shape'][1] * scale)
           )
         })
-
-        ctx.strokeStyle = '#0000ff'
-        dump['ground_truth'].forEach((b) => {
-          ctx.strokeRect(
-            Math.floor(b['position'][0] * scale),
-            Math.floor(b['position'][1] * scale),
-            Math.floor(b['shape'][0] * scale),
-            Math.floor(b['shape'][1] * scale)
-          )
-        })
       }).attr({
         src: $(location).attr("href") + '/images/image'
       });

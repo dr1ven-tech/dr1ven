@@ -4,6 +4,8 @@ import os
 
 from perception.fusion.atari.atari import Atari
 
+from sensors.camera import Camera, CameraImage
+
 from utils.config import Config
 from utils.log import Log
 from utils.scenario import Scenario, ScenarioSpec
@@ -24,7 +26,9 @@ class AtariScenario(Scenario):
             "Initializing fusion", {
                 'version': "atari",
             })
-        self._atari = Atari(config)
+        self._atari = Atari(config, spec.data()['lane_count'])
+
+        camera = Camera.from_dict(spec.data()['camera'])
 
         front_camera_dir = os.path.join(
             os.path.dirname(spec.path()),
@@ -40,11 +44,14 @@ class AtariScenario(Scenario):
         self._front_cameras = []
         for f in sorted(front_camera_paths):
             Log.out(
-                "Loading front camera raw image", {
+                "Loading front camera image", {
                     'filename': f,
                 })
             self._front_cameras.append(
-                cv2.imread(os.path.join(front_camera_dir, f)),
+                CameraImage.from_path_and_camera(
+                    os.path.join(front_camera_dir, f),
+                    camera,
+                )
             )
 
     def run(
@@ -53,6 +60,8 @@ class AtariScenario(Scenario):
         dump = {
             'bbox_detected': [],
             'lane_detected': [],
+            'steps': [],
+            'scale': 640 / self._front_cameras[0].size()[0],
         }
         os.makedirs(self.dump_dir())
 
@@ -61,13 +70,14 @@ class AtariScenario(Scenario):
 
             dump['bbox_detected'].append([dict(b) for b in boxes])
             dump['lane_detected'].append([dict(l) for l in lanes])
+            dump['steps'].append({
+                'step': i,
+                'state': dict(state),
+            })
 
             cv2.imwrite(
                 os.path.join(self.dump_dir(), str(i) + ".png"),
-                cv2.resize(
-                    front_camera, (640, 360),
-                    interpolation=cv2.INTER_LINEAR,
-                ),
+                front_camera.data(size=(640, 360)),
             )
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")
