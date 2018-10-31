@@ -60,6 +60,7 @@ class AtariScenario(Scenario):
         dump = {
             'bbox_detected': [],
             'lane_detected': [],
+            'steps': [],
         }
         os.makedirs(self.dump_dir())
 
@@ -68,13 +69,14 @@ class AtariScenario(Scenario):
 
             dump['bbox_detected'].append([dict(b) for b in boxes])
             dump['lane_detected'].append([dict(l) for l in lanes])
+            dump['steps'].append({
+                'step': i,
+                'state': dict(state),
+            })
 
             cv2.imwrite(
                 os.path.join(self.dump_dir(), str(i) + ".png"),
-                cv2.resize(
-                    front_camera, (640, 360),
-                    interpolation=cv2.INTER_LINEAR,
-                ),
+                front_camera.data(size=(640, 360)),
             )
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")

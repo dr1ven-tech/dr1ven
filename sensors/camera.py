@@ -23,12 +23,12 @@ class Camera:
     def camera_matrix(
             self,
     ) -> np.ndarray:
-        return self._camera_matrix()
+        return self._camera_matrix
 
     def bird_eye_projection(
             self,
     ) -> np.ndarray:
-        return self._bird_eye_projection()
+        return self._bird_eye_projection
 
     def __iter__(
             self,

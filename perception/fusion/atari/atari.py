@@ -56,7 +56,7 @@ class Atari:
             })
 
         assert len(lanes) >= 2
-        lanes = sorted(lanes, key=lambda l: l.coordinates()[0][0])
+        lanes = sorted(lanes, key=lambda l: l.coordinates()[-1][0])
 
         # Default "Atari" environment for now (fixed `self._lane_count`).
         section = Section(
@@ -112,10 +112,17 @@ class Atari:
             [0.0, 50.0, 0.0],
         )
 
+        Log.out(
+            "Detected ego", {
+                'lateral_index': lane_index,
+                'lateral_lane_positon': lateral_lane_position,
+            })
+
         # TODO(stan): track vehicles across frames, in particular their speed.
         entities = []
         for b in boxes:
             box_bottom_height = b.position()[1] + b.shape()[1]
+            box_left_width = b.position()[0]
 
             lane_index, lateral_lane_position, left_lanes, right_lanes = \
                 self._lane_position(lanes, b.position()[0])
@@ -129,8 +136,27 @@ class Atari:
                 (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
             real_height = b.shape()[1] / b.shape()[0] * real_width
 
-            # z / f = DX / dx
-            distance = 0.0
+            # `z = f * DX / dx`. We use the lanes to estimate distance as they
+            # are not subject to occlusion.
+            distance = front_camera.camera().camera_matrix()[0][0] * \
+                (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH) / (right[0]-left[0])
+
+            # TODO(stan): clean that up
+            distance = min(distance, HIGHWAY_VOXEL_WIDTH * (
+                HIGHWAY_LANE_DEPTH - EGO_POSITION_DEPTH - 1
+            ))
+
+            Log.out(
+                "Detected entity", {
+                    'type': b.type(),
+                    'box_left_width': box_left_width,
+                    'box_bottom_height': box_bottom_height,
+                    'lateral_index': lane_index,
+                    'lateral_lane_positon': lateral_lane_position,
+                    'distance': distance,
+                    'width': real_width,
+                    'height': real_height,
+                })
 
             entities.append(
                 Entity(
@@ -154,8 +180,6 @@ class Atari:
                 )
             )
 
-            import pdb; pdb.set_trace()
-
         return Highway([section], ego, entities), boxes, lanes
 
     @staticmethod
@@ -165,7 +189,7 @@ class Atari:
     ) -> (int, float):
         split = -1
         for i in range(len(lanes)):
-            if lanes[i].coordinates()[0][0] <= width:
+            if lanes[i].coordinates()[-1][0] <= width:
                 split = i
             else:
                 break
@@ -186,13 +210,13 @@ class Atari:
             left = left_lanes[1]
             right = left_lanes[0]
 
-        assert right.coordinates()[0][0] > \
-            left.coordinates()[0][0]
+        assert right.coordinates()[-1][0] > \
+            left.coordinates()[-1][0]
 
         lateral_lane_position = (
-            (width - left.coordinates()[0][0]) /
-            (right.coordinates()[0][0] -
-             left.coordinates()[0][0])
+            (width - left.coordinates()[-1][0]) /
+            (right.coordinates()[-1][0] -
+             left.coordinates()[-1][0])
         ) * (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
 
         return lane_index, lateral_lane_position, left_lanes, right_lanes

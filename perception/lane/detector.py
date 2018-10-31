@@ -22,7 +22,7 @@ class Lane:
         for p in coordinates:
             assert len(p) == 2
         assert len(coordinates) > 2
-        self._coordinates = reversed(sorted(coordinates, key=lambda p: p[1]))
+        self._coordinates = sorted(coordinates, key=lambda p: p[1])
 
     def coordinates(
             self,
@@ -35,9 +35,9 @@ class Lane:
     ) -> typing.List[int]:
         maximal = 0
         for i in range(len(self._coordinates)):
-            maximal = i
-            if (self._coordinates[1] > height):
+            if (self._coordinates[i][1] > height):
                 break
+            maximal = i
 
         neighbors = []
         if maximal == len(self._coordinates)-1:
@@ -54,7 +54,7 @@ class Lane:
         alpha = (neighbors[1][0] - neighbors[0][0]) / \
             (neighbors[0][1] != neighbors[1][1])
 
-        return [neighbors[0][0] + alpha * (neighbors[0][0] - height), height]
+        return [neighbors[0][0] + alpha * (neighbors[0][1] - height), height]
 
     def __iter__(
             self,
