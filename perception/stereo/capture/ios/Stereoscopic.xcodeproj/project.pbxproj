@@ -14,6 +14,11 @@
 		DCBA7807216CF6CA00BD7AB2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCBA7805216CF6CA00BD7AB2 /* LaunchScreen.storyboard */; };
 		DCBA7812216CF6CA00BD7AB2 /* StereoscopicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA7811216CF6CA00BD7AB2 /* StereoscopicTests.swift */; };
 		DCBA781D216CF6CA00BD7AB2 /* StereoscopicUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCBA781C216CF6CA00BD7AB2 /* StereoscopicUITests.swift */; };
+		DCE721DD218B03E30030919D /* CameraConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE721DC218B03E30030919D /* CameraConfig.swift */; };
+		DCE721E0218B04E70030919D /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE721DE218B04E70030919D /* SettingsViewController.swift */; };
+		DCE721E1218B04E70030919D /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCE721DF218B04E70030919D /* SettingsViewController.xib */; };
+		DCE721E3218B099B0030919D /* SettingsViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE721E2218B099B0030919D /* SettingsViewDataSource.swift */; };
+		DCE721E5218B42740030919D /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCE721E4218B42740030919D /* Metadata.swift */; };
 		DCFD758B216FEF5C0075F5D8 /* dong.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DCFD758A216FEF5C0075F5D8 /* dong.mp3 */; };
 /* End PBXBuildFile section */
 
@@ -48,6 +53,11 @@
 		DCBA7818216CF6CA00BD7AB2 /* StereoscopicUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StereoscopicUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCBA781C216CF6CA00BD7AB2 /* StereoscopicUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StereoscopicUITests.swift; sourceTree = "<group>"; };
 		DCBA781E216CF6CA00BD7AB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCE721DC218B03E30030919D /* CameraConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraConfig.swift; sourceTree = "<group>"; };
+		DCE721DE218B04E70030919D /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		DCE721DF218B04E70030919D /* SettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SettingsViewController.xib; sourceTree = "<group>"; };
+		DCE721E2218B099B0030919D /* SettingsViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewDataSource.swift; sourceTree = "<group>"; };
+		DCE721E4218B42740030919D /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
 		DCFD758A216FEF5C0075F5D8 /* dong.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = dong.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +111,11 @@
 			children = (
 				DCBA77FC216CF6C800BD7AB2 /* AppDelegate.swift */,
 				DCBA77FE216CF6C800BD7AB2 /* ViewController.swift */,
+				DCE721E4218B42740030919D /* Metadata.swift */,
+				DCE721DE218B04E70030919D /* SettingsViewController.swift */,
+				DCE721E2218B099B0030919D /* SettingsViewDataSource.swift */,
+				DCE721DF218B04E70030919D /* SettingsViewController.xib */,
+				DCE721DC218B03E30030919D /* CameraConfig.swift */,
 				DCFD758A216FEF5C0075F5D8 /* dong.mp3 */,
 				DCBA7800216CF6C800BD7AB2 /* Main.storyboard */,
 				DCBA7803216CF6CA00BD7AB2 /* Assets.xcassets */,
@@ -236,6 +251,7 @@
 				DCBA7804216CF6CA00BD7AB2 /* Assets.xcassets in Resources */,
 				DCFD758B216FEF5C0075F5D8 /* dong.mp3 in Resources */,
 				DCBA7802216CF6C800BD7AB2 /* Main.storyboard in Resources */,
+				DCE721E1218B04E70030919D /* SettingsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,8 +276,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DCE721E3218B099B0030919D /* SettingsViewDataSource.swift in Sources */,
 				DCBA77FF216CF6C800BD7AB2 /* ViewController.swift in Sources */,
+				DCE721DD218B03E30030919D /* CameraConfig.swift in Sources */,
 				DCBA77FD216CF6C800BD7AB2 /* AppDelegate.swift in Sources */,
+				DCE721E5218B42740030919D /* Metadata.swift in Sources */,
+				DCE721E0218B04E70030919D /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

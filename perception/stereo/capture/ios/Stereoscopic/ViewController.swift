@@ -10,14 +10,26 @@ import UIKit
 import AVFoundation
 import CoreLocation
 
-class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
+class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureDepthDataOutputDelegate {
 
     @IBOutlet weak var videoView: UIView!
     
-    private enum SessionSetupResult {
+    enum CameraError: Error {
+        case noCaptureDevice
+        case cannotAddVideoOutput
+    }
+
+    fileprivate enum SessionSetupResult {
         case success
         case notAuthorized
-        case configurationFailed
+        case configurationFailed(error: Error)
+        
+        var isSuccess: Bool {
+            switch self {
+            case .success: return true
+            case .notAuthorized, .configurationFailed(error: _): return false
+            }
+        }
     }
     
     private enum RecordState {
@@ -27,21 +39,42 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
         case saving
     }
 
+    private var cameraConfig: CameraConfig = .teleCamera {
+        didSet {
+            //if cameraConfig is set, reload everything
+        }
+    }
     
-    private var setupResult: SessionSetupResult = .success
+    private var setupResult: SessionSetupResult = .success {
+        didSet {
+            switch setupResult {
+            case .configurationFailed(let error):
+                let alert = UIAlertController(title: "error", message: error.localizedDescription, preferredStyle: .alert)
+                self.show(alert, sender: nil)
+            case .success:
+                print("success")
+            case .notAuthorized:
+                print("not authorized")
+            }
+        }
+    }
+    
     private let session = AVCaptureSession()
     private var isSessionRunning = false
     private var recordState: RecordState = .loading
     private var teleDevice: AVCaptureDevice!
     private var videoDeviceInput: AVCaptureDeviceInput!
     private var statusBarOrientation: UIInterfaceOrientation = .landscapeRight
-    private var outputURL: URL!
-    
+    private var videoOutputURL: URL!
+    private var dataOutputURL: URL!
+
     private var startDate: Date!
     private var movieFileOutput = AVCaptureMovieFileOutput()
     // Communicate with the session and other session objects on this queue.
     private let sessionQueue = DispatchQueue(label: "session queue", attributes: [], autoreleaseFrequency: .workItem)
     
+    private var videoMetadata: VideoMetadata?
+
     private let videoDataOutput = AVCaptureVideoDataOutput()
     private let dataOutputQueue = DispatchQueue(label: "video data queue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     
@@ -125,28 +158,27 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
 
     // Call this on the session queue
     private func configureSession() {
-        if setupResult != .success {
+        if setupResult.isSuccess == false {
             return
         }
         
         //ask for the tele device
-        let videoDeviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInTelephotoCamera], mediaType: .video, position: .back)
+        let videoDeviceDiscoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [cameraConfig.captureDevice], mediaType: .video, position: .back)
 
-        let defaultTeleDevice: AVCaptureDevice? = videoDeviceDiscoverySession.devices.first
+        let defaultRequiredDevice: AVCaptureDevice? = videoDeviceDiscoverySession.devices.first
         
-        guard let videoDevice = defaultTeleDevice else {
-            print("Could not find any video device")
-            setupResult = .configurationFailed
+        guard let videoDevice = defaultRequiredDevice else {
+            setupResult = .configurationFailed(error: CameraError.noCaptureDevice)
             return
         }
         
-        teleDevice = defaultTeleDevice
+        teleDevice = videoDevice
                 
         do {
             videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
         } catch {
             print("Could not create video device input: \(error)")
-            setupResult = .configurationFailed
+            setupResult = .configurationFailed(error: error)
             return
         }
         
@@ -166,8 +198,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
             videoDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
         } else {
-            print("Could not add video data output to the session")
-            setupResult = .configurationFailed
+            setupResult = .configurationFailed(error: CameraError.cannotAddVideoOutput)
             session.commitConfiguration()
             return
         }
@@ -180,7 +211,10 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
             //set intric matrix
             if connection.isCameraIntrinsicMatrixDeliverySupported {
                 connection.isCameraIntrinsicMatrixDeliveryEnabled = true
-                print("intrinsic matrix enabled")
+            }
+            
+            if connection.isVideoStabilizationSupported {
+                connection.preferredVideoStabilizationMode = .off
             }
         }
 
@@ -238,7 +272,6 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
                     message = message + "WB:\(error.localizedDescription)"
                 }
             }
-            
         }
         cameraConfigButton.setTitle(message, for: .normal)
     }
@@ -274,6 +307,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
         }
     }
     
+    // MARK: - User Interaction
+
     @IBAction func recordButtonWasTouched() {
         switch recordState {
         case RecordState.ready:
@@ -291,6 +326,8 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     func startRecording() {
         //start recording
         startDate = Date()
+        let metadata = Metadata.init(model: UIDevice.current.model, captureDevice: teleDevice.description, averageFPS:nil)
+        videoMetadata = VideoMetadata.init(metadata: metadata, cameraCalibrationData: [CameraCalibration](), GNSSData: [GNSS](), IMUData: [IMU]())
         //if movieFileOutput wasn't connected to the session yet
         if movieFileOutput.connections.isEmpty {
             session.addOutput(movieFileOutput)
@@ -308,13 +345,13 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
         do {
             let name = UIDevice().name + "-" + startDate.description(with: Locale.current)
             let documentDirectory = try fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor:nil, create:true)
-            outputURL = documentDirectory.appendingPathComponent(name).appendingPathExtension("mov")
+            videoOutputURL = documentDirectory.appendingPathComponent(name).appendingPathExtension("mov")
         }
         catch {
             print(error)
         }
         
-        movieFileOutput.startRecording(to: outputURL, recordingDelegate: self)
+        movieFileOutput.startRecording(to: videoOutputURL, recordingDelegate: self)
         
         //sound for video sync
         playClapSound()
@@ -341,15 +378,21 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate, AV
     // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
     
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+                
+        guard let exifMetadata = CMGetAttachment(sampleBuffer, key: "{Exif}" as CFString,  attachmentModeOut: nil) as? Dictionary<String, Any> else {return}
+
         if let cameraIntrinsicData = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) as? Data
         {
-            let matrix: matrix_float3x3 = cameraIntrinsicData.withUnsafeBytes { $0.pointee }
-            print(matrix)
+//            let matrix: matrix_float3x3 = cameraIntrinsicData.withUnsafeBytes { $0.pointee }
+            var newCameraCalibration = CameraCalibration.init(exif: exifMetadata, cameraIntrinsicData: cameraIntrinsicData, cameraDistorsionMatrix: nil)
+            if var cameraCalibrationData = videoMetadata?.cameraCalibrationData, var videoMetadata = videoMetadata  {
+                cameraCalibrationData.append(newCameraCalibration)
+                videoMetadata.cameraCalibrationData = cameraCalibrationData
+            }
         }
     }
     
     func captureOutput(_ output: AVCaptureOutput, didDrop sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         print("did drop frame")
     }
-
 }
