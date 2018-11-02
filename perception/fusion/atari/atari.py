@@ -123,14 +123,23 @@ class Atari:
         for b in boxes:
             box_bottom_height = b.position()[1] + b.shape()[1]
             box_left_width = b.position()[0]
+            box_right_width = b.position()[0] + b.shape()[0]
+
+            if box_right_width < lanes[0].at_height(box_bottom_height)[0] or \
+                    box_left_width > lanes[-1].at_height(box_bottom_height)[0]:
+                Log.out(
+                    "Entity out of bound", {
+                        'box_left_width': box_left_width,
+                        'box_right_width': box_right_width,
+                        'box_bottom_height': box_bottom_height,
+                    })
+                continue
 
             lane_index, lateral_lane_position, left_lanes, right_lanes = \
                 self._lane_position(lanes, b.position()[0])
 
             left = left_lanes[0].at_height(box_bottom_height)
             right = right_lanes[0].at_height(box_bottom_height)
-
-            assert right[0] > left[0]
 
             real_width = b.shape()[0] / (right[0]-left[0]) * \
                 (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
