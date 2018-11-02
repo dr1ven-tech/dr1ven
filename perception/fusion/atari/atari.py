@@ -69,7 +69,7 @@ class Atari:
         camera_center = front_camera.size()[0] / 2
 
         lane_index, lateral_lane_position, _, _ = self._lane_position(
-            lanes, camera_center,
+            lanes, camera_center, lanes[0].coordinates()[-1][1],
         )
 
         # TODO(stan): The fuser should be passed as argument a `Vehicle` object
@@ -136,7 +136,7 @@ class Atari:
                 continue
 
             lane_index, lateral_lane_position, left_lanes, right_lanes = \
-                self._lane_position(lanes, b.position()[0])
+                self._lane_position(lanes, b.position()[0], box_bottom_height)
 
             left = left_lanes[0].at_height(box_bottom_height)
             right = right_lanes[0].at_height(box_bottom_height)
@@ -199,12 +199,12 @@ class Atari:
     ) -> (int, float):
         split = -1
         for i in range(len(lanes)):
-            if lanes[i].at_height(height) <= width:
+            if lanes[i].at_height(height)[0] <= width:
                 split = i
             else:
                 break
 
-        left_lanes = lanes[:split+1]
+        left_lanes = list(reversed(lanes[:split+1]))
         right_lanes = lanes[split+1:]
 
         # TODO(stan): for now we assert if we're past the left-most lane but
@@ -220,11 +220,16 @@ class Atari:
             left = left_lanes[1]
             right = left_lanes[0]
 
-        right_width = right.at_height(height)
-        left_width = left.at_height(height)
+        right_width = right.at_height(height)[0]
+        left_width = left.at_height(height)[0]
 
         assert right_width > left_width
 
+        Log.out("lateral_lane_position", {
+            'width': width,
+            'left_width': left_width,
+            'right_width': right_width,
+        })
         lateral_lane_position = (
             (width - left_width) / (right_width - left_width)
         ) * (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
