@@ -195,10 +195,11 @@ class Atari:
     def _lane_position(
             lanes: typing.List[Lane],
             width: int,
+            height: int,
     ) -> (int, float):
         split = -1
         for i in range(len(lanes)):
-            if lanes[i].coordinates()[-1][0] <= width:
+            if lanes[i].at_height(height) <= width:
                 split = i
             else:
                 break
@@ -219,13 +220,13 @@ class Atari:
             left = left_lanes[1]
             right = left_lanes[0]
 
-        assert right.coordinates()[-1][0] > \
-            left.coordinates()[-1][0]
+        right_width = right.at_height(height)
+        left_width = left.at_height(height)
+
+        assert right_width > left_width
 
         lateral_lane_position = (
-            (width - left.coordinates()[-1][0]) /
-            (right.coordinates()[-1][0] -
-             left.coordinates()[-1][0])
+            (width - left_width) / (right_width - left_width)
         ) * (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
 
         return lane_index, lateral_lane_position, left_lanes, right_lanes
