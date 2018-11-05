@@ -38,6 +38,7 @@ class Atari:
             front_camera: CameraImage,
     ) -> (Highway, typing.List[BBox], typing.List[Lane]):
         start = time.time()
+
         boxes = self._bbox_detector.detect(front_camera)
         Log.out(
             "Boxes detected", {
