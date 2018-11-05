@@ -210,8 +210,8 @@ class Atari:
             left = right_lanes[0]
             right = right_lanes[1]
         elif len(right_lanes) == 0:
-            left = left_lanes[-2]
-            right = left_lanes[-1]
+            left = left_lanes[1]
+            right = left_lanes[0]
         else:
             left = left_lanes[0]
             right = right_lanes[0]
@@ -235,7 +235,6 @@ class Atari:
         if len(left_lanes) == 0:
             lateral_lane_position += HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
         if len(right_lanes) == 0:
-            lane_index += 1
             lateral_lane_position -= HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
 
         return lane_index, lateral_lane_position, \
