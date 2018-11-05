@@ -115,7 +115,7 @@ class Atari:
 
         Log.out(
             "Detected ego", {
-                'lateral_index': lane_index,
+                'lateral_index': (lane_index + 1),
                 'lateral_lane_positon': lateral_lane_position,
             })
 
@@ -171,7 +171,7 @@ class Atari:
                     EntityOccupation(
                         EntityOrientation.FORWARD,
                         [
-                            HIGHWAY_LANE_WIDTH * lane_index +
+                            HIGHWAY_LANE_WIDTH * (lane_index + 1) +
                             int(math.floor(
                                 lateral_lane_position / HIGHWAY_VOXEL_WIDTH
                             )),
@@ -221,15 +221,22 @@ class Atari:
 
         assert right_at_height[0] > left_at_height[0]
 
-        Log.out("lateral_lane_position", {
-            'width': width,
-            'left_at_height[0]': left_at_height[0],
-            'right_at_height_width[0]': right_at_height[0],
-        })
+        # Log.out("DEBUG _lane_position", {
+        #     'height': height,
+        #     'width': width,
+        #     'left_at_height[0]': left_at_height[0],
+        #     'right_at_height_width[0]': right_at_height[0],
+        # })
         lateral_lane_position = (
             (width - left_at_height[0]) /
             (right_at_height[0] - left_at_height[0])
         ) * (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
+
+        if len(left_lanes) == 0:
+            lateral_lane_position += HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
+        if len(right_lanes) == 0:
+            lane_index += 1
+            lateral_lane_position -= HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
 
         return lane_index, lateral_lane_position, \
             left_lanes, right_lanes, \
