@@ -43,7 +43,7 @@ class BBoxScenario(Scenario):
     def run(
             self,
     ) -> bool:
-        boxes = self._detector.detect(self._image, (640, 360))
+        boxes = self._detector.detect(self._image)
 
         dump = {
             'detected': [dict(b) for b in boxes],
@@ -63,7 +63,7 @@ class BBoxScenario(Scenario):
         with open(dump_path, 'w') as out:
             json.dump(dump, out, indent=2)
 
-        cv2.imwrite(image_path, self._image.data(size=(640, 360)))
+        cv2.imwrite(image_path, self._image.data())
 
         self._detector.close()
 

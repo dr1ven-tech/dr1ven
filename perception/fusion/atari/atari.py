@@ -38,6 +38,7 @@ class Atari:
             front_camera: CameraImage,
     ) -> (Highway, typing.List[BBox], typing.List[Lane]):
         start = time.time()
+
         boxes = self._bbox_detector.detect(front_camera)
         Log.out(
             "Boxes detected", {
@@ -55,21 +56,13 @@ class Atari:
                 'processing_time': (time.time() - start),
             })
 
-        assert len(lanes) >= 2
-        lanes = sorted(lanes, key=lambda l: l.coordinates()[-1][0])
-
         # Default "Atari" environment for now (fixed `self._lane_count`).
         section = Section(
             0, HIGHWAY_LANE_DEPTH-1,
+            [RoadType.INVALID] * HIGHWAY_LANE_WIDTH +
             [RoadType.DRIVABLE] * (HIGHWAY_LANE_WIDTH * self._lane_count) +
             [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1) +
             [RoadType.INVALID],
-        )
-
-        camera_center = front_camera.size()[0] / 2
-
-        lane_index, lateral_lane_position, _, _ = self._lane_position(
-            lanes, camera_center,
         )
 
         # TODO(stan): The fuser should be passed as argument a `Vehicle` object
@@ -80,6 +73,19 @@ class Atari:
         VEHICLE_WIDTH = 1.8
         VEHICLE_HEIGHT = 1.5
         CAMERA_LATERAL_POSITION = 0.2
+
+        # TODO(stan): remove exit and use tracking instead.
+        if len(lanes) < 2:
+            return None, boxes, lanes
+
+        assert len(lanes) >= 2
+        lanes = sorted(lanes, key=lambda l: l.coordinates()[-1][0])
+
+        camera_center = front_camera.size()[0] / 2
+
+        lane_index, lateral_lane_position, _, _, _, _ = self._lane_position(
+            lanes, camera_center, lanes[0].coordinates()[-1][1],
+        )
 
         # Readjust the lateral_lane_positon based on the camera position.
         lateral_lane_position -= CAMERA_LATERAL_POSITION
@@ -99,7 +105,7 @@ class Atari:
             EntityOccupation(
                 EntityOrientation.FORWARD,
                 [
-                    HIGHWAY_LANE_WIDTH * lane_index +
+                    HIGHWAY_LANE_WIDTH * (lane_index + 1) +
                     int(math.floor(
                         lateral_lane_position / HIGHWAY_VOXEL_WIDTH
                     )),
@@ -114,7 +120,7 @@ class Atari:
 
         Log.out(
             "Detected ego", {
-                'lateral_index': lane_index,
+                'lateral_index': (lane_index + 1),
                 'lateral_lane_positon': lateral_lane_position,
             })
 
@@ -123,35 +129,40 @@ class Atari:
         for b in boxes:
             box_bottom_height = b.position()[1] + b.shape()[1]
             box_left_width = b.position()[0]
+            box_right_width = b.position()[0] + b.shape()[0]
 
-            lane_index, lateral_lane_position, left_lanes, right_lanes = \
-                self._lane_position(lanes, b.position()[0])
+            if box_right_width < lanes[0].at_height(box_bottom_height)[0] or \
+                    box_left_width > lanes[-1].at_height(box_bottom_height)[0]:
+                Log.out(
+                    "Entity out of bound", {
+                        'box_left_width': box_left_width,
+                        'box_right_width': box_right_width,
+                        'box_bottom_height': box_bottom_height,
+                    })
+                continue
 
-            left = left_lanes[0].at_height(box_bottom_height)
-            right = right_lanes[0].at_height(box_bottom_height)
+            lane_index, lateral_lane_position, \
+                left_lanes, right_lanes, \
+                left_at_height, right_at_height = \
+                self._lane_position(lanes, b.position()[0], box_bottom_height)
 
-            assert right[0] > left[0]
-
-            real_width = b.shape()[0] / (right[0]-left[0]) * \
+            real_width = b.shape()[0] / \
+                (right_at_height[0]-left_at_height[0]) * \
                 (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
             real_height = b.shape()[1] / b.shape()[0] * real_width
 
             # `z = f * DX / dx`. We use the lanes to estimate distance as they
             # are not subject to occlusion.
             distance = front_camera.camera().camera_matrix()[0][0] * \
-                (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH) / (right[0]-left[0])
-
-            # TODO(stan): clean that up
-            distance = min(distance, HIGHWAY_VOXEL_WIDTH * (
-                HIGHWAY_LANE_DEPTH - EGO_POSITION_DEPTH - 1
-            ))
+                (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH) / \
+                (right_at_height[0]-left_at_height[0])
 
             Log.out(
                 "Detected entity", {
                     'type': b.type(),
                     'box_left_width': box_left_width,
                     'box_bottom_height': box_bottom_height,
-                    'lateral_index': lane_index,
+                    'lateral_index': (lane_index + 1),
                     'lateral_lane_positon': lateral_lane_position,
                     'distance': distance,
                     'width': real_width,
@@ -165,7 +176,7 @@ class Atari:
                     EntityOccupation(
                         EntityOrientation.FORWARD,
                         [
-                            HIGHWAY_LANE_WIDTH * lane_index +
+                            HIGHWAY_LANE_WIDTH * (lane_index + 1) +
                             int(math.floor(
                                 lateral_lane_position / HIGHWAY_VOXEL_WIDTH
                             )),
@@ -186,37 +197,51 @@ class Atari:
     def _lane_position(
             lanes: typing.List[Lane],
             width: int,
+            height: int,
     ) -> (int, float):
         split = -1
         for i in range(len(lanes)):
-            if lanes[i].coordinates()[-1][0] <= width:
+            if lanes[i].at_height(height)[0] <= width:
                 split = i
             else:
                 break
 
-        left_lanes = lanes[:split+1]
+        left_lanes = list(reversed(lanes[:split+1]))
         right_lanes = lanes[split+1:]
-
-        # TODO(stan): for now we assert if we're past the left-most lane but
-        # eventually we would want to handle such exceptions explicitely.
-        assert len(left_lanes) > 0
 
         lane_index = len(left_lanes)-1
 
-        if len(right_lanes) > 0:
-            left = left_lanes[0]
-            right = right_lanes[0]
-        else:
+        if len(left_lanes) == 0:
+            left = right_lanes[0]
+            right = right_lanes[1]
+        elif len(right_lanes) == 0:
             left = left_lanes[1]
             right = left_lanes[0]
+        else:
+            left = left_lanes[0]
+            right = right_lanes[0]
 
-        assert right.coordinates()[-1][0] > \
-            left.coordinates()[-1][0]
+        right_at_height = right.at_height(height)
+        left_at_height = left.at_height(height)
 
+        assert right_at_height[0] > left_at_height[0]
+
+        # Log.out("DEBUG _lane_position", {
+        #     'height': height,
+        #     'width': width,
+        #     'left_at_height[0]': left_at_height[0],
+        #     'right_at_height_width[0]': right_at_height[0],
+        # })
         lateral_lane_position = (
-            (width - left.coordinates()[-1][0]) /
-            (right.coordinates()[-1][0] -
-             left.coordinates()[-1][0])
+            (width - left_at_height[0]) /
+            (right_at_height[0] - left_at_height[0])
         ) * (HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH)
 
-        return lane_index, lateral_lane_position, left_lanes, right_lanes
+        if len(left_lanes) == 0:
+            lateral_lane_position += HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
+        if len(right_lanes) == 0:
+            lateral_lane_position -= HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
+
+        return lane_index, lateral_lane_position, \
+            left_lanes, right_lanes, \
+            left_at_height, right_at_height

@@ -49,12 +49,16 @@ class Lane:
                 self._coordinates[maximal], self._coordinates[maximal+1]
             ]
 
+        # Log.out("DEBUG lane_at_height", {
+        #     'neighbors': neighbors,
+        # })
+
         assert neighbors[0][1] != neighbors[1][1]
 
         alpha = (neighbors[1][0] - neighbors[0][0]) / \
-            (neighbors[0][1] != neighbors[1][1])
+            (neighbors[1][1] - neighbors[0][1])
 
-        return [neighbors[0][0] + alpha * (neighbors[0][1] - height), height]
+        return [neighbors[0][0] + alpha * (height - neighbors[0][1]), height]
 
     def __iter__(
             self,

@@ -70,10 +70,17 @@ class AtariScenario(Scenario):
 
             dump['bbox_detected'].append([dict(b) for b in boxes])
             dump['lane_detected'].append([dict(l) for l in lanes])
-            dump['steps'].append({
-                'step': i,
-                'state': dict(state),
-            })
+            if state is not None:
+                dump['steps'].append({
+                    'step': i,
+                    'state': dict(state),
+                })
+            else:
+                # TODO(stan): remove this hack once we have proper tracking.
+                dump['steps'].append({
+                    'step': i,
+                    'state': dump['steps'][i-i]['state'],
+                })
 
             cv2.imwrite(
                 os.path.join(self.dump_dir(), str(i) + ".png"),

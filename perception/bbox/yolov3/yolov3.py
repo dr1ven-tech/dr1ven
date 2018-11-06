@@ -1,3 +1,4 @@
+import cv2
 import os
 import perception.bbox.yolov3.darknet.python.darknet as darknet
 import typing
@@ -10,6 +11,7 @@ from state.entity import EntityType
 
 from utils.config import Config
 
+YOLOV3_SQUARE_SIZE = 608
 
 class YOLOv3(BBoxDetector):
     def __init__(
@@ -44,12 +46,37 @@ class YOLOv3(BBoxDetector):
     def detect(
             self,
             image: CameraImage,
-            size: typing.Optional[typing.Tuple[int, int]] = None,
     ) -> typing.List[BBox]:
         assert self._closed is False
         assert image.data().shape[2] == 3
 
-        r = darknet.detect(self._net, self._meta, image.data(size=size))
+        if image.size()[0] >= image.size()[1]:
+            length = image.size()[1]
+            dx = int((image.size()[0] - image.size()[1]) / 2)
+            dy = 0
+        else:
+            length = image.size()[0]
+            dx = 0
+            dy = int((image.size()[1] - image.size()[0]) / 2)
+
+        square = cv2.resize(
+            image.data()[dy:dy+length, dx:dx+length],
+            (YOLOV3_SQUARE_SIZE, YOLOV3_SQUARE_SIZE),
+            interpolation=cv2.INTER_LINEAR,
+        )
+
+        scale = length / YOLOV3_SQUARE_SIZE
+
+        # square = cv2.resize(
+        #     image.data(),
+        #     (int(image.size()[0] / 2), int(image.size()[1] / 2)),
+        #     interpolation=cv2.INTER_LINEAR,
+        # )
+        # scale = 2.0
+        # dx = 0
+        # dy = 0
+
+        r = darknet.detect(self._net, self._meta, square)
 
         classes = {
             'car': EntityType.CAR,
@@ -73,8 +100,11 @@ class YOLOv3(BBoxDetector):
                     BBox(
                         classes[p[0].decode('utf-8')],
                         p[1],
-                        [int(p[2][0]-p[2][2]/2), int(p[2][1]-p[2][3]/2)],
-                        [int(p[2][2]), int(p[2][3])],
+                        [
+                            int(dx + scale*(p[2][0]-p[2][2]/2)),
+                            int(dy + scale*(p[2][1]-p[2][3]/2))
+                        ],
+                        [int(scale*p[2][2]), int(scale*p[2][3])],
                     )
                 )
 
