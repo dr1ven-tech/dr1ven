@@ -56,9 +56,6 @@ class Atari:
                 'processing_time': (time.time() - start),
             })
 
-        assert len(lanes) >= 2
-        lanes = sorted(lanes, key=lambda l: l.coordinates()[-1][0])
-
         # Default "Atari" environment for now (fixed `self._lane_count`).
         section = Section(
             0, HIGHWAY_LANE_DEPTH-1,
@@ -66,12 +63,6 @@ class Atari:
             [RoadType.DRIVABLE] * (HIGHWAY_LANE_WIDTH * self._lane_count) +
             [RoadType.EMERGENCY] * (HIGHWAY_LANE_WIDTH-1) +
             [RoadType.INVALID],
-        )
-
-        camera_center = front_camera.size()[0] / 2
-
-        lane_index, lateral_lane_position, _, _, _, _ = self._lane_position(
-            lanes, camera_center, lanes[0].coordinates()[-1][1],
         )
 
         # TODO(stan): The fuser should be passed as argument a `Vehicle` object
@@ -82,6 +73,19 @@ class Atari:
         VEHICLE_WIDTH = 1.8
         VEHICLE_HEIGHT = 1.5
         CAMERA_LATERAL_POSITION = 0.2
+
+        # TODO(stan): remove exit and use tracking instead.
+        if len(lanes) < 2:
+            return None, boxes, lanes
+
+        assert len(lanes) >= 2
+        lanes = sorted(lanes, key=lambda l: l.coordinates()[-1][0])
+
+        camera_center = front_camera.size()[0] / 2
+
+        lane_index, lateral_lane_position, _, _, _, _ = self._lane_position(
+            lanes, camera_center, lanes[0].coordinates()[-1][1],
+        )
 
         # Readjust the lateral_lane_positon based on the camera position.
         lateral_lane_position -= CAMERA_LATERAL_POSITION

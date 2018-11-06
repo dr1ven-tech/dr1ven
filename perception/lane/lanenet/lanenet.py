@@ -142,10 +142,7 @@ class LaneNet(LaneDetector):
 
                     coordinates.append([rx, ry])
 
-                if len(coordinates) > 0:
-                    raw.append(
-                        coordinates,
-                    )
+                raw.append(coordinates)
 
             filtered: typing.List[typing.List[typing.List[int]]] = \
                 [[] for _ in raw]
@@ -159,4 +156,4 @@ class LaneNet(LaneDetector):
                 if not np.array_equal(sign, cur):
                     break
 
-        return [Lane(l) for l in filtered]
+        return [Lane(l) for l in filtered if len(l) > 2]
