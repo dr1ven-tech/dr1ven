@@ -52,31 +52,18 @@ class YOLOv3(BBoxDetector):
 
         if image.size()[0] >= image.size()[1]:
             length = image.size()[1]
-            dx = int((image.size()[0] - image.size()[1]) / 2)
-            dy = 0
         else:
             length = image.size()[0]
-            dx = 0
-            dy = int((image.size()[1] - image.size()[0]) / 2)
-
-        square = cv2.resize(
-            image.data()[dy:dy+length, dx:dx+length],
-            (YOLOV3_SQUARE_SIZE, YOLOV3_SQUARE_SIZE),
-            interpolation=cv2.INTER_LINEAR,
-        )
 
         scale = length / YOLOV3_SQUARE_SIZE
 
-        # square = cv2.resize(
-        #     image.data(),
-        #     (int(image.size()[0] / 2), int(image.size()[1] / 2)),
-        #     interpolation=cv2.INTER_LINEAR,
-        # )
-        # scale = 2.0
-        # dx = 0
-        # dy = 0
+        resized = cv2.resize(
+            image.data(),
+            (int(image.size()[0] / scale), int(image.size()[1] / scale)),
+            interpolation=cv2.INTER_LINEAR,
+        )
 
-        r = darknet.detect(self._net, self._meta, square)
+        r = darknet.detect(self._net, self._meta, resized)
 
         classes = {
             'car': EntityType.CAR,
@@ -101,8 +88,8 @@ class YOLOv3(BBoxDetector):
                         classes[p[0].decode('utf-8')],
                         p[1],
                         [
-                            int(dx + scale*(p[2][0]-p[2][2]/2)),
-                            int(dy + scale*(p[2][1]-p[2][3]/2))
+                            int(scale*(p[2][0]-p[2][2]/2)),
+                            int(scale*(p[2][1]-p[2][3]/2))
                         ],
                         [int(scale*p[2][2]), int(scale*p[2][3])],
                     )
