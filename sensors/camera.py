@@ -13,12 +13,14 @@ class Camera:
             self,
             camera_matrix: np.ndarray,
             bird_eye_projection: np.ndarray,
+            bird_eye_input_size: typing.Tuple[int, int],
     ) -> None:
         assert camera_matrix.shape == (3, 3)
         assert bird_eye_projection.shape == (3, 3)
 
         self._camera_matrix = camera_matrix
         self._bird_eye_projection = bird_eye_projection
+        self._bird_eye_input_size = bird_eye_input_size
 
     def camera_matrix(
             self,
@@ -30,11 +32,17 @@ class Camera:
     ) -> np.ndarray:
         return self._bird_eye_projection
 
+    def bird_eye_input_size(
+            self,
+    ) -> typing.Tuple[int, int]:
+        return self._bird_eye_input_size
+
     def __iter__(
             self,
     ):
         yield 'camera_matrix', self._camera_matrix.tolist()
-        yield 'bird_eye_projection', self.bird_eye_projection.tolist()
+        yield 'bird_eye_projection', self._bird_eye_projection.tolist()
+        yield 'bird_eye_input_size', list(self._bird_eye_input_size)
 
     @staticmethod
     def from_dict(
@@ -43,6 +51,7 @@ class Camera:
         return Camera(
             np.array(spec['camera_matrix']),
             np.array(spec['bird_eye_projection']),
+            tuple(spec['bird_eye_input_size']),
         )
 
 
@@ -88,6 +97,26 @@ class CameraImage:
             self,
     ) -> typing.Tuple[int, int]:
         return (self._data.shape[1], self._data.shape[0])
+
+    def bird_eye_data(
+            self,
+    ) -> np.ndarray:
+        """`data` returns the raw data of a bird eye view.
+
+        The bird eye view projection is calibrated for a specific
+        `bird_eye_input_size` (parameter of the Camera itself).
+        """
+
+        output_size = (
+            self._camera.bird_eye_input_size()[0],
+            self._camera.bird_eye_input_size()[1] * 5,
+        )
+
+        return cv2.warpPerspective(
+            self.data(self._camera.bird_eye_input_size()),
+            self._camera.bird_eye_projection(),
+            output_size,
+        )
 
     @staticmethod
     def from_path_and_camera(

@@ -55,6 +55,7 @@ class LaneScenario(Scenario):
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")
         image_path = os.path.join(self.dump_dir(), "image.png")
+        bird_eye_path = os.path.join(self.dump_dir(), "bird_eye.png")
 
         Log.out(
             "Dumping detection", {
@@ -66,6 +67,7 @@ class LaneScenario(Scenario):
             json.dump(dump, out, indent=2)
 
         cv2.imwrite(image_path, self._image.data())
+        cv2.imwrite(bird_eye_path, self._image.bird_eye_data())
 
         self._detector.close()
 
