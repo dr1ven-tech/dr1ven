@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import os
 import tensorflow as tf
@@ -78,6 +79,8 @@ class LaneNet(LaneDetector):
         assert self._closed is False
         assert image.data().shape[2] == 3
         assert image.data().shape[1] / image.data().shape[0] == 1280 / 720
+        assert image.camera().bird_eye_input_size()[0] == 512
+        assert image.camera().bird_eye_input_size()[1] == 256
 
         resized = image.data(size=(512, 256))
         resized = resized - VGG_MEAN
@@ -109,51 +112,136 @@ class LaneNet(LaneDetector):
             else:
                 cluster_index = range(num_clusters)
 
-            raw = []
+        raw_projected = []
+        bird_eye_points = []
+        fitted_points = []
+        max_height = 5 * 256
+        maximal_height = 0
+        maximal_index = 0
 
-            for index, i in enumerate(cluster_index):
-                idx = np.where(labels == i)
-                points = np.flip(lane_coordinate[idx], axis=1)
+        for index, i in enumerate(cluster_index):
+            idx = np.where(labels == i)
+            points = np.flip(lane_coordinate[idx], axis=1)
 
-                x = np.float64(points)[:, 0]
-                y = np.float64(points)[:, 1]
+            projected = np.squeeze(
+                cv2.perspectiveTransform(
+                    np.array([points], dtype="float32"),
+                    image.camera().bird_eye_projection(),
+                ),
+                axis=0,
+            )
 
-                # Y = np.ones((y.size, 3))
-                # Y[:, 0] = y*y
-                # Y[:, 1] = y
+            max_height = min(max_height, int(projected[-1][1]))
+            if abs(projected[-1][1] - projected[0][-1]) > maximal_height:
+                maximal_height = abs(projected[-1][1] - projected[0][-1])
+                maximal_index = i
 
-                Y = np.ones((y.size, 2))
-                Y[:, 0] = y
+            for j in range(projected.shape[0]):
+                bird_eye_points.append(projected[j])
 
-                w = np.dot(
-                    np.linalg.inv(np.dot(np.transpose(Y), Y)),
-                    np.dot(np.transpose(Y), x),
-                )
+            x = np.float64(projected)[:, 0]
+            y = np.float64(projected)[:, 1]
 
-                coordinates = []
-                for y in range(256):
-                    y = float(y)
-                    # v = np.float64([y*y, y, 1])
-                    v = np.float64([y, 1])
-                    x = np.dot(w, v)
+            Y = np.ones((y.size, 3))
+            Y[:, 0] = y*y
+            Y[:, 1] = y
+            # Y = np.ones((y.size, 2))
+            # Y[:, 0] = y
 
-                    rx = int(round(x * image.data().shape[1] / 512))
-                    ry = int(round(y * image.data().shape[0] / 256))
+            w = np.dot(
+                np.linalg.inv(np.dot(np.transpose(Y), Y)),
+                np.dot(np.transpose(Y), x),
+            )
 
-                    coordinates.append([rx, ry])
+            print("W: {}".format(w))
 
-                raw.append(coordinates)
+            coordinates = []
+            for y in range(10*256):
+                y = float(y)
+                v = np.float64([y*y, y, 1])
+                # v = np.float64([y, 1])
+                x = np.dot(w, v)
 
-            filtered: typing.List[typing.List[typing.List[int]]] = \
-                [[] for _ in raw]
-            sign = None
-            for p in reversed(range(len(raw[0]))):
-                for l in range(len(raw)):
-                    filtered[l].append(raw[l][p])
-                cur = np.sign([raw[0][p][0] - l[p][0] for l in raw])
-                if sign is None:
-                    sign = cur
-                if not np.array_equal(sign, cur):
-                    break
+                # rx = int(round(x * image.data().shape[1] / 512))
+                # ry = int(round(y * image.data().shape[0] / 256))
 
-        return [Lane(l) for l in filtered if len(l) > 2]
+                coordinates.append([x, y])
+                fitted_points.append([x, y])
+
+            raw_projected.append(coordinates)
+
+        idx = np.where(labels == maximal_index)
+        points = np.flip(lane_coordinate[idx], axis=1)
+
+        projected = np.squeeze(
+            cv2.perspectiveTransform(
+                np.array([points], dtype="float32"),
+                image.camera().bird_eye_projection(),
+            ),
+            axis=0,
+        )
+
+        projected = projected - np.array([
+            raw_projected[maximal_index][max_height][0] - 256,
+            0,
+        ])
+
+        road_fitted = []
+
+        x = np.float64(projected)[:, 0]
+        y = np.float64(projected)[:, 1]
+
+        Y = np.ones((y.size, 3))
+        Y[:, 0] = y*y
+        Y[:, 1] = y
+
+        w = np.dot(
+            np.linalg.inv(np.dot(np.transpose(Y), Y)),
+            np.dot(np.transpose(Y), x),
+        )
+
+        for y in range(5*256):
+            y = float(y)
+            v = np.float64([y*y, y, 1])
+            x = np.dot(w, v)
+
+            # rx = int(round(x * image.data().shape[1] / 512))
+            # ry = int(round(y * image.data().shape[0] / 256))
+
+            road_fitted.append(np.array([x, y]))
+
+        for index, i in enumerate(cluster_index):
+            coordinates = []
+            for y in range(5*256):
+                y = float(y)
+                v = np.float64([y*y, y, 1])
+                x = np.dot(w, v)
+
+                coordinates.append(np.array([
+                    x + raw_projected[i][max_height][0] - 256,
+                    y,
+                ]))
+
+        raw_projected = cv2.perspectiveTransform(
+            np.array(raw_projected, dtype="float32"),
+            np.linalg.inv(image.camera().bird_eye_projection()),
+        ).tolist()
+
+        for l in raw_projected:
+            for p in l:
+                p[0] *= image.data().shape[1] / 512
+                p[1] *= image.data().shape[0] / 256
+
+        # filtered: typing.List[typing.List[typing.List[int]]] = \
+        #     [[] for _ in raw_projected]
+        # sign = None
+        # for p in reversed(range(len(raw[0]))):
+        #     for l in range(len(raw)):
+        #         filtered[l].append(raw[l][p])
+        #     cur = np.sign([raw[0][p][0] - l[p][0] for l in raw])
+        #     if sign is None:
+        #         sign = cur
+        #     if not np.array_equal(sign, cur):
+        #         break
+
+        return [Lane(l) for l in raw_projected if len(l) > 2], bird_eye_points, fitted_points

@@ -1,5 +1,6 @@
 import cv2
 import json
+import numpy as np
 import os
 
 from perception.lane.lanenet.lanenet import LaneNet
@@ -43,15 +44,31 @@ class LaneScenario(Scenario):
     def run(
             self,
     ) -> bool:
-        lanes = self._detector.detect(self._image)
+        lanes, points, fitted = self._detector.detect(self._image)
 
         dump = {
             'detected': [dict(l) for l in lanes],
         }
 
-        assert len(lanes) > 1
+        # assert len(lanes) > 1
 
         # TODO(stan): test criteria
+
+        bird_eye = self._image.bird_eye_data()
+        for p in points:
+            bird_eye = cv2.rectangle(
+                bird_eye,
+                tuple(np.int64(p-np.array([1, 1]))),
+                tuple(np.int64(p+np.array([1, 1]))),
+                (0, 255, 0), 1,
+            )
+        for p in fitted:
+            bird_eye = cv2.rectangle(
+                bird_eye,
+                tuple(np.int64(p-np.array([1, 1]))),
+                tuple(np.int64(p+np.array([1, 1]))),
+                (0, 0, 255), 1,
+            )
 
         dump_path = os.path.join(self.dump_dir(), "dump.json")
         image_path = os.path.join(self.dump_dir(), "image.png")
@@ -67,7 +84,7 @@ class LaneScenario(Scenario):
             json.dump(dump, out, indent=2)
 
         cv2.imwrite(image_path, self._image.data())
-        cv2.imwrite(bird_eye_path, self._image.bird_eye_data())
+        cv2.imwrite(bird_eye_path, bird_eye)
 
         self._detector.close()
 
