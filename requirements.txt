@@ -18,6 +18,8 @@ matplotlib==3.0.0
 mccabe==0.6.1
 mkl-fft==1.0.6
 mkl-random==1.0.1
+mypy==0.641
+mypy-extensions==0.4.1
 numpy==1.15.3
 olefile==0.46
 opencv-contrib-python==3.3.0.10
@@ -27,6 +29,7 @@ protobuf==3.6.1
 pycodestyle==2.4.0
 pycparser==2.19
 pyflakes==2.0.0
+pykalman==0.9.5
 pyparsing==2.2.2
 python-dateutil==2.7.3
 python-gflags==3.1.2
@@ -39,4 +42,5 @@ tensorflow==1.11.0
 termcolor==1.1.0
 torch==0.4.1
 torchvision==0.2.1
+typed-ast==1.1.0
 Werkzeug==0.14.1
