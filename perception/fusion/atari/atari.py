@@ -36,7 +36,9 @@ class Atari:
             self,
             now: float,
             front_camera: CameraImage,
-    ) -> (Highway, typing.List[BBox], typing.List[Lane]):
+    ) -> typing.Tuple[
+        typing.Optional[Highway], typing.List[BBox], typing.List[Lane]
+    ]:
         start = time.time()
 
         boxes = self._bbox_detector.detect(front_camera)
@@ -81,7 +83,7 @@ class Atari:
         assert len(lanes) >= 2
         lanes = sorted(lanes, key=lambda l: l.coordinates()[-1][0])
 
-        camera_center = front_camera.size()[0] / 2
+        camera_center = int(front_camera.size()[0] / 2)
 
         lane_index, lateral_lane_position, _, _, _, _ = self._lane_position(
             lanes, camera_center, lanes[0].coordinates()[-1][1],
@@ -110,7 +112,7 @@ class Atari:
                         lateral_lane_position / HIGHWAY_VOXEL_WIDTH
                     )),
                     EGO_POSITION_DEPTH,
-                    0.0,
+                    0,
                 ],
                 int(math.ceil(VEHICLE_WIDTH / HIGHWAY_VOXEL_WIDTH)),
                 int(math.ceil(VEHICLE_HEIGHT / HIGHWAY_VOXEL_WIDTH)),
@@ -182,7 +184,7 @@ class Atari:
                             )),
                             EGO_POSITION_DEPTH +
                             int(math.floor(distance / HIGHWAY_VOXEL_WIDTH)),
-                            0.0,
+                            0,
                         ],
                         int(math.ceil(real_width / HIGHWAY_VOXEL_WIDTH)),
                         int(math.ceil(real_height / HIGHWAY_VOXEL_WIDTH)),
@@ -198,7 +200,11 @@ class Atari:
             lanes: typing.List[Lane],
             width: int,
             height: int,
-    ) -> (int, float):
+    ) -> typing.Tuple[
+        int, float,
+        typing.List[Lane], typing.List[Lane],
+        typing.List[int], typing.List[int],
+    ]:
         split = -1
         for i in range(len(lanes)):
             if lanes[i].at_height(height)[0] <= width:
