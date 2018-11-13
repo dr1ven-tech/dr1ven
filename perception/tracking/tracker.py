@@ -17,12 +17,12 @@ class Tracker:
             initial_ego: EntityObservation,
             initial_now: float,
     ) -> None:
-        self.ego_tracker = EntityTracker(
+        self._ego_tracker = EntityTracker(
             initial_ego,
             initial_now,
         )
 
-        self._entitiy_trackers = []
+        self._trackers: typing.List[EntityTracker] = []
 
     def track(
             self,
@@ -30,7 +30,7 @@ class Tracker:
             ego: EntityObservation,
             entities: typing.List[EntityObservation],
     ) -> None:
-        self.ego_tracker.track(ego)
+        self._ego_tracker.track(ego)
 
         start = time.time()
 
@@ -44,12 +44,12 @@ class Tracker:
         # Filter matches based on (im)possibility of the observation
         # transition.
         matches = np.zeros((len(entities), len(self._trackers)))
-        cost = 0.0
+        matches_cost = 0.0
         for i in row_ind:
             for j in col_ind:
                 if self._trackers[j].possible(entities[i]):
                     matches[i][j] = 1
-                    cost += cost[i][j]
+                    matches_cost += cost[i][j]
 
         # Track or miss all existing trackers.
         for j in range(len(self._trackers)):
@@ -79,7 +79,7 @@ class Tracker:
                 'trackers_count': len(self._trackers),
                 'entities_count': len(entities),
                 'matches_count': matches.sum(),
-                'average_cost': cost / matches.sum(),
+                'average_cost': matches_cost / matches.sum(),
                 'new_count': new_count,
                 'removals_count': removals_count,
                 'processing_time': (time.time() - start),

@@ -49,7 +49,7 @@ class EntityTracker:
             initial_observation: EntityObservation,
             initial_now: float,
     ) -> None:
-        self._observation_matrices = np.array([
+        self._observation_matrix = np.array([
             [1, 0, 0, 0, 0, 0],
             [0, 1, 0, 0, 0, 0],
             [0, 0, 0, 0, 1, 0],
@@ -82,7 +82,7 @@ class EntityTracker:
     def _update(
             self,
             now: float,
-            observations: np.ndarray,
+            observations: typing.Optional[np.ndarray],
     ) -> None:
         dt = now - self._last_now
         assert dt > 0
@@ -148,6 +148,7 @@ class EntityTracker:
         if abs(self._last_state_mean[1] - observation.array()[1]) > \
                 ENTITY_OBSERVATION_POSITION_TRANSITION_MAX:
             return False
+        return True
 
     def mahalanobis(
             self,
