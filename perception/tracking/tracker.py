@@ -30,7 +30,7 @@ class Tracker:
             ego: EntityObservation,
             entities: typing.List[EntityObservation],
     ) -> None:
-        self._ego_tracker.track(ego)
+        self._ego_tracker.track(now, ego)
 
         start = time.time()
 

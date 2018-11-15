@@ -7,6 +7,8 @@ from perception.bbox.detector import BBox
 from perception.bbox.yolov3.yolov3 import YOLOv3
 from perception.lane.detector import Lane
 from perception.lane.lanenet.lanenet import LaneNet
+from perception.tracking.tracker import Tracker
+from perception.tracking.entity import EntityObservation
 
 from sensors.camera import CameraImage
 
@@ -21,6 +23,15 @@ from state.section import Section, RoadType
 from utils.config import Config
 from utils.log import Log
 
+# TODO(stan): The fuser should be passed as argument a `Vehicle` object
+# containing a list of sensor and their positions (eg `Camera`, `Radar`, ...)
+# as well as the vehicle dimensions.
+
+# For now we'll take pretty arbitrary constants.
+VEHICLE_WIDTH = 1.8
+VEHICLE_HEIGHT = 1.5
+CAMERA_LATERAL_POSITION = 0.2
+
 
 class Atari:
     def __init__(
@@ -31,6 +42,7 @@ class Atari:
         self._lane_detector = LaneNet(config)
         self._bbox_detector = YOLOv3(config)
         self._lane_count = lane_count
+        self._tracker: typing.Optional[Tracker] = None
 
     def fuse(
             self,
@@ -67,15 +79,6 @@ class Atari:
             [RoadType.INVALID],
         )
 
-        # TODO(stan): The fuser should be passed as argument a `Vehicle` object
-        # containing a list of sensor and their positions (eg `Camera`,
-        # `Radar`, ...) as well as the vehicle dimensions.
-
-        # For now we'll take pretty arbitrary constants.
-        VEHICLE_WIDTH = 1.8
-        VEHICLE_HEIGHT = 1.5
-        CAMERA_LATERAL_POSITION = 0.2
-
         # TODO(stan): remove exit and use tracking instead.
         if len(lanes) < 2:
             return None, boxes, lanes
@@ -96,38 +99,13 @@ class Atari:
             lane_index -= 1
             lateral_lane_position += HIGHWAY_VOXEL_WIDTH * HIGHWAY_LANE_WIDTH
 
-        # TODO(stan): We don't have odomoter recordings for now, os let's
-        # assume the speed to be constant for the ego vehicle. (50 voxel/s is
-        # 90 km/h).
-
-        # TODO(stan): track lateral speed of ego vehicle.
-        ego = Entity(
-            EntityType.CAR,
-            'ego',
-            EntityOccupation(
-                EntityOrientation.FORWARD,
-                [
-                    HIGHWAY_LANE_WIDTH * (lane_index + 1) +
-                    int(math.floor(
-                        lateral_lane_position / HIGHWAY_VOXEL_WIDTH
-                    )),
-                    EGO_POSITION_DEPTH,
-                    0,
-                ],
-                int(math.ceil(VEHICLE_WIDTH / HIGHWAY_VOXEL_WIDTH)),
-                int(math.ceil(VEHICLE_HEIGHT / HIGHWAY_VOXEL_WIDTH)),
-            ),
-            [0.0, 50.0, 0.0],
-        )
-
         Log.out(
             "Detected ego", {
                 'lateral_index': (lane_index + 1),
                 'lateral_lane_positon': lateral_lane_position,
             })
 
-        # TODO(stan): track vehicles across frames, in particular their speed.
-        entities = []
+        observations = []
         for b in boxes:
             box_bottom_height = b.position()[1] + b.shape()[1]
             box_left_width = b.position()[0]
@@ -171,24 +149,89 @@ class Atari:
                     'height': real_height,
                 })
 
+            observations.append(
+                EntityObservation(
+                    [HIGHWAY_LANE_WIDTH * (lane_index + 1) *
+                     HIGHWAY_VOXEL_WIDTH + lateral_lane_position, distance],
+                    [real_width, real_height],
+                )
+            )
+
+        if self._tracker is None:
+            self._tracker = Tracker(
+                EntityObservation(
+                    [HIGHWAY_LANE_WIDTH * (lane_index + 1) *
+                     HIGHWAY_VOXEL_WIDTH + lateral_lane_position, 0.0],
+                    [VEHICLE_WIDTH, VEHICLE_HEIGHT],
+                ),
+                now,
+            )
+        else:
+            self._tracker.track(
+                now,
+                EntityObservation(
+                    [HIGHWAY_LANE_WIDTH * (lane_index + 1) *
+                     HIGHWAY_VOXEL_WIDTH + lateral_lane_position, 0.0],
+                    [VEHICLE_WIDTH, VEHICLE_HEIGHT],
+                ),
+                observations,
+            )
+
+        # TODO(stan): We don't have odomoter recordings for now, os let's
+        # assume the speed to be constant for the ego vehicle. (50 voxel/s is
+        # 90 km/h).
+        ego = Entity(
+            EntityType.CAR,
+            'ego',
+            EntityOccupation(
+                EntityOrientation.FORWARD,
+                [
+                    int(math.floor(
+                        self._tracker.ego_tracker().position()[0] /
+                        HIGHWAY_VOXEL_WIDTH
+                    )),
+                    EGO_POSITION_DEPTH,
+                    0,
+                ],
+                int(math.ceil(
+                    self._tracker.ego_tracker().size()[0] / HIGHWAY_VOXEL_WIDTH
+                )),
+                int(math.ceil(
+                    self._tracker.ego_tracker().size()[1] / HIGHWAY_VOXEL_WIDTH
+                )),
+            ),
+            # TODO(stan): extract lateral speed fromm tracker.
+            [0.0, 50.0, 0.0],
+        )
+
+        entities = []
+        for e in self._tracker.trackers():
             entities.append(
                 Entity(
-                    b.type(),
+                    # TODO(stan): track type in EntityTracker
+                    EntityType.CAR,  # b.type()
+                    # TODO(stan): assign ids in EntityTracker
                     "{}".format(random.randrange(99999)),
                     EntityOccupation(
                         EntityOrientation.FORWARD,
                         [
-                            HIGHWAY_LANE_WIDTH * (lane_index + 1) +
                             int(math.floor(
-                                lateral_lane_position / HIGHWAY_VOXEL_WIDTH
+                                e.position()[0] / HIGHWAY_VOXEL_WIDTH
                             )),
                             EGO_POSITION_DEPTH +
-                            int(math.floor(distance / HIGHWAY_VOXEL_WIDTH)),
+                            int(math.floor(
+                                e.position()[1] / HIGHWAY_VOXEL_WIDTH
+                            )),
                             0,
                         ],
-                        int(math.ceil(real_width / HIGHWAY_VOXEL_WIDTH)),
-                        int(math.ceil(real_height / HIGHWAY_VOXEL_WIDTH)),
+                        int(math.ceil(
+                            e.size()[0] / HIGHWAY_VOXEL_WIDTH
+                        )),
+                        int(math.ceil(
+                            e.size()[1] / HIGHWAY_VOXEL_WIDTH
+                        )),
                     ),
+                    # TODO(stan): extract forward/lateral speed fromm tracker.
                     [0.0, 50.0, 0.0],
                 )
             )

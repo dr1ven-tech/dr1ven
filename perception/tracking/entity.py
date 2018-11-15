@@ -67,7 +67,7 @@ class EntityTracker:
         ])
         # We initialize the coveriance matrix to the identify matrix which is a
         # sensible (and reversible) default.
-        self._last_state_covariance = np.eye((6, 6))
+        self._last_state_covariance = np.eye(6, 6)
 
         # Initialize a kallman filter by setting the observation matrix as well
         # as the initial state mean.
