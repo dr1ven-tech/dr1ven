@@ -34,7 +34,16 @@ class Tracker:
 
         start = time.time()
 
-        cost = np.array((len(entities), len(self._trackers)))
+        for e in entities:
+            Log.out(
+                "Entity input", {
+                    'x': e.array()[0],
+                    'y': e.array()[1],
+                    'w': e.array()[2],
+                    'h': e.array()[3],
+                })
+
+        cost = np.zeros((len(entities), len(self._trackers)))
         for i in range(len(entities)):
             for j in range(len(self._trackers)):
                 cost[i][j] = self._trackers[j].mahalanobis(entities[i])
@@ -45,11 +54,12 @@ class Tracker:
         # transition.
         matches = np.zeros((len(entities), len(self._trackers)))
         matches_cost = 0.0
-        for i in row_ind:
-            for j in col_ind:
-                if self._trackers[j].possible(entities[i]):
-                    matches[i][j] = 1
-                    matches_cost += cost[i][j]
+        for k in range(len(row_ind)):
+            i = row_ind[k]
+            j = col_ind[k]
+            if self._trackers[j].possible(entities[i]):
+                matches[i][j] = 1
+                matches_cost += cost[i][j]
 
         # Track or miss all existing trackers.
         for j in range(len(self._trackers)):
@@ -61,10 +71,10 @@ class Tracker:
                 self._trackers[j].track(now, None)
 
         # Create a tracker for all entities that were were not able to assign.
-        new_count = 0
+        creations_count = 0
         for i in range(len(entities)):
             if np.nonzero(matches[i, :])[0].shape[0] == 0:
-                new_count += 1
+                creations_count += 1
                 self._trackers.append(EntityTracker(entities[i], now))
 
         # Remove tracker that have exceeded their miss count.
@@ -73,6 +83,7 @@ class Tracker:
             t = self._trackers[i]
             if t.miss_count() > TRACKER_MISS_COUNT_MAX:
                 self._trackers.remove(t)
+                removals_count += 1
 
         Log.out(
             "Tracker assignement", {
@@ -80,7 +91,7 @@ class Tracker:
                 'entities_count': len(entities),
                 'matches_count': matches.sum(),
                 'average_cost': matches_cost / matches.sum(),
-                'new_count': new_count,
+                'creations_count': creations_count,
                 'removals_count': removals_count,
                 'processing_time': (time.time() - start),
             })

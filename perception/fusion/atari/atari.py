@@ -114,7 +114,7 @@ class Atari:
             if box_right_width < lanes[0].at_height(box_bottom_height)[0] or \
                     box_left_width > lanes[-1].at_height(box_bottom_height)[0]:
                 Log.out(
-                    "Entity out of bound", {
+                    "Filtered entity (out of bound)", {
                         'box_left_width': box_left_width,
                         'box_right_width': box_right_width,
                         'box_bottom_height': box_bottom_height,

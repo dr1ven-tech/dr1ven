@@ -6,6 +6,8 @@ import typing
 from perception.tracking.constants import \
     ENTITY_OBSERVATION_POSITION_TRANSITION_MAX
 
+from utils.log import Log
+
 
 class EntityObservation:
     """ EntityObservation repreents the tracked observations for an entity.
@@ -67,7 +69,7 @@ class EntityTracker:
         ])
         # We initialize the coveriance matrix to the identify matrix which is a
         # sensible (and reversible) default.
-        self._last_state_covariance = np.eye(6, 6)
+        self._last_state_covariance = np.eye(6, 6) * 20.0
 
         # Initialize a kallman filter by setting the observation matrix as well
         # as the initial state mean.
@@ -142,6 +144,15 @@ class EntityTracker:
     ) -> bool:
         # TODO(stan): Iterate on definition of impossible observation
         # transitions.
+        Log.out(
+            "Posibility test", {
+                'last_x': self._last_state_mean[0],
+                'new__x': observation.array()[0],
+                'last_y': self._last_state_mean[1],
+                'new__y': observation.array()[1],
+            })
+        return True
+
         if abs(self._last_state_mean[0] - observation.array()[0]) > \
                 ENTITY_OBSERVATION_POSITION_TRANSITION_MAX:
             return False
