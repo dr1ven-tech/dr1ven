@@ -107,7 +107,7 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 					case .Success:
 					self.drawPathOnMap()
 					case .Failure(let error):
-						print("Could not get location metadata track from asset: \(error))")
+						print("Could not get location metadata track from asset: \(String(describing: error)))")
 				}
 			})
 		}
@@ -450,6 +450,7 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 			// Read in all the timed metadata groups from the track and save it in an array to use for drawing on the map later
 			// The corresponding time stamps for the location data are stored in another array
 			if let metadataAdaptor = self.metadataAdaptor {
+				locationPoints.removeAll()
 				while let group = metadataAdaptor.nextTimedMetadataGroup() {
 					if let location = self.locationFromMetadataGroup(metadataGroup: group) {
 						locationPoints.append(location)
@@ -470,7 +471,6 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		// Draw the extracted path as an overlay on the map view
 		let polyline = MKPolyline(coordinates: pointsToUse, count: pointsToUse.count)
 		self.annotatedMapView.add(polyline, level: .aboveRoads)
-//		self.annotatedMapView.addOverlays([polyline], level: .aboveRoads)
 		
 		// Set initial coordinate to the starting coordinate of the path
 		if let firstCoordinate = locationPoints.first {
@@ -655,5 +655,4 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		polylineRenderer.strokeColor =  UIColor(red: 0.1, green: 0.5, blue: 0.98, alpha: 0.8)
 		return polylineRenderer
 	}
-	
 }

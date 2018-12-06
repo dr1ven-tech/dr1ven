@@ -54,7 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				52F0236F1CA6D26500C3AD17 /* README.md */,
-				5238005B1C8D8B7F00AA38E6 /* AVMetadataRecordPlay */,
+				5238005B1C8D8B7F00AA38E6 /* MetadataRecordPlay */,
 				5238005A1C8D8B7F00AA38E6 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,7 +68,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5238005B1C8D8B7F00AA38E6 /* AVMetadataRecordPlay */ = {
+		5238005B1C8D8B7F00AA38E6 /* MetadataRecordPlay */ = {
 			isa = PBXGroup;
 			children = (
 				DC54EAAD21B6D26200397B92 /* Views */,
@@ -81,7 +81,6 @@
 				523800651C8D8B7F00AA38E6 /* LaunchScreen.storyboard */,
 				523800681C8D8B7F00AA38E6 /* Info.plist */,
 			);
-			name = AVMetadataRecordPlay;
 			path = MetadataRecordPlay;
 			sourceTree = "<group>";
 		};
