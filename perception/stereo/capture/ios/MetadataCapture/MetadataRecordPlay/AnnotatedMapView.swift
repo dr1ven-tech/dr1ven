@@ -9,5 +9,4 @@
 import MapKit
 
 class AnnotatedMapView: MKMapView {
-
 }

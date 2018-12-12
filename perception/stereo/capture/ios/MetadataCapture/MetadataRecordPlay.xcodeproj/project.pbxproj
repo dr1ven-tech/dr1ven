@@ -16,9 +16,14 @@
 		5238007B1C8D91AD00AA38E6 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5238007A1C8D91AD00AA38E6 /* PreviewView.swift */; };
 		52D0A7351D25F6F7009741A8 /* AssetGridViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0A7341D25F6F7009741A8 /* AssetGridViewController.swift */; };
 		52D0A7371D25F723009741A8 /* AssetGridViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52D0A7361D25F723009741A8 /* AssetGridViewCell.swift */; };
+		DC2E657A21BFFB7F007D7208 /* SeekerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC2E657921BFFB7F007D7208 /* SeekerView.swift */; };
 		DC54EAAA21B6CEA200397B92 /* AnnotatedMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC54EAA921B6CEA200397B92 /* AnnotatedMapView.swift */; };
 		DC54EAAC21B6D07900397B92 /* icons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC54EAAB21B6D07900397B92 /* icons.xcassets */; };
 		DC54EAB121B6D29200397B92 /* PlayerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC54EAB021B6D29200397B92 /* PlayerButton.swift */; };
+		DCA387CF21C023A2008009ED /* SeekerViewDatasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA387CE21C023A2008009ED /* SeekerViewDatasource.swift */; };
+		DCA387D121C0658B008009ED /* SeekerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA387D021C0658B008009ED /* SeekerCell.swift */; };
+		DCA387D321C16175008009ED /* SeekerCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCA387D221C16175008009ED /* SeekerCell.xib */; };
+		DCA387D521C177BF008009ED /* CarAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA387D421C177BF008009ED /* CarAnnotation.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,9 +39,14 @@
 		52D0A7341D25F6F7009741A8 /* AssetGridViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetGridViewController.swift; sourceTree = "<group>"; };
 		52D0A7361D25F723009741A8 /* AssetGridViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetGridViewCell.swift; sourceTree = "<group>"; };
 		52F0236F1CA6D26500C3AD17 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DC2E657921BFFB7F007D7208 /* SeekerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeekerView.swift; sourceTree = "<group>"; };
 		DC54EAA921B6CEA200397B92 /* AnnotatedMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotatedMapView.swift; sourceTree = "<group>"; };
 		DC54EAAB21B6D07900397B92 /* icons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = icons.xcassets; sourceTree = "<group>"; };
 		DC54EAB021B6D29200397B92 /* PlayerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerButton.swift; sourceTree = "<group>"; };
+		DCA387CE21C023A2008009ED /* SeekerViewDatasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeekerViewDatasource.swift; sourceTree = "<group>"; };
+		DCA387D021C0658B008009ED /* SeekerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeekerCell.swift; sourceTree = "<group>"; };
+		DCA387D221C16175008009ED /* SeekerCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SeekerCell.xib; sourceTree = "<group>"; };
+		DCA387D421C177BF008009ED /* CarAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarAnnotation.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +117,11 @@
 			isa = PBXGroup;
 			children = (
 				523800781C8D919100AA38E6 /* PlayerViewController.swift */,
+				DC2E657921BFFB7F007D7208 /* SeekerView.swift */,
+				DCA387D021C0658B008009ED /* SeekerCell.swift */,
+				DCA387D221C16175008009ED /* SeekerCell.xib */,
+				DCA387CE21C023A2008009ED /* SeekerViewDatasource.swift */,
+				DCA387D421C177BF008009ED /* CarAnnotation.swift */,
 				DC54EAA921B6CEA200397B92 /* AnnotatedMapView.swift */,
 			);
 			name = Player;
@@ -184,6 +199,7 @@
 			files = (
 				523800671C8D8B7F00AA38E6 /* LaunchScreen.storyboard in Resources */,
 				523800641C8D8B7F00AA38E6 /* Assets.xcassets in Resources */,
+				DCA387D321C16175008009ED /* SeekerCell.xib in Resources */,
 				DC54EAAC21B6D07900397B92 /* icons.xcassets in Resources */,
 				523800621C8D8B7F00AA38E6 /* Main.storyboard in Resources */,
 			);
@@ -197,12 +213,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				52D0A7351D25F6F7009741A8 /* AssetGridViewController.swift in Sources */,
+				DCA387D121C0658B008009ED /* SeekerCell.swift in Sources */,
 				DC54EAAA21B6CEA200397B92 /* AnnotatedMapView.swift in Sources */,
+				DCA387D521C177BF008009ED /* CarAnnotation.swift in Sources */,
 				523800791C8D919100AA38E6 /* PlayerViewController.swift in Sources */,
 				5238007B1C8D91AD00AA38E6 /* PreviewView.swift in Sources */,
 				523800771C8D917900AA38E6 /* CameraViewController.swift in Sources */,
 				5238005D1C8D8B7F00AA38E6 /* AppDelegate.swift in Sources */,
 				DC54EAB121B6D29200397B92 /* PlayerButton.swift in Sources */,
+				DC2E657A21BFFB7F007D7208 /* SeekerView.swift in Sources */,
+				DCA387CF21C023A2008009ED /* SeekerViewDatasource.swift in Sources */,
 				52D0A7371D25F723009741A8 /* AssetGridViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,6 +359,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = T8RHT642EK;
 				INFOPLIST_FILE = "$(SRCROOT)/MetadataRecordPlay/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVMetadataRecordPlay";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -354,6 +375,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEVELOPMENT_TEAM = T8RHT642EK;
 				INFOPLIST_FILE = "$(SRCROOT)/MetadataRecordPlay/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVMetadataRecordPlay";
 				PRODUCT_NAME = "$(TARGET_NAME)";

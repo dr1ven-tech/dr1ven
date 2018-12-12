@@ -12,7 +12,7 @@ import CoreMedia
 import ImageIO
 import MapKit
 
-class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDelegate, UIDocumentPickerDelegate, MKMapViewDelegate {
+class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDelegate, UIDocumentPickerDelegate, MKMapViewDelegate, UICollectionViewDelegate {
 	
 	// MARK: View Controller Life Cycle
 	
@@ -28,6 +28,7 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		itemMetadataOutput.setDelegate(self, queue: metadataQueue)
 		
 		self.annotatedMapView.delegate = self
+		self.annotatedMapView.register(CarAnnotation.self, forAnnotationViewWithReuseIdentifier: "carAnnotationIdentifier")
 	}
 	
 	override func viewDidDisappear(_ animated: Bool) {
@@ -125,6 +126,8 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 	
 	private var currentPin = MKPointAnnotation()
 	
+	private var carAnnotation = CarAnnotation()
+	
 	private var timeStamps = [NSValue]()
 	
 	private var locationPoints = [CLLocation]()
@@ -132,7 +135,13 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 	private var shouldCenterMapView = true
 
 	@IBOutlet private weak var locationOverlayLabel: UILabel!
+	
+	@IBOutlet private weak var directionOverlayLabel: UILabel!
 
+	@IBOutlet private weak var seekerView: SeekerView!
+
+	var seekerViewDatasource: SeekerViewDataSource?
+	
 	private func setUpPlayer(for asset: AVAsset) {
 		let mutableComposition = AVMutableComposition()
 		
@@ -160,7 +169,8 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		for metadataTrack in asset.tracks(withMediaType: AVMediaTypeMetadata) {
 			if track(metadataTrack, hasMetadataIdentifier:AVMetadataIdentifierQuickTimeMetadataDetectedFace) ||
 				track(metadataTrack, hasMetadataIdentifier:AVMetadataIdentifierQuickTimeMetadataVideoOrientation) ||
-				track(metadataTrack, hasMetadataIdentifier:AVMetadataIdentifierQuickTimeMetadataLocationISO6709) {
+				track(metadataTrack, hasMetadataIdentifier:AVMetadataIdentifierQuickTimeMetadataLocationISO6709) ||
+				track(metadataTrack, hasMetadataIdentifier:AVMetadataIdentifierQuickTimeMetadataDirectionFacing) {
 				
 				let mutableCompositionMetadataTrack = mutableComposition.addMutableTrack(withMediaType: AVMediaTypeMetadata, preferredTrackID: kCMPersistentTrackID_Invalid)
 				
@@ -193,7 +203,18 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 			facesLayer.frame = playerLayer.videoRect;
 			
 			self.playerLayer = playerLayer
+			
+			self.seekerView.register(UINib(nibName: "SeekerCell", bundle: nil), forCellWithReuseIdentifier: "thumbnailIdentifier")
+			self.seekerView.setCollectionViewLayout(SeekerViewFlowLayout(frame: self.seekerView.frame), animated: false, completion: nil)
+			self.seekerView.delegate = self
 		}
+		
+		//seeker
+		self.seekerViewDatasource = SeekerViewDataSource(asset: asset, collectionView: self.seekerView)
+		if let datasource = self.seekerViewDatasource{
+			self.seekerView.dataSource = datasource
+		}
+
 		
 		// Update the player layer to match the video's default transform. Disable animation so the transform applies immediately.
 		CATransaction.begin()
@@ -261,6 +282,9 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 					else if self.track(track.assetTrack, hasMetadataIdentifier: AVMetadataIdentifierQuickTimeMetadataVideoOrientation) {
 						self.locationOverlayLabel.text = ""
 					}
+					else if self.track(track.assetTrack, hasMetadataIdentifier: AVMetadataIdentifierQuickTimeMetadataDirectionFacing) {
+						self.directionOverlayLabel.text = ""
+					}
 				}
 				else {
 					var faces = [AVMetadataObject]()
@@ -303,6 +327,17 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 										}
 									}
 								}
+							
+							case AVMetadataIdentifierQuickTimeMetadataDirectionFacing:
+							
+								if itemDataType == String(kCMMetadataDataType_QuickTimeMetadataDirection) {
+									if let itemValue = metdataItem.value as? String {
+										self.directionOverlayLabel.text = itemValue
+										if let direction = self.directionFromDirectionMetadataItem(metdataItem: metdataItem) {
+											self.updateCurrentDirection(direction: direction)
+										}
+									}
+							}
 							
 							default:
 								print("Timed metadata: unrecognized metadata identifier \(itemIdentifier)")
@@ -533,13 +568,46 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		return nil
 	}
 	
-	func updateCurrentLocation(location: CLLocation)
-	{
+	func directionFromDirectionMetadataItem(metdataItem: AVMetadataItem) -> Double? {
+		
+		guard let _ = metdataItem.identifier, let itemDataType = metdataItem.dataType else {
+			return nil
+		}
+		
+		// Go through the timed metadata group to extract direction value
+		if itemDataType == String(kCMMetadataDataType_QuickTimeMetadataDirection) {
+			if let itemValue = metdataItem.value as? String {
+				
+				// Extract from a string in angle notation
+				let directionRange =  itemValue.startIndex..<itemValue.index(itemValue.startIndex, offsetBy: 8)
+				let direction = itemValue[directionRange]
+				
+				guard let directionValue = Double(direction) else {
+					return nil
+				}
+				
+				return directionValue
+			}
+		}
+		return nil
+	}
+
+	
+	func updateCurrentLocation(location: CLLocation) {
 		// Update current pin to the new location
 		DispatchQueue.main.async {
 			self.currentPin.coordinate = location.coordinate
 			self.annotatedMapView.setCenter(location.coordinate, animated: true)
 			self.annotatedMapView.addAnnotation(self.currentPin)
+		}
+	}
+	
+	func updateCurrentDirection(direction: Double) {
+		// Update current pin to the new direction
+		DispatchQueue.main.async {
+			print("direction \(direction)")
+			self.carAnnotation.layer.transform = CATransform3DRotate(CATransform3DIdentity, CGFloat(Double.pi*direction/180.0), 0, 0, 1)
+//				CGAffineTransform.init(rotationAngle: CGFloat(2*Double.pi/direction))
 		}
 	}
 	
@@ -636,6 +704,16 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		return transform
 	}
 	
+	// MARK: UICollectionViewDelegate
+
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		let progress = scrollView.contentOffset.x / (scrollView.contentSize.width - self.view.frame.width)
+		if let asset = self.playerAsset {
+			let seekValue = Int(progress * CGFloat(asset.duration.value))
+			let time = CMTime(value: CMTimeValue(seekValue), timescale: asset.duration.timescale)
+			self.player?.seek(to: time)
+		}
+	}
 	
 	// MARK: UIDocumentPickerDelegate
 	
@@ -654,5 +732,11 @@ class PlayerViewController: UIViewController, AVPlayerItemMetadataOutputPushDele
 		polylineRenderer.lineWidth = 5.0
 		polylineRenderer.strokeColor =  UIColor(red: 0.1, green: 0.5, blue: 0.98, alpha: 0.8)
 		return polylineRenderer
+	}
+
+	func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+		let annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: "carAnnotationIdentifier") as! CarAnnotation
+		self.carAnnotation = annotationView
+		return annotationView
 	}
 }

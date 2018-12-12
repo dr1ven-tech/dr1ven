@@ -456,7 +456,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 			if !self.movieFileOutput.isRecording {
 				// Begin location updates.
 				self.locationManager.startUpdatingLocation()
-				
+				self.locationManager.startUpdatingHeading()
+
 				if UIDevice.current.isMultitaskingSupported {
 					/*
 						Set up background task.
@@ -481,6 +482,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 			else {
 				self.movieFileOutput.stopRecording()
 				self.locationManager.stopUpdatingLocation()
+				self.locationManager.stopUpdatingHeading()
 			}
 		}
 	}
@@ -574,7 +576,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 	// MARK: Metadata Support
 	
 	private var locationMetadataInput: AVCaptureMetadataInput?
-	
+	private var directionMetadataInput: AVCaptureMetadataInput?
+
 	private func connectMetadataPorts() {
 		// Location metadata
 		if !isConnectionActiveWithInputPort(AVMetadataIdentifierQuickTimeMetadataLocationISO6709) {
@@ -599,6 +602,31 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 			
 			locationMetadataInput = newLocationMetadataInput
 		}
+		
+		// Direction metadata
+		if !isConnectionActiveWithInputPort(AVMetadataIdentifierQuickTimeMetadataDirectionFacing) {
+			// Create a format description for the location metadata.
+			let specs = [kCMMetadataFormatDescriptionMetadataSpecificationKey_Identifier as String: AVMetadataIdentifierQuickTimeMetadataDirectionFacing,
+						 kCMMetadataFormatDescriptionMetadataSpecificationKey_DataType as String: kCMMetadataDataType_QuickTimeMetadataDirection as String]
+			
+			var directionMetadataDesc: CMFormatDescription?
+			CMMetadataFormatDescriptionCreateWithMetadataSpecifications(kCFAllocatorDefault, kCMMetadataFormatType_Boxed, [specs] as CFArray, &directionMetadataDesc)
+			
+			// Create the metadata input and add it to the session.
+			guard let newDirectionMetadataInput = AVCaptureMetadataInput(formatDescription: directionMetadataDesc, clock: CMClockGetHostTimeClock())
+				else {
+					print("Unable to obtain metadata input.")
+					return
+			}
+			session.addInputWithNoConnections(newDirectionMetadataInput)
+			
+			// Connect the direction metadata input to the movie file output.
+			let inputPort = newDirectionMetadataInput.ports[0]
+			session.add(AVCaptureConnection(inputPorts: [inputPort], output: movieFileOutput))
+			
+			directionMetadataInput = newDirectionMetadataInput
+		}
+
 		
 		// Face metadata
 		if !isConnectionActiveWithInputPort(AVMetadataIdentifierQuickTimeMetadataDetectedFace) {
@@ -832,6 +860,27 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 				catch {
 					print("Could not add timed metadata group: \(error)")
 				}
+			}
+		}
+	}
+	
+	func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+		// If we are recording a movie, then send the heading to the AVCaptureMetadataInput for
+		// heading data so that it can be put into a timed metadata track
+		if movieFileOutput.isRecording {
+			var direction: String
+			let newDirectionMetadataItem = AVMutableMetadataItem()
+			newDirectionMetadataItem.identifier = AVMetadataIdentifierQuickTimeMetadataDirectionFacing
+			newDirectionMetadataItem.dataType = kCMMetadataDataType_QuickTimeMetadataDirection as String
+			direction = String(format: "%+08.4lf/", newHeading.magneticHeading)
+			newDirectionMetadataItem.value = direction as NSString
+			
+			let metadataItemGroup = AVTimedMetadataGroup(items: [newDirectionMetadataItem], timeRange: CMTimeRangeMake(CMClockGetTime(CMClockGetHostTimeClock()), kCMTimeInvalid))
+			do {
+				try directionMetadataInput?.append(metadataItemGroup)
+			}
+			catch {
+				print("Could not add timed metadata group: \(error)")
 			}
 		}
 	}

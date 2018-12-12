@@ -264,6 +264,8 @@ class AssetGridViewController: UICollectionViewController, PHPhotoLibraryChangeO
 		
 		let requestOptions = PHVideoRequestOptions()
 		requestOptions.isNetworkAccessAllowed = true
+		requestOptions.deliveryMode = .highQualityFormat
+			
 		requestOptions.progressHandler = { progress, error, _, info in
 			if let error = error {
 				DispatchQueue.main.async {
